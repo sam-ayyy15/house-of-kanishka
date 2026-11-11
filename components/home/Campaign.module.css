@@ -1,0 +1,58 @@
+.section {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 560px;
+  overflow: hidden;
+  background: #c8371c;
+}
+
+.label {
+  position: absolute;
+  z-index: 1;
+}
+
+/* Corner positions from spec §4.3 (left / top as % of the section). */
+.tl {
+  left: 5%;
+  top: 6%;
+}
+
+.tr {
+  left: 52%;
+  top: 5%;
+}
+
+.bl {
+  left: 27%;
+  top: 82%;
+}
+
+.br {
+  left: 76%;
+  top: 82%;
+}
+
+/* EXTRAPOLATED – no reference design: on mobile the four labels sit in the corners. */
+@media (max-width: 767px) {
+  .tl,
+  .bl {
+    left: 20px;
+  }
+
+  .tr,
+  .br {
+    left: 55%;
+  }
+
+  .tl,
+  .tr {
+    top: calc(var(--header-h) + 24px);
+  }
+
+  .bl,
+  .br {
+    top: auto;
+    bottom: 32px;
+  }
+}
