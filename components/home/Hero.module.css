@@ -1,0 +1,105 @@
+.hero {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 560px;
+  overflow: hidden;
+  background: #060606;
+  color: var(--vr-white);
+}
+
+.photo {
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+/* Lockup: live text, centred; vertical centre ≈ 48 % of the hero (tuned against V). */
+.lockup {
+  /* Size unit: 1vw on desktop, scaled up on mobile so the lockup fills ~80 % of the width. */
+  --u: 1vw;
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  font-family: var(--font-serif);
+  white-space: nowrap;
+  text-align: center;
+}
+
+.line1 {
+  display: block;
+  font-size: calc(10.7 * var(--u));
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+}
+
+.rose {
+  display: block;
+  font-family: var(--font-hero-italic);
+  font-style: italic;
+  font-size: calc(20.8 * var(--u));
+  font-weight: 500;
+  line-height: 0.8;
+  letter-spacing: -0.03em;
+  margin-top: -0.3em;
+}
+
+/* Script overlaps the lower-right of "rose". */
+.script {
+  position: absolute;
+  left: 26%;
+  bottom: -0.95em;
+  font-family: var(--font-script);
+  font-size: calc(5.6 * var(--u));
+  line-height: 1;
+  letter-spacing: 0.08em;
+  transform: rotate(-4deg);
+  transform-origin: left bottom;
+}
+
+.cta {
+  position: absolute;
+  left: 50%;
+  top: 93.5%;
+  transform: translate(-50%, -50%);
+  font-size: 16px;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+/* EXTRAPOLATED – no reference design: tablet portrait scales the lockup between desktop and mobile. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .lockup {
+    --u: 1.6vw;
+  }
+}
+
+/* Mobile (S3): tighter crop on the face; lockup in the lower half, slightly right of centre. */
+@media (max-width: 767px) {
+  /* EXTRAPOLATED – no reference design: S3 shows no CTA in the first screen, so the
+     mobile hero runs slightly taller than the viewport and the CTA sits just below the fold. */
+  .hero {
+    height: calc(100svh + 72px);
+  }
+
+  .photo {
+    object-position: 40% 30%;
+  }
+
+  .lockup {
+    --u: 2.47vw;
+    left: 52.5%;
+    top: 47%;
+  }
+
+
+  .cta {
+    top: auto;
+    bottom: 36px;
+    transform: translateX(-50%);
+  }
+}

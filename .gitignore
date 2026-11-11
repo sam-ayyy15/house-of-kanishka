@@ -1,0 +1,11 @@
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+# Third-party reference media and placeholders made from it: local only, never ship.
+public/placeholders/
+reference/screenshots/
+reference/video-frames/
+# Screenshot comparisons
+.shots/
+.next-dev.log

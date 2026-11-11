@@ -1,0 +1,101 @@
+/* Design tokens: spec §12.2. [E] values are tuned against reference images. */
+:root {
+  /* colour */
+  --vr-red: #a20f15;
+  --vr-black: #000000;
+  --vr-white: #ffffff;
+  --vr-grey-tile: #f7f7f7;
+  --vr-grey-blob: #f7f6f9;
+  --vr-grey-oval: #f3f3f3;
+  --vr-text-muted: #767676; /* spec #999, darkened for 4.5:1 contrast (approved) */
+  --vr-border: #e6e6e6;
+
+  /* type families: placeholders until licensed fonts arrive (Q2) */
+  --font-serif: var(--font-instrument-serif), 'Times New Roman', serif;
+  --font-hero-italic: var(--font-hero-italic-face), var(--font-instrument-serif), serif;
+  --font-script: var(--font-mrs-saint-delafield), cursive;
+  --font-sans: var(--font-inter), 'Helvetica Neue', Arial, sans-serif;
+
+  /* layout */
+  --pad-x: clamp(20px, 4vw, 64px);
+  --header-pad-x: clamp(20px, 2.8vw, 40px);
+  --gutter: clamp(8px, 2.2vw, 32px);
+  --header-h: 80px;
+  --section-py: clamp(64px, 8vw, 120px);
+  --radius: 0;
+}
+
+/* EXTRAPOLATED – no reference design: tablet portrait uses the mobile header. */
+@media (max-width: 1023px) {
+  :root {
+    --header-h: 56px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-radius: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--vr-white);
+  color: var(--vr-black);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+  font-weight: 400;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+/* Plain visible focus ring for keyboard users (approved). */
+:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 3px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
