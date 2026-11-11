@@ -1,0 +1,117 @@
+.section {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 600px;
+  overflow: hidden;
+  background: var(--vr-red);
+  color: var(--vr-white);
+}
+
+.photo {
+  object-fit: cover;
+  object-position: 60% 30%;
+}
+
+.headline {
+  position: absolute;
+  left: 4%;
+  top: 8%;
+  z-index: 1;
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 4.4vw, 64px);
+  line-height: 1.1;
+}
+
+/* Three columns starting at ~4 / 36 / 71 % and ~75 % down (spec §4.7). */
+.services {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 75%;
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.service {
+  position: absolute;
+  top: 0;
+  width: 26%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  /* Legibility over the white blazer (spec §12.6, approved): a faint shadow, no visual change on red. */
+  text-shadow: 0 0 12px rgb(0 0 0 / 0.35);
+}
+
+.service:nth-child(1) {
+  left: 4%;
+}
+
+.service:nth-child(2) {
+  left: 36%;
+}
+
+.service:nth-child(3) {
+  left: 71%;
+}
+
+.service svg {
+  filter: drop-shadow(0 0 6px rgb(0 0 0 / 0.35));
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: 30px;
+  line-height: 1.1;
+}
+
+.body {
+  max-width: 34em;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.link {
+  margin-top: 6px;
+  font-size: 15px;
+}
+
+/* EXTRAPOLATED – no reference design: headline at the top, services stacked at the bottom. */
+@media (max-width: 767px) {
+  .section {
+    height: auto;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: calc(var(--header-h) + 24px) var(--pad-x) 40px;
+  }
+
+  .photo {
+    object-position: 62% 30%;
+  }
+
+  .headline {
+    position: relative;
+    left: auto;
+    top: auto;
+    font-size: 36px;
+  }
+
+  .services {
+    position: relative;
+    top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .service {
+    position: static;
+    width: auto;
+  }
+}

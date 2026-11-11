@@ -1,0 +1,82 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  min-height: 80vh;
+  padding: var(--section-py) var(--pad-x);
+  background: var(--vr-white);
+  text-align: center;
+}
+
+.eyebrow {
+  font-size: 17px;
+}
+
+.heading {
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 5.5vw, 80px);
+  line-height: 1.2;
+}
+
+.heading em {
+  font-style: italic;
+}
+
+/* Input ~400 × 51 and button ~188 × 51 with a ~15px gap, centred (V 12.6 s). */
+.form {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 8px;
+}
+
+.input {
+  width: 400px;
+  height: 51px;
+  padding: 0 16px;
+  border: 1px solid var(--vr-border);
+  background: var(--vr-white);
+  font: inherit;
+  font-size: 16px;
+  color: #111;
+}
+
+.input::placeholder {
+  color: var(--vr-text-muted);
+}
+
+.button {
+  width: 188px;
+  height: 51px;
+  background: var(--vr-black);
+  color: var(--vr-white);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* EXTRAPOLATED – no reference design: heading reflows, form stacks full width. */
+@media (max-width: 767px) {
+  .section {
+    min-height: 0;
+    gap: 24px;
+  }
+
+  .br {
+    display: none;
+  }
+
+  .form {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .input,
+  .button {
+    width: 100%;
+  }
+}
