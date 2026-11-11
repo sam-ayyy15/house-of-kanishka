@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "tsc --noEmit",
     "shots": "node scripts/screenshot.mjs",
-    "placeholders": "node scripts/make-placeholders.mjs && rm -rf .next/dev/cache/images .next/cache/images"
+    "placeholders": "node scripts/make-placeholders.mjs && node scripts/make-campaign-loop.mjs && rm -rf .next/dev/cache/images .next/cache/images"
   },
   "dependencies": {
     "lucide-react": "^1.72.0",
