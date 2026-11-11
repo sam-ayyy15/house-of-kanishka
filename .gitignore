@@ -6,6 +6,7 @@ next-env.d.ts
 public/placeholders/
 reference/screenshots/
 reference/video-frames/
+reference/images/
 # Screenshot comparisons
 .shots/
 .next-dev.log

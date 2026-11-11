@@ -39,17 +39,9 @@ async function crop(src, region, out, { blurBoxes = [], sigma = 20, feather = 6,
   console.log('wrote', out);
 }
 
-// A01 – Hero. Centre tile of video frame 01 (~896×560, ≈16:10).
-// Header, lockup and CTA are baked into the frame, so those areas are blurred.
-await crop(
-  'reference/video-frames/01-hero.jpg',
-  { left: 372, top: 372, width: 896, height: 560 },
-  'hero.jpg',
-  {
-    blurBoxes: [
-      { left: 0, top: 0, width: 896, height: 32 },
-      { left: 300, top: 176, width: 312, height: 236 },
-      { left: 350, top: 506, width: 200, height: 42 },
-    ],
-  },
-);
+// A01 – Hero. Raw source photo supplied by the client (1798×875, no baked-in text).
+// Framing is done in CSS with object-position, so the photo is only re-encoded here.
+await sharp('reference/images/Glossy Pink Blazer Editorial Portrait.png')
+  .jpeg({ quality: 90, mozjpeg: true })
+  .toFile(`${OUT}/hero.jpg`);
+console.log('wrote hero.jpg');
