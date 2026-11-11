@@ -1,5 +1,6 @@
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/home/Hero';
+import { NewArrivals } from '@/components/home/NewArrivals';
 
 export default function HomePage() {
   return (
@@ -7,6 +8,7 @@ export default function HomePage() {
       <Header overlayTargetId="hero" />
       <main>
         <Hero />
+        <NewArrivals />
       </main>
     </>
   );

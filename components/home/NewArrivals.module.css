@@ -1,0 +1,113 @@
+.section {
+  padding: 100px var(--pad-x) var(--section-py);
+  background: var(--vr-white);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 4.6vw, 66px);
+  line-height: 1.1;
+}
+
+/* Editorial row (S4). Column widths as % of the content width: ~30 / 22 / 41. */
+.row {
+  display: grid;
+  grid-template-columns: 30fr 22fr 41fr;
+  column-gap: 3.5%;
+  align-items: end;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Slot 1: cut-out model; its box is as tall as the framed photo so the bottoms align. */
+.cutoutMedia {
+  position: relative;
+  aspect-ratio: 30 / 48.5;
+}
+
+/* Slot 2: object on a light-grey ellipse, top-aligned so its caption sits higher. */
+.oval {
+  align-self: start;
+}
+
+.ovalMedia {
+  position: relative;
+  aspect-ratio: 0.75;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--vr-grey-oval);
+}
+
+/* Placeholder crop carries its own grey; darken blends it into the CSS oval. */
+.ovalImg {
+  object-fit: contain;
+  padding: 8%;
+  mix-blend-mode: darken;
+}
+
+/* Slot 3: framed studio photo (~0.84). */
+.framedMedia {
+  position: relative;
+  aspect-ratio: 0.846;
+  background: #f2f4f5;
+}
+
+.contain {
+  object-fit: contain;
+  object-position: 50% 100%;
+}
+
+.cover {
+  object-fit: cover;
+}
+
+.grid {
+  display: none;
+}
+
+/* Mobile (S3): "New Arrivals" (no "Our"), 2-column grid, no captions. */
+@media (max-width: 767px) {
+  .section {
+    padding-top: 40px;
+  }
+
+  .head {
+    margin-bottom: 24px;
+  }
+
+  .title {
+    font-size: 34px;
+  }
+
+  .our,
+  .row {
+    display: none;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .gridItem {
+    position: relative;
+    display: block;
+    height: 360px;
+  }
+}
