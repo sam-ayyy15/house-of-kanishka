@@ -5,7 +5,7 @@ import { PdpInfo } from '@/components/pdp/PdpInfo';
 import { blazer } from '@/lib/products';
 import styles from './page.module.css';
 
-export const metadata: Metadata = { title: `${blazer.name} · Vivienne Rôse` };
+export const metadata: Metadata = { title: `${blazer.name} · House of Kanishka` };
 
 /** PDP (spec §6, S1). Mobile order: title → gallery → tabs → selects → purchase (approved). */
 export default function ProductPage() {

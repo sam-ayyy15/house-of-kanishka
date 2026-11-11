@@ -58,7 +58,7 @@ export function Header({ overlayTargetId, bagCount = 0, mobileLeft = 'logo' }: P
       </nav>
 
       <Link href="/" className={`${styles.logo} ${mobileLeft === 'filter' ? styles.logoDesktopOnly : ''}`}>
-        Vivienne Rôse
+        House of Kanishka
       </Link>
       {mobileLeft === 'filter' && (
         // What FILTER opens is [M]; the trigger is inert for now.

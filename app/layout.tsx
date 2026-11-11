@@ -3,8 +3,8 @@ import { heroItalic, sans, script, serif } from './fonts';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Vivienne Rôse',
-  description: 'Vivienne Rôse: Parisian elegance and modern simplicity.',
+  title: 'House of Kanishka',
+  description: 'House of Kanishka: Parisian elegance and modern simplicity.',
 };
 
 export const viewport: Viewport = {

@@ -6,7 +6,7 @@ import { ProductGrid } from '@/components/plp/ProductGrid';
 import { dresses } from '@/lib/products';
 import styles from './page.module.css';
 
-export const metadata: Metadata = { title: 'Dresses · Vivienne Rôse' };
+export const metadata: Metadata = { title: 'Dresses · House of Kanishka' };
 
 /** PLP "Dresses" (spec §5, S2). */
 export default function DressesPage() {
