@@ -1,0 +1,40 @@
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 31px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tile {
+  position: relative;
+  aspect-ratio: 0.815;
+  background: var(--vr-grey-tile);
+}
+
+.tile img {
+  object-fit: cover;
+}
+
+/* EXTRAPOLATED – no reference design: swipeable row with the next tile peeking in. */
+@media (max-width: 767px) {
+  .gallery {
+    display: flex;
+    gap: 8px;
+    padding: 0 var(--pdp-pad);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 var(--pdp-pad);
+    scrollbar-width: none;
+  }
+
+  .gallery::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tile {
+    flex: 0 0 85%;
+    scroll-snap-align: start;
+  }
+}

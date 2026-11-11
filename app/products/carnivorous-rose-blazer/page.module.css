@@ -1,0 +1,67 @@
+/* S1: PDP side padding measures ~40px, the same as the header. */
+.main {
+  --pdp-pad: var(--header-pad-x);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    'title info'
+    'gallery gallery';
+  column-gap: var(--gutter);
+  /* Overrides .page-solid's padding-top, so the header height is added here. */
+  padding: calc(var(--header-h) + 42px) var(--pdp-pad) var(--section-py);
+}
+
+.title {
+  grid-area: title;
+  max-width: 7.8em; /* breaks as in S1: "Carnivorous Rose / Blazer - Black/White / Silk Rose" */
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 4.2vw, 60px);
+  line-height: 1.15;
+}
+
+.info {
+  grid-area: info;
+  max-width: 640px;
+}
+
+/* Gallery starts ~488px from the top of the page at 1440 (spec §6.1). */
+.gallery {
+  grid-area: gallery;
+  margin-top: 64px;
+}
+
+/* EXTRAPOLATED – no reference design: tablet portrait stacks the info under the title. */
+@media (max-width: 1023px) {
+  .main {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'title'
+      'info'
+      'gallery';
+    row-gap: 32px;
+  }
+
+  .info {
+    max-width: none;
+  }
+
+  .gallery {
+    margin-top: 16px;
+  }
+}
+
+/* EXTRAPOLATED – no reference design: title → swipeable gallery → tabs → selects → purchase. */
+@media (max-width: 767px) {
+  .main {
+    grid-template-areas:
+      'title'
+      'gallery'
+      'info';
+    padding-top: calc(var(--header-h) + 24px);
+    row-gap: 28px;
+  }
+
+  .gallery {
+    margin: 0 calc(-1 * var(--pdp-pad));
+  }
+}
