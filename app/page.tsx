@@ -1,4 +1,5 @@
 import { Header } from '@/components/Header';
+import { Accessories } from '@/components/home/Accessories';
 import { Campaign } from '@/components/home/Campaign';
 import { Hero } from '@/components/home/Hero';
 import { NewArrivals } from '@/components/home/NewArrivals';
@@ -15,6 +16,7 @@ export default function HomePage() {
         <Campaign />
         <WhoWeAre />
         <NewCollection />
+        <Accessories />
       </main>
     </>
   );
