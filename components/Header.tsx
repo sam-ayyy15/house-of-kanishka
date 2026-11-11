@@ -12,6 +12,8 @@ type Props = {
    */
   overlayTargetId?: string;
   bagCount?: number;
+  /** Mobile: listing pages show a FILTER trigger where the logo sits (S2, approved). */
+  mobileLeft?: 'logo' | 'filter';
 };
 
 /**
@@ -19,7 +21,7 @@ type Props = {
  * the hero (variant A), solid white with black text after it (variant B).
  * The switch is instant; no transition is evidenced.
  */
-export function Header({ overlayTargetId, bagCount = 0 }: Props) {
+export function Header({ overlayTargetId, bagCount = 0, mobileLeft = 'logo' }: Props) {
   const [solid, setSolid] = useState(!overlayTargetId);
 
   useEffect(() => {
@@ -42,21 +44,28 @@ export function Header({ overlayTargetId, bagCount = 0 }: Props) {
     <header className={styles.header} data-variant={solid ? 'solid' : 'transparent'}>
       {/* Desktop: three zones */}
       <nav className={`${styles.zone} ${styles.left}`} aria-label="Primary">
-        <a href="#" className={styles.navLink}>
+        {/* Only one listing page exists so far, so Shop and New Arrivals both open it. */}
+        <Link href="/dresses" className={styles.navLink}>
           <MenuIcon className={styles.menuIcon} />
           Shop
-        </a>
-        <a href="#" className={styles.navLink}>
+        </Link>
+        <Link href="/dresses" className={styles.navLink}>
           New Arrivals
-        </a>
+        </Link>
         <a href="#" className={styles.navLink}>
           The Brand
         </a>
       </nav>
 
-      <Link href="/" className={styles.logo}>
+      <Link href="/" className={`${styles.logo} ${mobileLeft === 'filter' ? styles.logoDesktopOnly : ''}`}>
         Vivienne Rôse
       </Link>
+      {mobileLeft === 'filter' && (
+        // What FILTER opens is [M]; the trigger is inert for now.
+        <button type="button" className={styles.mobileFilter}>
+          Filter
+        </button>
+      )}
 
       <nav className={`${styles.zone} ${styles.right}`} aria-label="Account">
         <a href="#" className={styles.navLink}>
@@ -73,13 +82,13 @@ export function Header({ overlayTargetId, bagCount = 0 }: Props) {
       {/* Mobile: icons only */}
       <div className={styles.icons}>
         <a href="#" className={styles.iconBtn} aria-label={`Shopping bag, ${bagCount} items`}>
-          <BagIcon />
+          <BagIcon size={24} />
         </a>
         <a href="#" className={styles.iconBtn} aria-label="Search">
-          <SearchIcon />
+          <SearchIcon size={22} />
         </a>
         <button type="button" className={styles.iconBtn} aria-label="Menu">
-          <MenuIcon size={20} />
+          <MenuIcon size={24} />
         </button>
       </div>
     </header>

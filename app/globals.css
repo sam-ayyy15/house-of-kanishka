@@ -88,6 +88,11 @@ video {
   outline-offset: 3px;
 }
 
+/* Pages without a hero: content starts below the fixed, solid header. */
+.page-solid {
+  padding-top: var(--header-h);
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

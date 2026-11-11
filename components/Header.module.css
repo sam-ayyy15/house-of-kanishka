@@ -52,7 +52,8 @@
   white-space: nowrap;
 }
 
-.icons {
+.icons,
+.mobileFilter {
   display: none;
 }
 
@@ -70,6 +71,19 @@
   .logo {
     justify-self: start;
     font-size: 31px;
+  }
+
+  .logoDesktopOnly {
+    display: none;
+  }
+
+  .mobileFilter {
+    display: block;
+    justify-self: start;
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   .icons {

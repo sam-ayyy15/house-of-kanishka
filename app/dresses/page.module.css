@@ -1,0 +1,56 @@
+.main {
+  padding-bottom: var(--section-py);
+}
+
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 24px var(--pad-x) 0;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 3.6vw, 52px);
+  line-height: 1.15;
+}
+
+.filter,
+.sort {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.filter {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 26px var(--pad-x) 40px;
+}
+
+.sortLabel {
+  margin-right: 6px;
+  color: var(--vr-text-muted);
+}
+
+@media (max-width: 767px) {
+  /* Mobile (S2): no title row; FILTER moves into the header. */
+  .titleRow,
+  .sort {
+    display: none;
+  }
+
+  .toolbar {
+    padding: 8px 0 24px var(--pad-x);
+  }
+}

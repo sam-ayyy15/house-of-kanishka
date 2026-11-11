@@ -1,0 +1,40 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 48px var(--gutter);
+  margin: 0;
+  padding: 0 var(--pad-x);
+  list-style: none;
+}
+
+/* Full-length cut-outs float on white; ~434px tall at 1440 (S2). */
+.card {
+  position: relative;
+  display: block;
+  height: clamp(300px, 30vw, 440px);
+}
+
+.card img {
+  object-fit: contain;
+  object-position: 50% 100%;
+}
+
+/* EXTRAPOLATED – no reference design: tablet portrait uses 3 columns. */
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Mobile (S2): 2 columns, almost no visible gutter. */
+@media (max-width: 767px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 0;
+    padding: 0 8px;
+  }
+
+  .card {
+    height: 330px;
+  }
+}

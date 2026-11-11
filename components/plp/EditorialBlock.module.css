@@ -1,0 +1,152 @@
+.block {
+  position: relative;
+  aspect-ratio: 1440 / 960;
+  margin: 90px 0;
+  overflow: hidden;
+}
+
+.blob {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--vr-grey-blob);
+}
+
+.watermark {
+  position: absolute;
+  left: 67.4%;
+  top: 2%;
+  font-family: var(--font-script);
+  font-size: 10.5vw;
+  line-height: 0.95;
+  color: #e8e8e8;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+.copy {
+  position: absolute;
+  left: 23.8%;
+  top: 20%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.4vw;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.heading {
+  font-family: var(--font-serif);
+  font-size: clamp(26px, 3.4vw, 50px);
+  line-height: 1.15;
+}
+
+.product {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.productMedia {
+  position: relative;
+  width: 100%;
+}
+
+.productMedia img {
+  object-fit: contain;
+}
+
+/* Placeholder crops carry the blob grey; darken lets them sit on it without a box. */
+.blend {
+  mix-blend-mode: darken;
+}
+
+.caption {
+  max-width: 13em;
+  font-size: 13px;
+}
+
+.bracelets {
+  left: 8.75%;
+  top: 48.3%;
+  width: 12.65%;
+}
+
+.miniBag {
+  left: 28.1%;
+  top: 50.7%;
+  width: 20%;
+}
+
+.lifestyle {
+  position: absolute;
+  top: 2.3%;
+}
+
+.lifestyle img {
+  object-fit: contain;
+  object-position: 50% 0;
+}
+
+.front {
+  left: 53.7%;
+  width: 16.6%;
+  height: 89%;
+}
+
+.back {
+  left: 78.3%;
+  width: 17.1%;
+  height: 87%;
+}
+
+/* EXTRAPOLATED – no reference design: heading and link, then the two accessories side by
+   side, then the two lifestyle shots side by side. No blob or watermark. */
+@media (max-width: 767px) {
+  .block {
+    aspect-ratio: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 16px;
+    margin: 56px 0;
+    padding: 0 var(--pad-x);
+  }
+
+  .blob,
+  .watermark {
+    display: none;
+  }
+
+  .copy,
+  .product,
+  .lifestyle {
+    position: static;
+    width: auto;
+    height: auto;
+    transform: none;
+  }
+
+  .copy {
+    grid-column: 1 / -1;
+    gap: 20px;
+  }
+
+  .heading {
+    font-size: 30px;
+  }
+
+  .caption {
+    font-size: 11px;
+  }
+
+  .lifestyle {
+    position: relative;
+    height: 380px;
+  }
+}
