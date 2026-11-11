@@ -1,0 +1,88 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 104px var(--pad-x) 140px;
+  background: var(--vr-white);
+  text-align: center;
+}
+
+.eyebrow {
+  margin-bottom: 28px;
+}
+
+.statement {
+  font-family: var(--font-serif);
+  font-size: clamp(26px, 3.6vw, 52px);
+  line-height: 1.15;
+}
+
+.statement em {
+  font-style: italic;
+}
+
+/* Photo ~37.6 % of the viewport, ~0.97 w:h, ~58px below the text. */
+.media {
+  position: relative;
+  width: 37.6vw;
+  margin-top: 58px;
+}
+
+.photo {
+  position: relative;
+  aspect-ratio: 0.97;
+  background: #e9e9e7;
+}
+
+.photo img {
+  object-fit: cover;
+}
+
+/* "Looking / for our stories": brand red, ~-5°, over the bottom quarter of the photo,
+   starting left of its left edge. */
+.script {
+  position: absolute;
+  left: -16%;
+  top: 62%;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-family: var(--font-script);
+  font-size: 12.5vw;
+  line-height: 0.75;
+  color: var(--vr-red);
+  white-space: nowrap;
+  text-align: left;
+  transform: rotate(-5deg);
+  transform-origin: left top;
+}
+
+.l2 {
+  margin-left: 0.5em;
+}
+
+/* EXTRAPOLATED – no reference design: same stack, scaled for mobile. */
+@media (max-width: 767px) {
+  .section {
+    padding: 64px var(--pad-x) 96px;
+  }
+
+  .eyebrow {
+    margin-bottom: 16px;
+  }
+
+  .br {
+    display: none;
+  }
+
+  .media {
+    width: 78vw;
+    margin-top: 32px;
+  }
+
+  .script {
+    left: -10%;
+    font-size: 24vw;
+  }
+}

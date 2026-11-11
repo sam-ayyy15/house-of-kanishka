@@ -2,6 +2,7 @@ import { Header } from '@/components/Header';
 import { Campaign } from '@/components/home/Campaign';
 import { Hero } from '@/components/home/Hero';
 import { NewArrivals } from '@/components/home/NewArrivals';
+import { WhoWeAre } from '@/components/home/WhoWeAre';
 
 export default function HomePage() {
   return (
@@ -11,6 +12,7 @@ export default function HomePage() {
         <Hero />
         <NewArrivals />
         <Campaign />
+        <WhoWeAre />
       </main>
     </>
   );

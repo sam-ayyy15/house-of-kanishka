@@ -82,12 +82,12 @@ await crop(`${V}/03-campaign.jpg`, { left: 356, top: 324, width: 906, height: 56
   ],
 });
 
-// A03 – Who We Are portrait. The reel shows it tilted ~4°; de-rotated, then the red
-// script that overlaps its lower part is blurred out.
-await crop(`${V}/04-who-we-are.jpg`, { left: 690, top: 520, width: 300, height: 310 }, 'who-we-are.jpg', {
-  rotate: 4,
+// A03 – Who We Are portrait. The reel shows it tilted ~4°, so it is de-rotated and cropped
+// with the strip under the overlapping red script blurred out.
+await crop(`${V}/04-who-we-are.jpg`, { left: 672, top: 512, width: 316, height: 326 }, 'who-we-are.jpg', {
+  rotate: 4, // coordinates are in the rotated (enlarged) canvas
   scale: 1.6,
-  blurBoxes: [{ left: 0, top: 235, width: 300, height: 75 }],
+  blurBoxes: [{ left: 0, top: 262, width: 316, height: 64 }],
 });
 
 // A04 – New Collection model inside the double-ellipse. Outside the ovals the source shows
