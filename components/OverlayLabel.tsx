@@ -7,15 +7,16 @@ type Props = {
   lines: string[];
   href?: string;
   className?: string;
+  titleClassName?: string;
   style?: React.CSSProperties;
 };
 
 /** Eyebrow + serif title, white on photo or red (spec §3.6). Destinations are [M]. */
-export function OverlayLabel({ eyebrow, lines, href = '#', className, style }: Props) {
+export function OverlayLabel({ eyebrow, lines, href = '#', className, titleClassName, style }: Props) {
   return (
     <Link href={href} className={`${styles.label} ${className ?? ''}`} style={style}>
       <span className={styles.eyebrow}>{eyebrow}</span>
-      <span className={styles.title}>
+      <span className={`${styles.title} ${titleClassName ?? ''}`}>
         {lines.map((line, i) => (
           <span key={i} className={styles.line}>
             {line}

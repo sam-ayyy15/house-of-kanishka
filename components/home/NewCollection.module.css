@@ -1,0 +1,111 @@
+.section {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 560px;
+  overflow: hidden;
+  background: var(--vr-red);
+}
+
+.defs {
+  position: absolute;
+}
+
+/* Giant type: black display serif, tilted ~-17° rising to the right, cropped by the section. */
+.giant {
+  position: absolute;
+  left: 2%;
+  top: 60%;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 36vw;
+  line-height: 0.78;
+  text-transform: uppercase;
+  color: var(--vr-black);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  transform: translateY(-50%) rotate(-17deg);
+  transform-origin: 0 50%;
+}
+
+.giantLine1,
+.giantLine2 {
+  display: block;
+}
+
+.giantLine2 {
+  margin-left: -0.62em;
+}
+
+/* Double-ellipse photo mask: ~48 % of the width, ~64 % of the height, centred, above the type. */
+.mask {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: min(47.7vw, 64svh * 1.13);
+  aspect-ratio: 1.13;
+  transform: translate(-50%, -50%);
+  clip-path: url(#vr-ovals);
+  background: #ddd5d2;
+}
+
+.mask img {
+  object-fit: cover;
+}
+
+.label {
+  position: absolute;
+  z-index: 2;
+}
+
+.tl {
+  left: 4%;
+  top: 8%;
+}
+
+.br {
+  left: 75%;
+  top: 82%;
+}
+
+/* Mobile (S3 right): one larger label under the header, the ovals merge into a single
+   tall notched shape, the giant type tilts more steeply. */
+@media (max-width: 767px) {
+  .giant {
+    left: -20%;
+    font-size: 70vw;
+    transform: translateY(-50%) rotate(-25deg);
+  }
+
+  .mask {
+    left: 50%;
+    top: 30%;
+    width: 88vw;
+    aspect-ratio: 0.62;
+    transform: translateX(-50%);
+  }
+
+  .tl {
+    left: var(--pad-x);
+    top: calc(var(--header-h) + 24px);
+  }
+
+  /* Mobile shows the title larger and on one line ("Golden Hour Paris"). */
+  .tlTitle {
+    font-size: 36px;
+  }
+
+  .tlTitle > span {
+    display: inline;
+  }
+
+  .tlTitle > span + span::before {
+    content: ' ';
+  }
+
+  .br {
+    display: none;
+  }
+}

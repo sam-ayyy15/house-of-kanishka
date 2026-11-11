@@ -91,17 +91,20 @@ await crop(`${V}/04-who-we-are.jpg`, { left: 672, top: 512, width: 316, height: 
 });
 
 // A04 – New Collection model inside the double-ellipse. Outside the ovals the source shows
-// red and giant letters, so that area is replaced with the studio colour #E1D9D5.
+// red and giant letters, so that area is replaced with the studio colour sampled near the
+// oval edges (#DDD5D2), so no ring shows when the page applies its own, larger mask.
 {
   const region = { left: 564, top: 404, width: 472, height: 416 };
   const base = await sharp(`${V}/05-new-collection.jpg`).extract(region).toBuffer();
   const ovals = Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${region.width}" height="${region.height}">` +
+      // Feathered edge so the studio fill blends into the photo without a visible ring.
+      `<filter id="f"><feGaussianBlur stdDeviation="8"/></filter><g filter="url(#f)">` +
       `<ellipse cx="${0.35 * region.width}" cy="${0.5 * region.height}" rx="${0.27 * region.width}" ry="${0.46 * region.height}" fill="#fff"/>` +
-      `<ellipse cx="${0.665 * region.width}" cy="${0.5 * region.height}" rx="${0.27 * region.width}" ry="${0.46 * region.height}" fill="#fff"/></svg>`,
+      `<ellipse cx="${0.665 * region.width}" cy="${0.5 * region.height}" rx="${0.27 * region.width}" ry="${0.46 * region.height}" fill="#fff"/></g></svg>`,
   );
   const notches = Buffer.from(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${region.width}" height="${region.height}" fill="#E1D9D5">` +
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${region.width}" height="${region.height}" fill="#DDD5D2">` +
       `<rect x="${0.48 * region.width}" y="0" width="${0.22 * region.width}" height="${0.14 * region.height}"/>` +
       `<rect x="${0.3 * region.width}" y="${0.86 * region.height}" width="${0.14 * region.width}" height="${0.14 * region.height}"/></svg>`,
   );
@@ -109,7 +112,7 @@ await crop(`${V}/04-who-we-are.jpg`, { left: 672, top: 512, width: 316, height: 
     .composite([{ input: ovals, blend: 'dest-in' }, { input: notches }])
     .png().toBuffer();
   // Composite first, then resize (sharp applies resize before composite in one pipeline).
-  const flat = await sharp({ create: { width: region.width, height: region.height, channels: 3, background: '#E1D9D5' } })
+  const flat = await sharp({ create: { width: region.width, height: region.height, channels: 3, background: '#DDD5D2' } })
     .composite([{ input: inside }])
     .png()
     .toBuffer();
