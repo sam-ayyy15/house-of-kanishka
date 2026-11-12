@@ -3,25 +3,26 @@ import { Phone, RefreshCw, Truck } from 'lucide-react';
 import { UnderlineLink } from '../UnderlineLink';
 import styles from './Promo.module.css';
 
-// Spec §4.7 copy; threshold in EUR (approved, Q7).
+// Spec §4.7 copy; threshold in EUR (approved, Q7). All three links open the Help page,
+// each at its own topic.
 const services = [
   {
     Icon: Truck,
     title: 'Free Shipping',
     body: 'Enjoy free shipping on all orders above €350. Get your favorite styles delivered to your door.',
-    link: 'View all', href: '/new-arrivals',
+    link: 'View all', href: '/help#shipping',
   },
   {
     Icon: RefreshCw,
     title: 'Easy Returns',
     body: 'Not the right fit? No problem. We offer hassle-free returns within 30 days of purchase.',
-    link: 'Learn more', href: '/shipping-returns',
+    link: 'Learn more', href: '/help#returns',
   },
   {
     Icon: Phone,
     title: '24/7 Customer Support',
     body: 'Have questions? Our customer support team is here to help you anytime, day or night.',
-    link: 'Contact us', href: '/contact',
+    link: 'Contact us', href: '/help#support',
   },
 ];
 

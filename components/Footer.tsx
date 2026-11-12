@@ -16,11 +16,12 @@ const columns = [
     links: collections.map((c) => ({ label: c.title.join(' '), href: collectionHref(c.slug) })),
   },
   {
-    title: 'Customer Care',
+    title: 'Help',
     links: [
-      { label: 'Shipping & Returns', href: '/shipping-returns' },
-      { label: 'Size Guide', href: '/size-guide' },
-      { label: 'Contact Us', href: '/contact' },
+      { label: 'Shipping', href: '/help#shipping' },
+      { label: 'Returns', href: '/help#returns' },
+      { label: 'Size Guide', href: '/help#size-guide' },
+      { label: 'Contact Us', href: '/help#support' },
     ],
   },
   {

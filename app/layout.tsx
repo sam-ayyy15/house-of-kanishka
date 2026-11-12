@@ -18,6 +18,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
+      // Lets Next jump to the top on page changes even though anchor links scroll smoothly.
+      data-scroll-behavior="smooth"
       className={`${serif.variable} ${heroItalic.variable} ${script.variable} ${sans.variable}`}
     >
       <body>

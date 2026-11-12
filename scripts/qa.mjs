@@ -22,7 +22,7 @@ const log = (k, v) => console.log(k.padEnd(34), typeof v === 'string' ? v : JSON
   await page.waitForTimeout(1500);
   const videoBeforeScroll = requests.some((u) => u.includes('.webm'));
   const before = await page.evaluate(() => ({ ...window.__m, long: [...window.__m.long] }));
-  await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 300) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 120)); } });
+  await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 300) { scrollTo({ top: y, behavior: 'instant' }); await new Promise((r) => setTimeout(r, 120)); } });
   await page.waitForTimeout(800);
   const after = await page.evaluate(() => window.__m);
   log('LCP (phone, 4x CPU)', Math.round(before.lcp) + ' ms');
@@ -42,7 +42,7 @@ const log = (k, v) => console.log(k.padEnd(34), typeof v === 'string' ? v : JSON
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   await page.goto(BASE + '/', { waitUntil: 'networkidle' });
-  await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 500) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); } });
+  await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 500) { scrollTo({ top: y, behavior: 'instant' }); await new Promise((r) => setTimeout(r, 60)); } });
   const r = await page.evaluate(() => ({
     pending: document.querySelectorAll('[data-reveal-state="pending"]').length,
     hidden: [...document.querySelectorAll('[data-reveal], h1 span')].filter((e) => getComputedStyle(e).opacity !== '1').length,
@@ -62,7 +62,7 @@ const log = (k, v) => console.log(k.padEnd(34), typeof v === 'string' ? v : JSON
   page.on('pageerror', (e) => errors.push(String(e).slice(0, 120)));
   await page.goto(BASE + '/', { waitUntil: 'networkidle' });
   const initiallyPending = await page.evaluate(() => document.querySelectorAll('[data-reveal-state="pending"]').length);
-  await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 400) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 100)); } });
+  await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 400) { scrollTo({ top: y, behavior: 'instant' }); await new Promise((r) => setTimeout(r, 100)); } });
   await page.waitForTimeout(1400);
   const rest = await page.evaluate(() => ({
     stillPending: document.querySelectorAll('[data-reveal-state="pending"]').length,

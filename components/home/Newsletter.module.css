@@ -108,3 +108,66 @@
     background: #262626;
   }
 }
+
+/* ---------- Word-by-word reveal ---------- */
+
+/* Each word sits in its own mask. The padding/margin pair gives descenders and the
+   italic's overhang room inside the mask without changing the layout. */
+.word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding: 0.06em 0.06em 0.16em;
+  margin: -0.06em -0.06em -0.16em;
+}
+
+.word > span {
+  display: inline-block;
+}
+
+/* The heading itself stays visible; only the words inside it move. */
+.heading[data-reveal-state='pending'] {
+  opacity: 1;
+}
+
+.heading[data-reveal-state='pending'] .word > span {
+  transform: translateY(118%);
+}
+
+.heading[data-reveal-state='in'] .word > span {
+  transition: transform 900ms var(--ease-out) calc(var(--w) * 45ms);
+}
+
+/* The form follows once the last words are landing. */
+.formWrap {
+  --reveal-delay: 650ms;
+  width: 100%;
+}
+
+/* Button hover: brand red wipes in from the left. */
+.button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--vr-red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.button:active {
+  transform: scale(0.985);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button:hover::before {
+    transform: scaleX(1);
+  }
+}

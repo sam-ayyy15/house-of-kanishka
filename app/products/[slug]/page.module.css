@@ -29,7 +29,36 @@
   margin-top: 64px;
 }
 
+/* Desktop split for products with one or two photos. */
+@media (min-width: 1024px) {
+  .main[data-layout='split'] {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      'gallery title'
+      'gallery info';
+    column-gap: clamp(40px, 6vw, 96px);
+    align-items: start;
+  }
+
+  .main[data-layout='split'] .gallery {
+    margin-top: 0;
+  }
+
+  .main[data-layout='split'] .title {
+    max-width: 10em;
+    padding-top: 24px;
+  }
+
+  .main[data-layout='split'] .info {
+    margin-top: 36px;
+    max-width: 560px;
+  }
+}
+
+/* Same side padding as the product above, so the row lines up with the title. */
 .related {
+  --pad-x: var(--header-pad-x);
   padding-bottom: var(--section-py);
 }
 

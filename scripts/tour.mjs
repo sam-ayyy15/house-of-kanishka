@@ -24,7 +24,7 @@ for (const [w, h] of [[1440, 900], [390, 844]]) {
     page.on('pageerror', (e) => errors.push(String(e).slice(0, 160)));
     await page.goto('http://localhost:3000' + route, { waitUntil: 'networkidle' });
     await page.evaluate(() => document.fonts.ready);
-    await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 500) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 80)); } scrollTo(0, 0); });
+    await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 500) { scrollTo({ top: y, behavior: 'instant' }); await new Promise((r) => setTimeout(r, 80)); } scrollTo({ top: 0, behavior: 'instant' }); });
     await page.waitForTimeout(1100);
     const name = (route === '/' ? 'home' : route.slice(1).replace(/\W+/g, '-')) + '-' + w;
     await page.screenshot({ path: `.shots/tour/${name}.png`, fullPage: true });

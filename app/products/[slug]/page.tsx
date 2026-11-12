@@ -31,7 +31,10 @@ export default async function ProductPage({ params }: Params) {
   return (
     <>
       <Header />
-      <main className={styles.main}>
+      {/* Three or more photos: the S1 layout (title + info above a row of tiles).
+          One or two photos: EXTRAPOLATED – no reference design: a split, with the photo
+          beside the details so the page is never left half empty. */}
+      <main className={styles.main} data-layout={product.gallery.length >= 3 ? 'row' : 'split'}>
         <h1 className={styles.title}>{product.name}</h1>
         <div className={styles.info}>
           <PdpInfo product={product} />

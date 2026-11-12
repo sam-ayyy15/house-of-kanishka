@@ -8,9 +8,9 @@ import styles from './PdpGallery.module.css';
  */
 export function PdpGallery({ images }: { images: GalleryImage[] }) {
   return (
-    <ul className={styles.gallery} aria-label="Product images">
-      {images.map((img) => (
-        <li key={img.src} className={styles.tile}>
+    <ul className={styles.gallery} aria-label="Product images" data-count={Math.min(images.length, 3)}>
+      {images.map((img, i) => (
+        <li key={img.src} className={styles.tile} style={{ '--i': i } as React.CSSProperties}>
           {/* Placeholders: local-only crops of the reference. Never ship. */}
           <Image
             src={img.src}

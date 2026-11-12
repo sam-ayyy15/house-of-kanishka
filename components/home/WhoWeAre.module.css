@@ -36,6 +36,77 @@
   background: #e9e9e7;
 }
 
+.defs {
+  position: absolute;
+}
+
+.photo {
+  overflow: hidden;
+}
+
+/* The dress area: lower-middle of the frame, feathered so the ripple has no edge. */
+.ripple,
+.sheen {
+  -webkit-mask-image: radial-gradient(ellipse 44% 46% at 50% 72%, #000 45%, transparent 100%);
+  mask-image: radial-gradient(ellipse 44% 46% at 50% 72%, #000 45%, transparent 100%);
+}
+
+.ripple {
+  display: none;
+}
+
+.sheen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  overflow: hidden;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+.sheen::before {
+  content: '';
+  position: absolute;
+  inset: -20% -60%;
+  background: linear-gradient(112deg, transparent 42%, rgb(255 255 255 / 0.75) 50%, transparent 58%);
+  transform: translateX(-60%);
+}
+
+/* The light crosses the satin, rests, then crosses again. */
+@keyframes satin-sheen {
+  0% {
+    transform: translateX(-60%);
+  }
+  55%,
+  100% {
+    transform: translateX(60%);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ripple {
+    display: block;
+    filter: url(#vr-satin);
+  }
+
+  .sheen {
+    display: block;
+  }
+
+  .sheen::before {
+    animation: satin-sheen 7s var(--ease-in-out) infinite;
+  }
+
+  /* Off screen: no filter work, light paused. */
+  .media[data-inview='false'] .ripple {
+    display: none;
+  }
+
+  .media[data-inview='false'] .sheen::before {
+    animation-play-state: paused;
+  }
+}
+
 .photo img {
   object-fit: cover;
   /* Portrait source (0.75) in a ~0.97 frame: keep the head in view. */

@@ -22,7 +22,7 @@ const pct = (v: number) => `${v}%`;
 /** Homepage §4.6: category list in the centre, six numbered cut-outs scattered around it. */
 export function Accessories() {
   return (
-    <section className={styles.section} aria-labelledby="accessories-title">
+    <section className={styles.section} aria-labelledby="accessories-title" data-loop>
       <div className={styles.centre}>
         <Eyebrow>
           <span id="accessories-title">Accessories</span>
@@ -30,7 +30,7 @@ export function Accessories() {
         <ul className={styles.categories}>
           {items.map((it) => (
             <li key={it.n}>
-              <Link href={`/accessories?type=${it.tag}`} className={styles.category}>
+              <Link href={`/accessories?type=${it.tag}`} className={styles.category} data-n={it.n}>
                 <span className={styles.index}>({it.n})</span>
                 {it.category}
               </Link>
@@ -44,10 +44,12 @@ export function Accessories() {
           <li
             key={it.n}
             className={styles.item}
+            data-n={it.n}
             data-reveal="fade"
             style={
               {
                 '--reveal-delay': `${i * 80}ms`,
+                '--i': i,
                 '--l': pct(it.box.l),
                 '--t': pct(it.box.t),
                 '--w': pct(it.box.r - it.box.l),

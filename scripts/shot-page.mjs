@@ -7,7 +7,7 @@ for (const [w, h] of [[1440, 900], [393, 852]]) {
   await page.goto('http://localhost:3000' + path, { waitUntil: 'networkidle' });
   await page.evaluate(() => document.fonts.ready);
   // Scroll through so lazy images load, then back to the top.
-  await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 600) { scrollTo(0, y); await new Promise(r => setTimeout(r, 60)); } scrollTo(0, 0); });
+  await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 600) { scrollTo({ top: y, behavior: 'instant' }); await new Promise(r => setTimeout(r, 60)); } scrollTo({ top: 0, behavior: 'instant' }); });
   await page.waitForTimeout(600);
   await page.screenshot({ path: `.shots/${name}-${w}.png` });
   await page.screenshot({ path: `.shots/${name}-${w}-full.png`, fullPage: true });

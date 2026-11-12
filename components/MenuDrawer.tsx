@@ -17,8 +17,8 @@ const utility = [
   { label: 'Login', href: '/login' },
   { label: 'Wishlist', href: '/wishlist' },
   { label: 'Shopping Bag', href: '/bag' },
-  { label: 'Shipping & Returns', href: '/shipping-returns' },
-  { label: 'Contact Us', href: '/contact' },
+  { label: 'Help', href: '/help' },
+  { label: 'Contact Us', href: '/help#support' },
 ];
 
 /** Menu opened by the ≡ trigger. EXTRAPOLATED – no reference design. */

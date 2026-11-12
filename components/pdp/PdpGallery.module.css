@@ -7,11 +7,22 @@
   list-style: none;
 }
 
+.gallery[data-count='1'] {
+  grid-template-columns: 1fr;
+}
+
+.gallery[data-count='2'] {
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Tiles fade in one after another on load. */
 .tile {
   position: relative;
   aspect-ratio: 0.815;
   background: var(--vr-grey-tile);
   overflow: hidden;
+  animation: vr-fade var(--dur-slow) var(--ease-out) calc(var(--i, 0) * var(--stagger)) both;
 }
 
 .cover {
@@ -23,6 +34,13 @@
   object-fit: contain;
   padding: 8%;
   mix-blend-mode: darken;
+}
+
+/* EXTRAPOLATED – no reference design: tablet portrait keeps a lone photo from growing too large. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .gallery[data-count='1'] {
+    max-width: 520px;
+  }
 }
 
 /* EXTRAPOLATED – no reference design: swipeable row with the next tile peeking in. */

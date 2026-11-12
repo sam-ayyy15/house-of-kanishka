@@ -51,6 +51,13 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* Anchor links (Help topics) glide instead of jumping. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
   margin: 0;
   background: var(--vr-white);

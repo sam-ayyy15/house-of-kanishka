@@ -78,6 +78,68 @@
   line-height: 1;
 }
 
+/* ---------- Motion (desktop constellation only) ----------
+   The six pieces hang in a ring around the category list. Each one swings a few degrees
+   around the centre of the section, like a mobile, each slightly out of step with the next.
+   Pointing at (or tabbing to) a category brings its piece forward and quiets the others. */
+@keyframes acc-sway {
+  from {
+    rotate: -2.4deg;
+  }
+  to {
+    rotate: 2.4deg;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Each item becomes a full-section layer, so it can turn around the section's centre.
+     Its children are still placed in % of the section. */
+  .item {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .itemMedia,
+  .itemLabel {
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      scale var(--dur-base) var(--ease-out);
+  }
+
+  .section:has(.category:is(:hover, :focus-visible)) :is(.itemMedia, .itemLabel) {
+    opacity: 0.25;
+  }
+
+  .section:has(.category[data-n='01']:is(:hover, :focus-visible)) .item[data-n='01'] :is(.itemMedia, .itemLabel),
+  .section:has(.category[data-n='02']:is(:hover, :focus-visible)) .item[data-n='02'] :is(.itemMedia, .itemLabel),
+  .section:has(.category[data-n='03']:is(:hover, :focus-visible)) .item[data-n='03'] :is(.itemMedia, .itemLabel),
+  .section:has(.category[data-n='04']:is(:hover, :focus-visible)) .item[data-n='04'] :is(.itemMedia, .itemLabel),
+  .section:has(.category[data-n='05']:is(:hover, :focus-visible)) .item[data-n='05'] :is(.itemMedia, .itemLabel),
+  .section:has(.category[data-n='06']:is(:hover, :focus-visible)) .item[data-n='06'] :is(.itemMedia, .itemLabel) {
+    opacity: 1;
+  }
+
+  .section:has(.category[data-n='01']:is(:hover, :focus-visible)) .item[data-n='01'] .itemMedia,
+  .section:has(.category[data-n='02']:is(:hover, :focus-visible)) .item[data-n='02'] .itemMedia,
+  .section:has(.category[data-n='03']:is(:hover, :focus-visible)) .item[data-n='03'] .itemMedia,
+  .section:has(.category[data-n='04']:is(:hover, :focus-visible)) .item[data-n='04'] .itemMedia,
+  .section:has(.category[data-n='05']:is(:hover, :focus-visible)) .item[data-n='05'] .itemMedia,
+  .section:has(.category[data-n='06']:is(:hover, :focus-visible)) .item[data-n='06'] .itemMedia {
+    scale: 1.08;
+  }
+}
+
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .item {
+    animation: acc-sway 9s var(--ease-in-out) calc(var(--i) * -2.3s) infinite alternate;
+  }
+
+  .section[data-inview='false'] .item {
+    animation-play-state: paused;
+  }
+}
+
 /* EXTRAPOLATED – no reference design: category list first, then a 2-column grid of the
    six items, each with its (01)–(06) label. */
 @media (max-width: 767px) {
