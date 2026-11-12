@@ -171,3 +171,11 @@
     transform: scaleX(1);
   }
 }
+
+/* Local copies of the shared keyframes (globals.css). Animation names in a component
+   stylesheet are scoped to that file, so the global ones can't be referenced from here. */
+@keyframes vr-fade {
+  from {
+    opacity: 0;
+  }
+}

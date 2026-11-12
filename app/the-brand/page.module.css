@@ -162,3 +162,18 @@
 .heroPhoto {
   animation: vr-settle 1800ms var(--ease-out) both;
 }
+
+/* Local copies of the shared keyframes (globals.css). Animation names in a component
+   stylesheet are scoped to that file, so the global ones can't be referenced from here. */
+@keyframes vr-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes vr-settle {
+  from {
+    scale: 1.045;
+  }
+}

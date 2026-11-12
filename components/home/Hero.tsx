@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { Handwriting } from '../Handwriting';
 import { UnderlineLink } from '../UnderlineLink';
 import styles from './Hero.module.css';
 
@@ -19,7 +20,10 @@ export function Hero() {
       <h1 className={styles.lockup}>
         <span className={styles.line1}>there she</span>
         <span className={styles.rose}>rose</span>
-        <span className={styles.script}>jamilie sea</span>
+        {/* The signature is written out once the lockup has landed. */}
+        <span className={styles.script} data-write="load">
+          <Handwriting text="jamilie sea" />
+        </span>
       </h1>
 
       <UnderlineLink href="/collections/golden-hour-paris" className={styles.cta}>

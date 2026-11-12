@@ -169,6 +169,166 @@ html:has(dialog[open]) {
   }
 }
 
+/* ---------- Motion layer 2 (client request: richer motion, same calm language) ----------
+   Everything here is progressive: content is visible without JS, nothing runs with reduced
+   motion (RevealObserver never marks elements, and the global rule above collapses CSS
+   animations), and only transform, opacity and masks move. */
+
+/* 1. Word-by-word headline rise (the shared form of the newsletter heading).
+      <RiseWords> wraps each word in a mask; the padding/margin pair gives descenders and
+      italics room inside the mask without changing the layout. */
+.rw {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding: 0.06em 0.06em 0.16em;
+  margin: -0.06em -0.06em -0.16em;
+}
+
+.rw > span {
+  display: inline-block;
+}
+
+/* …on first scroll into view */
+[data-reveal='words'][data-reveal-state='pending'] {
+  opacity: 1;
+}
+
+[data-reveal='words'][data-reveal-state='pending'] .rw > span {
+  transform: translateY(118%);
+}
+
+[data-reveal='words'][data-reveal-state='in'] .rw > span {
+  transition: transform 900ms var(--ease-out) calc(var(--reveal-delay, 0ms) + var(--w) * 45ms);
+}
+
+/* …or on page load, for headings above the fold */
+@keyframes rw-rise {
+  from {
+    transform: translateY(118%);
+  }
+}
+
+[data-rise='load'] .rw > span {
+  animation: rw-rise 900ms var(--ease-out) calc(var(--rise-delay, 80ms) + var(--w) * 45ms) both;
+}
+
+/* 2. Curtain: a cover the colour of the page lifts off a photo while the photo eases back
+      from a slight zoom. The wrapper must already be positioned and hold one image. */
+[data-reveal='curtain'] {
+  overflow: hidden;
+}
+
+[data-reveal='curtain']:is([data-reveal-state='pending'], [data-reveal-state='in'])::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: 1;
+  background: var(--curtain, var(--vr-white));
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  pointer-events: none;
+}
+
+[data-reveal='curtain'][data-reveal-state='pending'] {
+  opacity: 1;
+}
+
+[data-reveal='curtain'][data-reveal-state='pending']::after {
+  transform: scaleY(1);
+}
+
+[data-reveal='curtain'][data-reveal-state='pending'] img {
+  transform: scale(1.12);
+}
+
+[data-reveal='curtain'][data-reveal-state='in']::after {
+  transition: transform 1100ms var(--ease-in-out) var(--reveal-delay, 0ms);
+}
+
+[data-reveal='curtain'][data-reveal-state='in'] img {
+  transition: transform 1700ms var(--ease-out) var(--reveal-delay, 0ms);
+}
+
+/* 3. Handwriting: <Handwriting> splits a script phrase into letters; each is uncovered by
+      a slanted pen edge and lands with a brief wet-ink soften (same recipe as Who We Are).
+      data-write="load" writes on page load; data-reveal="write" on first scroll into view. */
+.hw {
+  --hw-start: calc(var(--write-delay, 400ms) + var(--k) * 95ms);
+  padding: 0.7em 0.3em;
+  margin: 0 -0.3em;
+}
+
+@keyframes hw-pen {
+  from {
+    mask-position: 100% 0;
+    filter: blur(1.5px);
+    opacity: 0.75;
+  }
+  60% {
+    filter: blur(0.5px);
+    opacity: 1;
+  }
+  to {
+    mask-position: 0 0;
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
+[data-reveal='write'][data-reveal-state='pending'] {
+  opacity: 1;
+}
+
+[data-write='load'] .hw,
+[data-reveal='write']:is([data-reveal-state='pending'], [data-reveal-state='in']) .hw {
+  mask-image: linear-gradient(110deg, #000 38%, transparent 56%);
+  mask-size: 320% 100%;
+  mask-repeat: no-repeat;
+  mask-position: 100% 0;
+}
+
+[data-write='load'] .hw,
+[data-reveal='write'][data-reveal-state='in'] .hw {
+  animation: hw-pen 480ms cubic-bezier(0.37, 0, 0.63, 1) var(--hw-start) both;
+}
+
+/* 4. Scroll-linked depth, driven by the scroll position itself (CSS scroll timelines; no
+      scroll listeners). Browsers without support simply show the still layout. Movement
+      stays well under 10 % of the scroll distance. */
+@keyframes vr-parallax {
+  from {
+    translate: 0 calc(var(--parallax, 4%) * -1);
+  }
+  to {
+    translate: 0 var(--parallax, 4%);
+  }
+}
+
+/* Hero photos sink a little as the page scrolls away; hero lockups lift and fade. */
+@keyframes vr-hero-drift {
+  to {
+    translate: 0 8%;
+  }
+}
+
+@keyframes vr-hero-lift {
+  to {
+    opacity: 0;
+    translate: 0 -48px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    [data-parallax] {
+      animation: vr-parallax linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+  }
+}
+
 /* ---------- Page transitions (client request) ----------
    Old page fades out (220 ms), then the new page fades in with a 12 px rise (520 ms),
    overlapping a little so there is never a blank flash. The header doesn't move. */

@@ -126,3 +126,64 @@
 .photo {
   animation: vr-settle 1800ms var(--ease-out) both;
 }
+
+/* The signature writes itself after the lockup lands (letters: globals.css). */
+.script {
+  --write-delay: 900ms;
+}
+
+/* Scroll-linked depth (CSS scroll timelines; still layout where unsupported or with reduced
+   motion): as the hero scrolls away the photo sinks a little, and the lockup lifts and
+   fades. Both use `translate`, so the load animations and positioning transforms above
+   are untouched. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .photo {
+      animation:
+        vr-settle 1800ms var(--ease-out) both,
+        vr-hero-drift linear both;
+      animation-timeline: auto, scroll(root);
+      animation-range: normal, 0 100svh;
+    }
+
+    .lockup {
+      animation: vr-hero-lift linear both;
+      animation-timeline: scroll(root);
+      animation-range: 10svh 75svh;
+    }
+  }
+}
+
+/* Local copies of the shared keyframes (globals.css). Animation names in a component
+   stylesheet are scoped to that file, so the global ones can't be referenced from here. */
+@keyframes vr-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes vr-hero-drift {
+  to {
+    translate: 0 8%;
+  }
+}
+
+@keyframes vr-hero-lift {
+  to {
+    opacity: 0;
+    translate: 0 -48px;
+  }
+}
+
+@keyframes vr-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes vr-settle {
+  from {
+    scale: 1.045;
+  }
+}
