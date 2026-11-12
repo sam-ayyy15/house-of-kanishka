@@ -133,13 +133,12 @@ await crop(`${V}/06-accessories.jpg`, { left: 686, top: 810, width: 254, height:
 await crop(`${V}/06-accessories.jpg`, { left: 1078, top: 718, width: 102, height: 114 }, 'acc-bangles.jpg', { scale: 2 });
 await crop(`${V}/06-accessories.jpg`, { left: 988, top: 482, width: 190, height: 112 }, 'acc-beret.jpg', { scale: 2 });
 
-// A05 – Promo portrait. Headline and services row are baked in, so they are blurred.
-await crop(`${V}/07-promo-services.jpg`, { left: 356, top: 340, width: 890, height: 560 }, 'promo.jpg', {
-  blurBoxes: [
-    { left: 10, top: 20, width: 210, height: 80 },
-    { left: 5, top: 420, width: 870, height: 130 },
-  ],
-});
+// A05 – Promo portrait. Raw source photo supplied by the client (1570×1002, no baked-in
+// text). Framing is done in CSS with object-position, so the photo is only re-encoded here.
+await sharp('reference/images/Crimson Glamour in Gold Hoops.png')
+  .jpeg({ quality: 90, mozjpeg: true })
+  .toFile(`${OUT}/promo.jpg`);
+console.log('wrote promo.jpg');
 
 // A20–A22 – PDP blazer tiles (S1; tile background #F7F7F7 is part of the crop).
 await crop(`${SS}/01-pdp-desktop-tablet.png`, { left: 168, top: 357, width: 220, height: 270 }, 'pdp-1.jpg', { scale: 3 });
