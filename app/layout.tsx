@@ -24,6 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       // Lets Next jump to the top on page changes even though anchor links scroll smoothly.
       data-scroll-behavior="smooth"
       className={`${serif.variable} ${heroItalic.variable} ${script.variable} ${sans.variable}`}
+      // Browser extensions add their own attributes to <html> before React loads. This
+      // ignores attribute differences on this one tag only; the rest of the page is checked.
+      suppressHydrationWarning
     >
       <body>
         {/* Accounts and sessions (Clerk). All screens are the site's own; Clerk supplies
