@@ -36,6 +36,8 @@
 
 .photo img {
   object-fit: cover;
+  /* Portrait source (0.75) in a ~0.97 frame: keep the head in view. */
+  object-position: 50% 0%;
 }
 
 /* "Looking / for our stories": brand red, ~-5°, over the bottom quarter of the photo,
