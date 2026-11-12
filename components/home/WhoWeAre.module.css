@@ -124,47 +124,44 @@
   animation: who-cinema 2.6s var(--ease-out) both;
 }
 
-/* Step 2 – handwriting: each line is uncovered left to right by a soft-edged mask, at a
-   steady pen pace, "Looking" first, then "for our stories", once the photo has settled.
-   The font is untouched. Padding (cancelled by negative margins, so nothing moves) keeps
-   the loops and descenders, which overflow the line box, inside the masked area. */
-.l1,
-.l2 {
-  padding: 0.7em 0.35em;
-  margin-top: -0.7em;
-  margin-bottom: -0.7em;
-  margin-right: -0.35em;
+/* Step 2 – handwriting, letter by letter: each letter is uncovered by a pen edge that
+   leans with the script's slant, one after another, and lands with a brief wet-ink soften
+   (a little blur and transparency that settle). Timing: starts as the photo settles
+   (1.8 s), 70 ms between letters, 260 ms per letter, so the phrase takes ~1.9 s.
+   The font is untouched. Each letter's box is padded (and the padding cancelled by negative
+   margins, so nothing moves) so its loops and swashes stay inside the mask. */
+.ch {
+  --start: calc(1.8s + var(--k) * 70ms);
+  padding: 0.7em 0.3em;
+  margin: 0 -0.3em;
 }
 
-.l1 {
-  margin-left: -0.35em;
-}
-
-.l2 {
-  margin-left: 0.15em; /* 0.5em indent, minus the padding */
-}
-
-@keyframes who-write {
+@keyframes who-pen {
   from {
     mask-position: 100% 0;
+    filter: blur(1.5px);
+    opacity: 0.75;
+  }
+  70% {
+    filter: blur(0.4px);
+    opacity: 1;
   }
   to {
     mask-position: 0 0;
+    filter: blur(0);
+    opacity: 1;
   }
 }
 
-.media[data-reveal-state='pending'] :is(.l1, .l2),
-.media[data-reveal-state='in'] :is(.l1, .l2) {
-  mask-image: linear-gradient(90deg, #000 44%, transparent 56%);
-  mask-size: 260% 100%;
+.media[data-reveal-state='pending'] .ch,
+.media[data-reveal-state='in'] .ch {
+  /* 110deg: the edge runs parallel to the script's right-leaning stems. */
+  mask-image: linear-gradient(110deg, #000 42%, transparent 52%);
+  mask-size: 320% 100%;
   mask-repeat: no-repeat;
   mask-position: 100% 0;
 }
 
-.media[data-reveal-state='in'] .l1 {
-  animation: who-write 1.3s cubic-bezier(0.45, 0.05, 0.55, 0.95) 2s both;
-}
-
-.media[data-reveal-state='in'] .l2 {
-  animation: who-write 1.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) 3.15s both;
+.media[data-reveal-state='in'] .ch {
+  animation: who-pen 260ms cubic-bezier(0.3, 0.1, 0.4, 1) var(--start) both;
 }
