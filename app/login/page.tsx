@@ -8,7 +8,7 @@ export default function LoginPage() {
   return (
     <>
       <Header />
-      <main className="page">
+      <main>
         <LoginView />
       </main>
     </>

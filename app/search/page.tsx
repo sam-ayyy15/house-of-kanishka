@@ -8,7 +8,7 @@ export default function SearchPage() {
   return (
     <>
       <Header />
-      <main className="page">
+      <main style={{ minHeight: '80vh', paddingBottom: 'var(--section-py)' }}>
         <SearchView />
       </main>
     </>

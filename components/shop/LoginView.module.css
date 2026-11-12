@@ -1,0 +1,133 @@
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding-top: var(--header-h);
+}
+
+/* Left: portrait with the red script hanging off its lower edge, as in Who We Are. */
+.visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px var(--pad-x) 96px;
+}
+
+.photo {
+  position: relative;
+  container-type: inline-size;
+  width: min(100%, 470px);
+  aspect-ratio: 0.78;
+  background: #e9e9e7;
+}
+
+.photo img {
+  object-fit: cover;
+  object-position: 50% 0%;
+  animation: vr-fade var(--dur-slow) var(--ease-out) both;
+}
+
+.script {
+  position: absolute;
+  left: 50%;
+  bottom: 96px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 470px);
+  margin: 0;
+  font-family: var(--font-script);
+  font-size: clamp(88px, 10.5vw, 150px);
+  line-height: 0.75;
+  color: #d10000; /* same red as the Who We Are script */
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translate(-62%, 46%) rotate(-9deg);
+  transform-origin: left bottom;
+  animation: vr-fade var(--dur-slow) var(--ease-out) 300ms both;
+}
+
+.scriptLine2 {
+  margin-left: 0.5em;
+}
+
+/* Right: one form at a time. */
+.panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px var(--pad-x) 96px;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 420px);
+}
+
+.title {
+  margin-top: 16px;
+  font-family: var(--font-serif);
+  font-size: clamp(40px, 4.6vw, 66px);
+  line-height: 1.05;
+}
+
+.tabs {
+  display: flex;
+  gap: 28px;
+  margin: 28px 0 28px;
+}
+
+.tab {
+  padding: 6px 0;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vr-text-muted);
+  transition: color var(--dur-fast) ease;
+}
+
+.tab[aria-pressed='true'] {
+  color: var(--vr-black);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tab:hover {
+    color: var(--vr-black);
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: vr-fade var(--dur-base) var(--ease-out);
+}
+
+.form :global(.btn) {
+  margin-top: 8px;
+}
+
+.status {
+  min-height: 3em; /* reserved, so the message doesn't move the layout */
+}
+
+/* Tablet portrait and phones: the form alone, centred near the top. */
+@media (max-width: 1023px) {
+  .split {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .visual {
+    display: none;
+  }
+
+  .panel {
+    align-items: flex-start;
+    padding: 56px var(--pad-x) 80px;
+  }
+}

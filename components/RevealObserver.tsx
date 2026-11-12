@@ -4,6 +4,8 @@ import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
 /**
+ * Also pauses looping decorations (`data-loop`) while they are off screen.
+ *
  * Scroll reveals for any element carrying a `data-reveal` attribute ("rise" or "fade").
  * Content is server-rendered visible. On load, only elements still below the fold are
  * hidden, then each fades in once when it first scrolls into view. Nothing is hidden
@@ -14,8 +16,14 @@ export function RevealObserver() {
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Looping decorations (data-loop) only run while their section is on screen.
+    const loops = [...document.querySelectorAll<HTMLElement>('[data-loop]')];
+    const loopObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) (entry.target as HTMLElement).dataset.inview = String(entry.isIntersecting);
+    });
+    loops.forEach((el) => loopObserver.observe(el));
+
     const targets = [...document.querySelectorAll<HTMLElement>('[data-reveal]')];
-    if (!targets.length) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -43,7 +51,10 @@ export function RevealObserver() {
         observer.observe(el);
       }
     }
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      loopObserver.disconnect();
+    };
   }, [pathname]);
 
   return null;

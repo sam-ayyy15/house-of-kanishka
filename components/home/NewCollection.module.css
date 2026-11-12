@@ -136,3 +136,25 @@
     }
   }
 }
+
+/* The clip inside the ovals is alive: the photo drifts and breathes slowly, back and forth.
+   (Placeholder for real footage: swap the image for a looping video when it exists.)
+   It only runs while the section is on screen and never with reduced motion. */
+@keyframes oval-drift {
+  from {
+    transform: scale(1.02) translate(1.5%, 0.5%);
+  }
+  to {
+    transform: scale(1.16) translate(-3%, -2%);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mask img {
+    animation: oval-drift 9s var(--ease-in-out) infinite alternate;
+  }
+
+  .section[data-inview='false'] .mask img {
+    animation-play-state: paused;
+  }
+}

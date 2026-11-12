@@ -8,7 +8,7 @@ import styles from './NewCollection.module.css';
  */
 export function NewCollection({ asHero = false }: { asHero?: boolean }) {
   return (
-    <section className={styles.section} aria-label="New collection: Golden Hour Paris">
+    <section className={styles.section} aria-label="New collection: Golden Hour Paris" data-loop>
       {/* Mask shapes, in the photo box's own units (spec §12.4 #2). */}
       <svg width="0" height="0" className={styles.defs} aria-hidden="true" focusable="false">
         {/* Tuned against V 7.2 s and S3: the ovals overlap by ~35 %, leaving a visible notch

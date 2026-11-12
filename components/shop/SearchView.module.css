@@ -1,0 +1,117 @@
+.top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  padding: calc(var(--header-h) + 72px) var(--pad-x) 88px;
+  text-align: center;
+}
+
+.heading {
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 5.5vw, 80px);
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.heading em {
+  font-style: italic;
+}
+
+.form {
+  width: min(640px, 100%);
+  margin-top: 8px;
+}
+
+/* Same boxed input as the Newsletter form, wider. */
+.input {
+  width: 100%;
+  height: 56px;
+  padding: 0 18px;
+  border: 1px solid var(--vr-border);
+  background: var(--vr-white);
+  font: inherit;
+  font-size: 16px;
+  text-align: center;
+  color: var(--vr-black);
+  transition: border-color var(--dur-fast) ease;
+}
+
+.input::placeholder {
+  color: var(--vr-text-muted);
+}
+
+.input:focus-visible {
+  outline: none;
+  border-color: var(--vr-black);
+}
+
+.input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+/* (01) New Arrivals (02) Dresses (03) Accessories: the Accessories category list. */
+.browse {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.2em 0.6em;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 3.6vw, 52px);
+  line-height: 1.1;
+}
+
+.browseLink {
+  white-space: nowrap;
+  transition: color var(--dur-fast) ease;
+}
+
+.index {
+  margin-right: 0.08em;
+  font-size: 0.4em;
+  font-style: italic;
+  vertical-align: 1.5em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .browse:hover .browseLink:not(:hover) {
+    color: var(--vr-text-muted);
+  }
+}
+
+.count {
+  min-height: 1.5em;
+  font-size: 15px;
+}
+
+.rowHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 var(--pad-x) 40px;
+}
+
+.rowTitle {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 4.6vw, 66px);
+  line-height: 1.1;
+}
+
+@media (max-width: 767px) {
+  .top {
+    gap: 22px;
+    padding: calc(var(--header-h) + 48px) var(--pad-x) 56px;
+  }
+
+  .rowHead {
+    padding-bottom: 24px;
+  }
+
+  .rowTitle {
+    font-size: 34px;
+  }
+}
