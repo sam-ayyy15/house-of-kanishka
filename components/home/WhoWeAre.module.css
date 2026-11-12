@@ -36,30 +36,6 @@
   background: #e9e9e7;
 }
 
-/* ---------- Floating ----------
-   The photo drifts gently up and down, as if resting on air: 10px each way over 6s,
-   eased at both ends so it never stops abruptly. Only transform moves. Paused while the
-   section is off screen; not applied at all with reduced motion. */
-@keyframes photo-float {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-10px);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .photo {
-    animation: photo-float 3s var(--ease-in-out) infinite alternate;
-    will-change: transform;
-  }
-
-  .media[data-inview='false'] .photo {
-    animation-play-state: paused;
-  }
-}
-
 .photo img {
   object-fit: cover;
   /* Portrait source (0.75) in a ~0.97 frame: keep the head in view. */
@@ -112,4 +88,83 @@
     margin-top: 32px;
   }
 
+}
+
+/* ---------- First-view sequence (client request) ----------
+   RevealObserver marks .media "pending" while it is below the fold and "in" when it first
+   scrolls into view. It never runs with reduced motion, and without JS nothing is hidden,
+   so the photo and script are always readable. Plays once; no re-trigger on scroll back. */
+
+/* The global rule hides pending elements; here only the photo and script are hidden. */
+.media[data-reveal-state='pending'] {
+  opacity: 1;
+}
+
+/* Step 1 – slow cinematic zoom: from 92 % with a slight drop to full size, fading in. */
+@keyframes who-cinema {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.92);
+  }
+  25% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.media[data-reveal-state='pending'] .photo {
+  opacity: 0;
+  transform: translateY(14px) scale(0.92);
+}
+
+.media[data-reveal-state='in'] .photo {
+  animation: who-cinema 2.6s var(--ease-out) both;
+}
+
+/* Step 2 – handwriting: each line is uncovered left to right by a soft-edged mask, at a
+   steady pen pace, "Looking" first, then "for our stories", once the photo has settled.
+   The font is untouched. Padding (cancelled by negative margins, so nothing moves) keeps
+   the loops and descenders, which overflow the line box, inside the masked area. */
+.l1,
+.l2 {
+  padding: 0.7em 0.35em;
+  margin-top: -0.7em;
+  margin-bottom: -0.7em;
+  margin-right: -0.35em;
+}
+
+.l1 {
+  margin-left: -0.35em;
+}
+
+.l2 {
+  margin-left: 0.15em; /* 0.5em indent, minus the padding */
+}
+
+@keyframes who-write {
+  from {
+    mask-position: 100% 0;
+  }
+  to {
+    mask-position: 0 0;
+  }
+}
+
+.media[data-reveal-state='pending'] :is(.l1, .l2),
+.media[data-reveal-state='in'] :is(.l1, .l2) {
+  mask-image: linear-gradient(90deg, #000 44%, transparent 56%);
+  mask-size: 260% 100%;
+  mask-repeat: no-repeat;
+  mask-position: 100% 0;
+}
+
+.media[data-reveal-state='in'] .l1 {
+  animation: who-write 1.3s cubic-bezier(0.45, 0.05, 0.55, 0.95) 2s both;
+}
+
+.media[data-reveal-state='in'] .l2 {
+  animation: who-write 1.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) 3.15s both;
 }

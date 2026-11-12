@@ -15,7 +15,9 @@ export function WhoWeAre() {
         <br className={styles.br} /> <em>complementing your life and style</em>
       </p>
 
-      <div className={styles.media} data-loop>
+      {/* data-reveal="cinema": on first view the photo zooms in, then the script is written
+          (see WhoWeAre.module.css). Visible and still without JS or with reduced motion. */}
+      <div className={styles.media} data-reveal="cinema">
         <div className={styles.photo}>
           {/* Placeholder (A03): local-only crop of the reference. Never ship. */}
           <Image src="/placeholders/who-we-are.jpg" alt="" fill sizes="(max-width: 767px) 80vw, 38vw" />
