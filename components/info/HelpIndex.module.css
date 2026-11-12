@@ -53,6 +53,6 @@
   }
 
   .list:hover .link:not(:hover) {
-    color: var(--vr-text-muted);
+    color: var(--help-dim, var(--vr-text-muted));
   }
 }

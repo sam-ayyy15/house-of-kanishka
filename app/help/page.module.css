@@ -1,21 +1,80 @@
-.main {
-  padding-bottom: var(--section-py);
+/* ---------- Hero: brand red with giant black letters travelling behind the question ---------- */
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 86vh;
+  min-height: 86svh;
+  padding: calc(var(--header-h) + 48px) var(--pad-x) 72px;
+  overflow: hidden;
+  background: var(--vr-red);
+  color: var(--vr-white);
 }
 
-/* Intro: composed like the Newsletter and Search pages. */
-.intro {
+/* Same construction as the New Collection section: two tilted lines of repeated type. */
+.giant {
+  position: absolute;
+  left: -4%;
+  top: 52%;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 34vw;
+  line-height: 0.8;
+  text-transform: uppercase;
+  color: var(--vr-black);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  transform: translateY(-50%) rotate(-17deg);
+  transform-origin: 0 50%;
+}
+
+.giantLine1,
+.giantLine2 {
+  display: block;
+}
+
+/* Six copies of "HELP ": a one-sixth shift lands exactly on the next copy. */
+.track {
+  display: inline-block;
+  white-space: pre;
+}
+
+.giantLine2 .track {
+  transform: translateX(-8.333%);
+}
+
+@keyframes help-left {
+  to {
+    transform: translateX(-16.667%);
+  }
+}
+
+@keyframes help-right {
+  from {
+    transform: translateX(-25%);
+  }
+  to {
+    transform: translateX(-8.333%);
+  }
+}
+
+.heroCopy {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
-  padding: calc(var(--header-h) + 72px) var(--pad-x) 96px;
+  gap: 26px;
   text-align: center;
+  /* The index dims its siblings on hover: on red, dim to translucent white, not grey. */
+  --help-dim: rgb(255 255 255 / 0.6);
 }
 
 .heading {
   font-family: var(--font-serif);
-  font-size: clamp(36px, 5.5vw, 80px);
-  line-height: 1.1;
+  font-size: clamp(40px, 6.4vw, 92px);
+  line-height: 1.05;
   text-wrap: balance;
 }
 
@@ -32,37 +91,99 @@
   animation-delay: 100ms;
 }
 
-/* One topic per row: number, icon and title on the left, the answer on the right. */
+/* ---------- Topics: white, with a slow-drifting blob and a script watermark behind ---------- */
+.topics {
+  position: relative;
+  padding: 40px 0 var(--section-py);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.blob {
+  position: absolute;
+  z-index: -1;
+  left: -6%;
+  top: 4%;
+  width: 62%;
+  height: 92%;
+  fill: var(--vr-grey-blob);
+}
+
+.watermark {
+  position: absolute;
+  z-index: -1;
+  /* Under the Size Guide title, in the left column, clear of all text. */
+  left: 1%;
+  top: 46%;
+  margin: 0;
+  font-family: var(--font-script);
+  font-size: clamp(90px, 11vw, 165px);
+  line-height: 0.8;
+  color: #e7e6ea;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  transform: rotate(-7deg);
+}
+
+@keyframes blob-drift {
+  from {
+    transform: translate(-2%, -1.5%) scale(1);
+  }
+  to {
+    transform: translate(3%, 2%) scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .giantLine1 .track {
+    animation: help-left 30s linear infinite;
+  }
+
+  .giantLine2 .track {
+    animation: help-right 30s linear infinite;
+  }
+
+  .blob {
+    animation: blob-drift 16s var(--ease-in-out) infinite alternate;
+  }
+
+  .hero[data-inview='false'] .track,
+  .topics[data-inview='false'] .blob {
+    animation-play-state: paused;
+  }
+}
+
+/* One topic per row: numbered title on the left, the answer on the right. */
 .topic {
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
   column-gap: clamp(40px, 6vw, 96px);
+  align-items: start;
+  position: relative;
   margin: 0 var(--pad-x);
-  padding: 72px 0;
-  border-top: 1px solid var(--vr-border);
+  padding: 76px 0;
   /* Anchor links stop below the fixed header. */
   scroll-margin-top: var(--header-h);
 }
 
-.topicHead {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 18px;
-}
-
-.index {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(22px, 3vw, 44px);
-  line-height: 1;
+.topic + .topic {
+  border-top: 1px solid var(--vr-border);
 }
 
 .topicTitle {
   font-family: var(--font-serif);
-  font-size: clamp(34px, 4.6vw, 66px);
+  font-size: clamp(36px, 4.6vw, 66px);
   line-height: 1.05;
   text-wrap: balance;
+}
+
+/* The small italic number before the title, as in the Accessories list. */
+.index {
+  margin-right: 0.1em;
+  font-size: 0.36em;
+  font-style: italic;
+  vertical-align: 1.55em;
 }
 
 .topicBody {
@@ -70,7 +191,7 @@
   flex-direction: column;
   gap: 20px;
   max-width: 600px;
-  padding-top: 8px;
+  padding-top: 0.5em;
   font-size: 15px;
   line-height: 1.65;
 }
@@ -116,18 +237,37 @@
 }
 
 @media (max-width: 767px) {
-  .intro {
-    gap: 22px;
-    padding: calc(var(--header-h) + 48px) var(--pad-x) 64px;
+  .hero {
+    min-height: 78svh;
+  }
+
+  .giant {
+    font-size: 64vw;
+    transform: translateY(-50%) rotate(-25deg);
+  }
+
+  .heroCopy {
+    gap: 20px;
+  }
+
+  .blob {
+    left: -30%;
+    width: 120%;
+    height: 70%;
+  }
+
+  /* One column on phones: no empty space for it. */
+  .watermark {
+    display: none;
   }
 
   .topic {
     grid-template-columns: 1fr;
-    row-gap: 24px;
-    padding: 48px 0;
+    row-gap: 20px;
+    padding: 52px 0;
   }
 
-  .topicHead {
-    gap: 12px;
+  .topicBody {
+    padding-top: 0;
   }
 }

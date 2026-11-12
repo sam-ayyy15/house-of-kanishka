@@ -19,7 +19,10 @@ const items: Item[] = [
 
 const pct = (v: number) => `${v}%`;
 
-/** Homepage §4.6: category list in the centre, six numbered cut-outs scattered around it. */
+/**
+ * Homepage §4.6: category list in the centre, six numbered cut-outs around it.
+ * On desktop the six pieces travel slowly around the list on an oval path, staying upright.
+ */
 export function Accessories() {
   return (
     <section className={styles.section} aria-labelledby="accessories-title" data-loop>
@@ -49,22 +52,24 @@ export function Accessories() {
             style={
               {
                 '--reveal-delay': `${i * 80}ms`,
-                '--i': i,
                 '--l': pct(it.box.l),
                 '--t': pct(it.box.t),
                 '--w': pct(it.box.r - it.box.l),
                 '--h': pct(it.box.b - it.box.t),
-                '--label-l': pct(it.label.l),
-                '--label-t': pct(it.label.t),
+                // Label position, as % of the piece's own box (it travels with the piece).
+                '--label-l': pct(((it.label.l - it.box.l) / (it.box.r - it.box.l)) * 100),
+                '--label-t': pct(((it.label.t - it.box.t) / (it.box.b - it.box.t)) * 100),
               } as React.CSSProperties
             }
           >
-            <span className={styles.itemLabel} aria-hidden="true">
-              ({it.n})
-            </span>
-            <div className={styles.itemMedia}>
-              {/* Placeholder (A06–A11): local-only crop of the reference. Never ship. */}
-              <Image src={`/placeholders/${it.src}.jpg`} alt={it.alt} fill sizes="(max-width: 767px) 45vw, 27vw" />
+            <div className={styles.itemBody}>
+              <span className={styles.itemLabel} aria-hidden="true">
+                ({it.n})
+              </span>
+              <div className={styles.itemMedia}>
+                {/* Placeholder (A06–A11): local-only crop of the reference. Never ship. */}
+                <Image src={`/placeholders/${it.src}.jpg`} alt={it.alt} fill sizes="(max-width: 767px) 45vw, 27vw" />
+              </div>
             </div>
           </li>
         ))}

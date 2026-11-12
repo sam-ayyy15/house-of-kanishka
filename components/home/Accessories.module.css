@@ -36,6 +36,7 @@
 
 .category {
   white-space: nowrap;
+  transition: color var(--dur-fast) ease;
 }
 
 .index {
@@ -51,11 +52,20 @@
   list-style: none;
 }
 
+/* Each item is a full-section layer; its body sits at the measured position (video frame 06). */
 .item {
-  position: static;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-.itemMedia {
+/* The scroll reveal may only fade these layers: a transition on their transform would
+   make them lag behind the orbit. */
+.items .item {
+  transition-property: opacity;
+}
+
+.itemBody {
   position: absolute;
   left: var(--l);
   top: var(--t);
@@ -63,8 +73,18 @@
   height: var(--h);
 }
 
+.itemMedia {
+  position: absolute;
+  inset: 0;
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    scale var(--dur-base) var(--ease-out);
+}
+
+/* Multiply drops the crops' white backgrounds, so pieces can pass close to each other. */
 .itemMedia img {
   object-fit: contain;
+  mix-blend-mode: multiply;
 }
 
 .itemLabel {
@@ -76,39 +96,40 @@
   font-style: italic;
   font-size: clamp(22px, 3vw, 44px);
   line-height: 1;
+  white-space: nowrap;
+  transition: opacity var(--dur-base) var(--ease-out);
 }
 
-/* ---------- Motion (desktop constellation only) ----------
-   The six pieces hang in a ring around the category list. Each one swings a few degrees
-   around the centre of the section, like a mobile, each slightly out of step with the next.
-   Pointing at (or tabbing to) a category brings its piece forward and quiets the others. */
-@keyframes acc-sway {
-  from {
-    rotate: -2.4deg;
-  }
+/* ---------- Motion (desktop only) ----------
+   The pieces orbit the category list. --acc-a is the orbit angle, animated once on the list
+   and inherited by every piece.
+
+   Path: an oval, not a circle, because the section is wider than it is tall. Each layer is
+   squashed vertically (K), turned, then un-squashed: scale(1, K) rotate(a) scale(1, 1/K).
+   At a = 0 that is no change at all, so the pieces start exactly where the design puts them.
+   Each body applies the opposite turn around its own centre, so pieces and their numbers
+   stay upright and undistorted while they travel. */
+@property --acc-a {
+  syntax: '<angle>';
+  inherits: true;
+  initial-value: 0deg;
+}
+
+@keyframes acc-orbit {
   to {
-    rotate: 2.4deg;
+    --acc-a: 360deg;
   }
 }
 
 @media (min-width: 768px) {
-  /* Each item becomes a full-section layer, so it can turn around the section's centre.
-     Its children are still placed in % of the section. */
-  .item {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
+  .items {
+    --k: 0.5;
   }
 
-  .itemMedia,
-  .itemLabel {
-    transition:
-      opacity var(--dur-base) var(--ease-out),
-      scale var(--dur-base) var(--ease-out);
-  }
-
+  /* Pointing at (or tabbing to) a category brings its piece forward, quiets the others
+     and holds the orbit still while you look. */
   .section:has(.category:is(:hover, :focus-visible)) :is(.itemMedia, .itemLabel) {
-    opacity: 0.25;
+    opacity: 0.22;
   }
 
   .section:has(.category[data-n='01']:is(:hover, :focus-visible)) .item[data-n='01'] :is(.itemMedia, .itemLabel),
@@ -126,22 +147,52 @@
   .section:has(.category[data-n='04']:is(:hover, :focus-visible)) .item[data-n='04'] .itemMedia,
   .section:has(.category[data-n='05']:is(:hover, :focus-visible)) .item[data-n='05'] .itemMedia,
   .section:has(.category[data-n='06']:is(:hover, :focus-visible)) .item[data-n='06'] .itemMedia {
-    scale: 1.08;
+    scale: 1.1;
   }
 }
 
 @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
-  .item {
-    animation: acc-sway 9s var(--ease-in-out) calc(var(--i) * -2.3s) infinite alternate;
+  /* One full turn every 80 seconds, at constant speed. The ring is drawn 10 % smaller while
+     it turns so the outermost pieces and their numbers never touch the section edges, and
+     the list sits at the exact centre so every piece clears it by the same margin. */
+  .centre {
+    top: 50%;
+    width: auto;
+    transform: translate(-50%, -50%);
   }
 
-  .section[data-inview='false'] .item {
+  .items {
+    position: absolute;
+    inset: 0;
+    scale: 0.9;
+    animation: acc-orbit 80s linear infinite;
+  }
+
+  .item {
+    transform: scale(1, var(--k)) rotate(var(--acc-a)) scale(1, calc(1 / var(--k)));
+  }
+
+  /* Pieces are drawn a little smaller while they travel, and each number rides just above
+     its piece, so nothing reaches into the list or past the section edges at any angle. */
+  .itemBody {
+    transform: scale(1, var(--k)) rotate(calc(var(--acc-a) * -1)) scale(1, calc(1 / var(--k))) scale(0.86);
+  }
+
+  .itemLabel {
+    left: 0;
+    top: auto;
+    bottom: calc(100% + 4px);
+    font-size: clamp(18px, 2.3vw, 34px);
+  }
+
+  .section[data-inview='false'] .items,
+  .section:has(.category:is(:hover, :focus-visible)) .items {
     animation-play-state: paused;
   }
 }
 
 /* EXTRAPOLATED – no reference design: category list first, then a 2-column grid of the
-   six items, each with its (01)–(06) label. */
+   six items, each with its (01)–(06) label. No orbit on phones. */
 @media (max-width: 767px) {
   .section {
     aspect-ratio: auto;
@@ -168,9 +219,16 @@
 
   .item {
     position: relative;
+    inset: auto;
+  }
+
+  .itemBody {
+    position: static;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: auto;
+    height: auto;
   }
 
   .itemLabel {
@@ -180,8 +238,7 @@
 
   .itemMedia {
     position: relative;
-    left: auto;
-    top: auto;
+    inset: auto;
     width: 100%;
     height: 120px;
   }
