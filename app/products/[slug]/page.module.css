@@ -7,7 +7,6 @@
     'title info'
     'gallery gallery';
   column-gap: var(--gutter);
-  /* Overrides .page-solid's padding-top, so the header height is added here. */
   padding: calc(var(--header-h) + 42px) var(--pdp-pad) var(--section-py);
 }
 
@@ -28,6 +27,17 @@
 .gallery {
   grid-area: gallery;
   margin-top: 64px;
+}
+
+.related {
+  padding-bottom: var(--section-py);
+}
+
+.relatedTitle {
+  padding: 0 var(--pad-x) 40px;
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 4.6vw, 66px);
+  line-height: 1.1;
 }
 
 /* EXTRAPOLATED – no reference design: tablet portrait stacks the info under the title. */
@@ -63,5 +73,10 @@
 
   .gallery {
     margin: 0 calc(-1 * var(--pdp-pad));
+  }
+
+  .relatedTitle {
+    padding-bottom: 24px;
+    font-size: 34px;
   }
 }

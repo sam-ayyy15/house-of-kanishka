@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { newArrivals, newArrivalsMobile, PDP_HREF } from '@/lib/products';
+import { newArrivals, newArrivalsMobile, productHref } from '@/lib/products';
 import { ProductCaption } from '../ProductCaption';
 import { UnderlineLink } from '../UnderlineLink';
 import styles from './NewArrivals.module.css';
@@ -17,25 +17,25 @@ export function NewArrivals() {
         <h2 id="new-arrivals-title" className={styles.title}>
           <span className={styles.our}>Our </span>New Arrivals
         </h2>
-        <UnderlineLink href="/dresses">View all</UnderlineLink>
+        <UnderlineLink href="/new-arrivals">View all</UnderlineLink>
       </div>
 
       <div className={styles.row}>
-        <Link href={PDP_HREF} className={`${styles.item} ${styles.cutout}`}>
+        <Link href={productHref(dress)} className={`${styles.item} ${styles.cutout}`} data-reveal="rise">
           <div className={styles.cutoutMedia}>
             <Image src={dress.image} alt={dress.name} fill sizes="30vw" className={styles.contain} />
           </div>
           <ProductCaption name={dress.name} priceCents={dress.priceCents} />
         </Link>
 
-        <Link href={PDP_HREF} className={`${styles.item} ${styles.oval}`}>
+        <Link href={productHref(earrings)} className={`${styles.item} ${styles.oval}`} data-reveal="rise" style={{ '--reveal-delay': '80ms' } as React.CSSProperties}>
           <div className={styles.ovalMedia}>
             <Image src={earrings.image} alt={earrings.name} fill sizes="22vw" className={styles.ovalImg} />
           </div>
           <ProductCaption name={earrings.name} priceCents={earrings.priceCents} />
         </Link>
 
-        <Link href={PDP_HREF} className={`${styles.item} ${styles.framed}`}>
+        <Link href={productHref(framed)} className={`${styles.item} ${styles.framed}`} data-reveal="rise" style={{ '--reveal-delay': '160ms' } as React.CSSProperties}>
           <div className={styles.framedMedia}>
             <Image src={framed.image} alt={framed.name} fill sizes="41vw" className={styles.cover} />
           </div>
@@ -46,7 +46,7 @@ export function NewArrivals() {
       <ul className={styles.grid}>
         {newArrivalsMobile.map((p) => (
           <li key={p.slug}>
-            <Link href={PDP_HREF} className={styles.gridItem}>
+            <Link href={productHref(p)} className={styles.gridItem}>
               <Image src={p.image} alt={p.name} fill sizes="50vw" className={styles.contain} />
             </Link>
           </li>

@@ -1,12 +1,49 @@
 .link {
+  position: relative;
   display: inline-block;
+  padding-bottom: 7px;
   font-family: var(--font-sans);
   font-size: 16px;
   font-weight: 500;
   letter-spacing: 0.08em;
   line-height: 1;
   text-transform: uppercase;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 6px;
+}
+
+/* 1px underline the full width of the text (spec §3.3), drawn as an element so it can move. */
+.link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform-origin: left;
+}
+
+/* Hover: the line retracts to the right, then redraws from the left. */
+@keyframes underline-redraw {
+  0% {
+    transform: scaleX(1);
+    transform-origin: right;
+  }
+  45% {
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+  46% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  100% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link:hover::after {
+    animation: underline-redraw 600ms var(--ease-in-out);
+  }
 }

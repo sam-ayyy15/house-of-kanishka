@@ -41,6 +41,31 @@
   white-space: nowrap;
 }
 
+/* Hover: the underline draws in from the left (same language as the underlined links). */
+.navLink {
+  position: relative;
+  padding: 6px 0;
+}
+
+.navLink::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .navLink:hover::after {
+    transform: scaleX(1);
+  }
+}
+
 .menuIcon {
   flex: none;
 }
@@ -92,9 +117,29 @@
     gap: 20px;
   }
 
+  /* 44px touch targets; negative margins keep the visual spacing of the mockup. */
   .iconBtn {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    margin: 0 -10px;
+  }
+
+  .badge {
+    position: absolute;
+    top: 6px;
+    right: 2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    background: var(--vr-red);
+    color: var(--vr-white);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 16px;
+    text-align: center;
   }
 }

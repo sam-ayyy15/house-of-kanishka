@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { PDP_HREF, plpAccessories } from '@/lib/products';
+import { plpAccessories, productHref } from '@/lib/products';
 import { ProductCaption } from '../ProductCaption';
 import { UnderlineLink } from '../UnderlineLink';
 import styles from './EditorialBlock.module.css';
@@ -31,29 +31,29 @@ export function EditorialBlock() {
           Add the perfect
           <br /> touch to your look
         </h2>
-        <UnderlineLink href="#">View accessories</UnderlineLink>
+        <UnderlineLink href="/accessories">View accessories</UnderlineLink>
       </div>
 
-      <Link href={PDP_HREF} className={`${styles.product} ${styles.bracelets}`}>
+      <Link href={productHref(bracelets)} className={`${styles.product} ${styles.bracelets}`}>
         <div className={styles.productMedia} style={{ aspectRatio: 1 }}>
           <Image src={bracelets.image} alt="" fill sizes="(max-width: 767px) 45vw, 13vw" className={styles.blend} />
         </div>
         <ProductCaption name={bracelets.name} priceCents={bracelets.priceCents} align="center" className={styles.caption} />
       </Link>
 
-      <Link href={PDP_HREF} className={`${styles.product} ${styles.miniBag}`}>
+      <Link href={productHref(miniBag)} className={`${styles.product} ${styles.miniBag}`}>
         <div className={styles.productMedia} style={{ aspectRatio: 130 / 124 }}>
           <Image src={miniBag.image} alt="" fill sizes="(max-width: 767px) 45vw, 20vw" className={styles.blend} />
         </div>
         <ProductCaption name={miniBag.name} priceCents={miniBag.priceCents} align="center" className={styles.caption} />
       </Link>
 
-      <div className={`${styles.lifestyle} ${styles.front}`}>
+      <Link href="/products/floral-satin-midi-dress" className={`${styles.lifestyle} ${styles.front}`}>
         <Image src="/placeholders/plp-pink-front.jpg" alt="Pink floral satin cowl-neck midi dress, front" fill sizes="(max-width: 767px) 50vw, 17vw" />
-      </div>
-      <div className={`${styles.lifestyle} ${styles.back}`}>
+      </Link>
+      <Link href="/products/floral-satin-midi-dress" className={`${styles.lifestyle} ${styles.back}`} tabIndex={-1} aria-hidden="true">
         <Image src="/placeholders/plp-pink-back.jpg" alt="Pink floral satin cowl-neck midi dress, back" fill sizes="(max-width: 767px) 50vw, 17vw" />
-      </div>
+      </Link>
     </section>
   );
 }

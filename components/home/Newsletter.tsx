@@ -7,7 +7,7 @@ export function Newsletter() {
   return (
     <section className={styles.section} aria-labelledby="newsletter-title">
       <Eyebrow className={styles.eyebrow}>Subscribe</Eyebrow>
-      <h2 id="newsletter-title" className={styles.heading}>
+      <h2 id="newsletter-title" className={styles.heading} data-reveal="rise">
         Join the House of Kanishka world, be
         <br className={styles.br} /> the first to <em>discover new collections</em>
         <br className={styles.br} /> and exclusive offers.

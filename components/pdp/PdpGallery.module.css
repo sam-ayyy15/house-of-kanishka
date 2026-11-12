@@ -11,10 +11,18 @@
   position: relative;
   aspect-ratio: 0.815;
   background: var(--vr-grey-tile);
+  overflow: hidden;
 }
 
-.tile img {
+.cover {
   object-fit: cover;
+}
+
+/* Cut-outs on white: darken drops the white so the object sits on the grey tile. */
+.contain {
+  object-fit: contain;
+  padding: 8%;
+  mix-blend-mode: darken;
 }
 
 /* EXTRAPOLATED – no reference design: swipeable row with the next tile peeking in. */
@@ -36,5 +44,9 @@
   .tile {
     flex: 0 0 85%;
     scroll-snap-align: start;
+  }
+
+  .tile:only-child {
+    flex-basis: 100%;
   }
 }

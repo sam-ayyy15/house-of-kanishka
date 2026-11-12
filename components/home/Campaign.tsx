@@ -4,10 +4,10 @@ import styles from './Campaign.module.css';
 
 // Spec §4.3. "CAMPAING" corrected to "CAMPAIGN" (approved). Positions are % of the section.
 const labels = [
-  { key: 'tl', eyebrow: 'Campaign', lines: ['ASH X COS', '2025'] },
-  { key: 'tr', eyebrow: 'Rose Mood', lines: ['Golden', 'Hour Paris'] },
-  { key: 'bl', eyebrow: 'Campaign', lines: ['Midnight', 'Rôse'] },
-  { key: 'br', eyebrow: 'New Collection', lines: ['Autumn', 'Edition Paris'] },
+  { key: 'tl', href: '/collections/ash-x-cos-2025', eyebrow: 'Campaign', lines: ['ASH X COS', '2025'] },
+  { key: 'tr', href: '/collections/golden-hour-paris', eyebrow: 'Rose Mood', lines: ['Golden', 'Hour Paris'] },
+  { key: 'bl', href: '/collections/midnight-rose', eyebrow: 'Campaign', lines: ['Midnight', 'Rôse'] },
+  { key: 'br', href: '/collections/autumn-edition-paris', eyebrow: 'New Collection', lines: ['Autumn', 'Edition Paris'] },
 ] as const;
 
 /** Homepage §4.3: full-bleed video background with four corner labels. */
@@ -20,7 +20,7 @@ export function Campaign() {
         sources={[{ src: '/placeholders/campaign-loop.webm', type: 'video/webm' }]}
       />
       {labels.map((l) => (
-        <OverlayLabel key={l.key} eyebrow={l.eyebrow} lines={[...l.lines]} className={`${styles.label} ${styles[l.key]}`} />
+        <OverlayLabel key={l.key} href={l.href} eyebrow={l.eyebrow} lines={[...l.lines]} className={`${styles.label} ${styles[l.key]}`} />
       ))}
     </section>
   );

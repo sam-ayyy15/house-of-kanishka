@@ -7,34 +7,117 @@
   list-style: none;
 }
 
-/* Full-length cut-outs float on white; ~434px tall at 1440 (S2). */
-.card {
-  position: relative;
-  display: block;
-  height: clamp(300px, 30vw, 440px);
+.grid[data-columns='4'] {
+  grid-template-columns: repeat(4, 1fr);
 }
 
-.card img {
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Full-length cut-outs float on white; ~434px tall at 1440 (S2). */
+.media {
+  position: relative;
+  height: clamp(300px, 30vw, 440px);
+  overflow: hidden;
+}
+
+.media img {
   object-fit: contain;
   object-position: 50% 100%;
+  transform-origin: 50% 100%;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+/* Objects sit centred on the grey tile; darken drops the crop's own light background. */
+.media[data-card='tile'] {
+  background: var(--vr-grey-tile);
+}
+
+.media[data-card='tile'] img {
+  object-position: 50% 50%;
+  transform-origin: 50% 50%;
+  padding: 14%;
+  mix-blend-mode: darken;
+}
+
+.media[data-card='photo'] img {
+  object-fit: cover;
+  object-position: 50% 30%;
+  transform-origin: 50% 50%;
+}
+
+.grid[data-tiles] .media {
+  height: auto;
+  aspect-ratio: 0.815;
+}
+
+.caption {
+  font-size: 13px;
+}
+
+/* S2 shows no captions: they appear on hover or keyboard focus only. */
+.grid[data-captions='hover'] .caption {
+  opacity: 0;
+  transition: opacity var(--dur-fast) ease;
+}
+
+.grid[data-captions='hover'] .card:focus-visible .caption {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .media img {
+    transform: scale(1.03);
+  }
+
+  .grid[data-captions='hover'] .card:hover .caption {
+    opacity: 1;
+  }
 }
 
 /* EXTRAPOLATED – no reference design: tablet portrait uses 3 columns. */
 @media (max-width: 1023px) {
-  .grid {
+  .grid,
+  .grid[data-columns='4'] {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
 /* Mobile (S2): 2 columns, almost no visible gutter. */
 @media (max-width: 767px) {
-  .grid {
+  .grid,
+  .grid[data-columns='4'] {
     grid-template-columns: 1fr 1fr;
     gap: 28px 0;
     padding: 0 8px;
   }
 
-  .card {
+  .media {
     height: 330px;
+  }
+
+  .grid[data-tiles] {
+    gap: 28px 8px;
+    padding: 0 var(--pad-x);
+  }
+
+  .grid[data-tiles] .caption {
+    padding: 0;
+  }
+
+  .card {
+    gap: 10px;
+  }
+
+  .caption {
+    padding: 0 12px;
+    font-size: 11px;
+  }
+
+  .grid[data-captions='hover'] .caption {
+    display: none;
   }
 }

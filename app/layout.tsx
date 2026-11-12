@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from 'next';
+import { Footer } from '@/components/Footer';
+import { RevealObserver } from '@/components/RevealObserver';
 import { heroItalic, sans, script, serif } from './fonts';
 import './globals.css';
 
@@ -18,7 +20,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={`${serif.variable} ${heroItalic.variable} ${script.variable} ${sans.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        {children}
+        <Footer />
+        <RevealObserver />
+      </body>
     </html>
   );
 }

@@ -85,6 +85,7 @@
 }
 
 .lifestyle {
+  display: block;
   position: absolute;
   top: 2.3%;
 }

@@ -2,18 +2,20 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { bagCount, useStore } from '@/lib/store';
 import { BagIcon, MenuIcon, SearchIcon } from './icons';
+import { MenuDrawer } from './MenuDrawer';
 import styles from './Header.module.css';
 
 type Props = {
   /**
-   * id of the element the header floats over while transparent (the homepage hero).
+   * id of the element the header floats over while transparent (a full-bleed hero).
    * Omit it for pages whose header is always solid white.
    */
   overlayTargetId?: string;
-  bagCount?: number;
   /** Mobile: listing pages show a FILTER trigger where the logo sits (S2, approved). */
   mobileLeft?: 'logo' | 'filter';
+  onFilter?: () => void;
 };
 
 /**
@@ -21,8 +23,10 @@ type Props = {
  * the hero (variant A), solid white with black text after it (variant B).
  * The switch is instant; no transition is evidenced.
  */
-export function Header({ overlayTargetId, bagCount = 0, mobileLeft = 'logo' }: Props) {
+export function Header({ overlayTargetId, mobileLeft = 'logo', onFilter }: Props) {
   const [solid, setSolid] = useState(!overlayTargetId);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const count = bagCount(useStore());
 
   useEffect(() => {
     if (!overlayTargetId) return;
@@ -41,56 +45,71 @@ export function Header({ overlayTargetId, bagCount = 0, mobileLeft = 'logo' }: P
   }, [overlayTargetId]);
 
   return (
-    <header className={styles.header} data-variant={solid ? 'solid' : 'transparent'}>
-      {/* Desktop: three zones */}
-      <nav className={`${styles.zone} ${styles.left}`} aria-label="Primary">
-        {/* Only one listing page exists so far, so Shop and New Arrivals both open it. */}
-        <Link href="/dresses" className={styles.navLink}>
-          <MenuIcon className={styles.menuIcon} />
-          Shop
+    <>
+      <header className={styles.header} data-variant={solid ? 'solid' : 'transparent'}>
+        {/* Desktop: three zones */}
+        <nav className={`${styles.zone} ${styles.left}`} aria-label="Primary">
+          <button
+            type="button"
+            className={styles.navLink}
+            aria-haspopup="dialog"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(true)}
+          >
+            <MenuIcon className={styles.menuIcon} />
+            Shop
+          </button>
+          <Link href="/new-arrivals" className={styles.navLink}>
+            New Arrivals
+          </Link>
+          <Link href="/the-brand" className={styles.navLink}>
+            The Brand
+          </Link>
+        </nav>
+
+        <Link href="/" className={`${styles.logo} ${mobileLeft === 'filter' ? styles.logoDesktopOnly : ''}`}>
+          House of Kanishka
         </Link>
-        <Link href="/dresses" className={styles.navLink}>
-          New Arrivals
-        </Link>
-        <a href="#" className={styles.navLink}>
-          The Brand
-        </a>
-      </nav>
+        {mobileLeft === 'filter' && (
+          <button type="button" className={styles.mobileFilter} onClick={onFilter}>
+            Filter
+          </button>
+        )}
 
-      <Link href="/" className={`${styles.logo} ${mobileLeft === 'filter' ? styles.logoDesktopOnly : ''}`}>
-        House of Kanishka
-      </Link>
-      {mobileLeft === 'filter' && (
-        // What FILTER opens is [M]; the trigger is inert for now.
-        <button type="button" className={styles.mobileFilter}>
-          Filter
-        </button>
-      )}
+        <nav className={`${styles.zone} ${styles.right}`} aria-label="Account">
+          <Link href="/search" className={styles.navLink}>
+            Search
+          </Link>
+          <Link href="/login" className={styles.navLink}>
+            Login
+          </Link>
+          <Link href="/bag" className={styles.navLink}>
+            Shopping Bag ({count})
+          </Link>
+        </nav>
 
-      <nav className={`${styles.zone} ${styles.right}`} aria-label="Account">
-        <a href="#" className={styles.navLink}>
-          Search
-        </a>
-        <a href="#" className={styles.navLink}>
-          Login
-        </a>
-        <a href="#" className={styles.navLink}>
-          Shopping Bag ({bagCount})
-        </a>
-      </nav>
-
-      {/* Mobile: icons only */}
-      <div className={styles.icons}>
-        <a href="#" className={styles.iconBtn} aria-label={`Shopping bag, ${bagCount} items`}>
-          <BagIcon size={24} />
-        </a>
-        <a href="#" className={styles.iconBtn} aria-label="Search">
-          <SearchIcon size={22} />
-        </a>
-        <button type="button" className={styles.iconBtn} aria-label="Menu">
-          <MenuIcon size={24} />
-        </button>
-      </div>
-    </header>
+        {/* Mobile: icons only */}
+        <div className={styles.icons}>
+          <Link href="/bag" className={styles.iconBtn} aria-label={`Shopping bag, ${count} items`}>
+            <BagIcon size={24} />
+            {count > 0 && <span className={styles.badge}>{count}</span>}
+          </Link>
+          <Link href="/search" className={styles.iconBtn} aria-label="Search">
+            <SearchIcon size={22} />
+          </Link>
+          <button
+            type="button"
+            className={styles.iconBtn}
+            aria-label="Menu"
+            aria-haspopup="dialog"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(true)}
+          >
+            <MenuIcon size={24} />
+          </button>
+        </div>
+      </header>
+      <MenuDrawer open={menuOpen} onClose={() => setMenuOpen(false)} />
+    </>
   );
 }

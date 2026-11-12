@@ -1,0 +1,164 @@
+.hero {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  min-height: 560px;
+  overflow: hidden;
+  background: #060606;
+  color: var(--vr-white);
+}
+
+.heroPhoto {
+  object-fit: cover;
+  object-position: 90% 0%;
+}
+
+/* Echoes the homepage lockup: upright serif over a larger italic. */
+.heroTitle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-serif);
+  white-space: nowrap;
+}
+
+.heroTitle span {
+  font-size: clamp(56px, 10.7vw, 154px);
+  line-height: 0.9;
+  animation: vr-rise var(--dur-slow) var(--ease-out) 100ms both;
+}
+
+.heroTitle em {
+  margin-top: -0.3em;
+  font-family: var(--font-hero-italic);
+  font-size: clamp(96px, 19vw, 280px);
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  animation: vr-rise var(--dur-slow) var(--ease-out) 220ms both;
+}
+
+.statement {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  padding: 104px var(--pad-x) 96px;
+  text-align: center;
+}
+
+.statementText {
+  max-width: 22em;
+  font-family: var(--font-serif);
+  font-size: clamp(26px, 3.6vw, 52px);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: 46fr 54fr;
+  gap: var(--pad-x);
+  align-items: center;
+  padding: 0 var(--pad-x) var(--section-py);
+}
+
+.splitPhoto {
+  position: relative;
+  aspect-ratio: 0.75;
+  background: #e9e9e7;
+}
+
+.splitPhoto img {
+  object-fit: cover;
+}
+
+.notes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 44px;
+  max-width: 520px;
+  margin: 0 auto;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.noteTitle {
+  margin-bottom: 10px;
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 3.2vw, 46px);
+  line-height: 1.1;
+}
+
+.closing {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  padding: 120px var(--pad-x) 140px;
+  background: var(--vr-red);
+  color: var(--vr-white);
+  text-align: center;
+  overflow: hidden;
+}
+
+.closingScript {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-6deg);
+  font-family: var(--font-script);
+  font-size: clamp(120px, 22vw, 320px);
+  line-height: 1;
+  color: var(--vr-black);
+  opacity: 0.18;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.closingText {
+  position: relative;
+  max-width: 20em;
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 3.6vw, 52px);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.closing a {
+  position: relative;
+}
+
+@media (max-width: 767px) {
+  .heroPhoto {
+    object-position: 53% 0%; /* keeps the face in frame on a narrow screen */
+  }
+
+  .statement {
+    padding: 64px var(--pad-x);
+  }
+
+  .split {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .notes {
+    gap: 32px;
+    margin: 0;
+  }
+
+  .closing {
+    padding: 88px var(--pad-x);
+  }
+}
+
+.heroPhoto {
+  animation: vr-settle 1800ms var(--ease-out) both;
+}

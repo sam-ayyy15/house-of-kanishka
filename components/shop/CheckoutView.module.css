@@ -1,0 +1,143 @@
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  padding-top: 12vh;
+  text-align: center;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 80px;
+  align-items: start;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  max-width: 640px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 14px;
+}
+
+.group legend {
+  margin-bottom: 16px;
+  padding: 0;
+  font-family: var(--font-serif);
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.summary {
+  position: sticky;
+  top: calc(var(--header-h) + 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 28px;
+  background: var(--vr-grey-tile);
+  font-size: 14px;
+}
+
+.summaryTitle {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.line {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+}
+
+.thumb {
+  position: relative;
+  aspect-ratio: 0.815;
+  background: var(--vr-white);
+}
+
+.thumb img {
+  object-fit: contain;
+  padding: 8%;
+}
+
+.name {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.price,
+.totals dd {
+  font-variant-numeric: tabular-nums;
+}
+
+.totals {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--vr-border);
+}
+
+.totals div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.totals dt {
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.totals dd {
+  margin: 0;
+}
+
+@media (max-width: 1023px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .summary {
+    position: static;
+    order: -1;
+  }
+}
+
+@media (max-width: 767px) {
+  .summary {
+    padding: 20px;
+  }
+}

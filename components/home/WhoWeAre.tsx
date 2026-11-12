@@ -9,7 +9,7 @@ export function WhoWeAre() {
       <Eyebrow className={styles.eyebrow}>
         <span id="who-we-are-title">Who we are</span>
       </Eyebrow>
-      <p className={styles.statement}>
+      <p className={styles.statement} data-reveal="rise">
         Inspired by Parisian elegance and modern simplicity,
         <br className={styles.br} /> we create pieces that move with you, <em>effortlessly</em>
         <br className={styles.br} /> <em>complementing your life and style</em>

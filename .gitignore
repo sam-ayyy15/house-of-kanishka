@@ -10,3 +10,4 @@ reference/images/
 # Screenshot comparisons
 .shots/
 .next-dev.log
+.next-start.log

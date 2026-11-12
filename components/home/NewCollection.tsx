@@ -6,7 +6,7 @@ import styles from './NewCollection.module.css';
  * Homepage §4.5: giant tilted "NEW COLLECTION" on brand red, passing behind a
  * double-ellipse photo mask. The model is fully clipped by the ovals (no pop-out).
  */
-export function NewCollection() {
+export function NewCollection({ asHero = false }: { asHero?: boolean }) {
   return (
     <section className={styles.section} aria-label="New collection: Golden Hour Paris">
       {/* Mask shapes, in the photo box's own units (spec §12.4 #2). */}
@@ -30,12 +30,13 @@ export function NewCollection() {
       </div>
 
       <OverlayLabel
+        href="/collections/golden-hour-paris"
         eyebrow="New Collection"
         lines={['Golden', 'Hour Paris']}
-        className={`${styles.label} ${styles.tl}`}
+        className={`${styles.label} ${styles.tl} ${asHero ? styles.tlHero : ''}`}
         titleClassName={styles.tlTitle}
       />
-      <OverlayLabel eyebrow="New Collection" lines={['Season', 'Of Grace']} className={`${styles.label} ${styles.br}`} />
+      <OverlayLabel href="/collections/season-of-grace" eyebrow="New Collection" lines={['Season', 'Of Grace']} className={`${styles.label} ${styles.br}`} />
     </section>
   );
 }

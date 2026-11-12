@@ -22,7 +22,7 @@ export function Hero() {
         <span className={styles.script}>jamilie sea</span>
       </h1>
 
-      <UnderlineLink href="#" className={styles.cta}>
+      <UnderlineLink href="/collections/golden-hour-paris" className={styles.cta}>
         Discover the collection
       </UnderlineLink>
     </section>

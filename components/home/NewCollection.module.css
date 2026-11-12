@@ -70,6 +70,11 @@
   top: 82%;
 }
 
+/* As a page hero the transparent header sits on top: start the label below it. */
+.tlHero {
+  top: calc(var(--header-h) + 24px);
+}
+
 /* Mobile (S3 right): one larger label under the header, the ovals merge into a single
    tall notched shape, the giant type tilts more steeply. */
 @media (max-width: 767px) {
@@ -107,5 +112,27 @@
 
   .br {
     display: none;
+  }
+}
+
+/* Scroll-linked drift: the giant letters slide a few percent as the section passes
+   (well under the 10 % parallax limit). Scroll position is the clock, so it is linear
+   and has no duration. Browsers without scroll timelines simply show it still. */
+@keyframes giant-drift {
+  from {
+    translate: 3.5vw 0;
+  }
+  to {
+    translate: -3.5vw 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .giant {
+      animation: giant-drift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
   }
 }
