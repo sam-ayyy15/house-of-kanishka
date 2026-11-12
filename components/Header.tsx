@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { bagCount, useStore } from '@/lib/store';
+import { WhenSignedIn } from './auth/AuthEnabled';
 import { BagIcon, MenuIcon, SearchIcon } from './icons';
 import { MenuDrawer } from './MenuDrawer';
 import styles from './Header.module.css';
@@ -80,9 +81,18 @@ export function Header({ overlayTargetId, mobileLeft = 'logo', onFilter }: Props
           <Link href="/search" className={styles.navLink}>
             Search
           </Link>
-          <Link href="/login" className={styles.navLink}>
-            Login
-          </Link>
+          <WhenSignedIn
+            signedIn={
+              <Link href="/account" className={styles.navLink}>
+                Account
+              </Link>
+            }
+            signedOut={
+              <Link href="/login" className={styles.navLink}>
+                Login
+              </Link>
+            }
+          />
           <Link href="/bag" className={styles.navLink}>
             Shopping Bag ({count})
           </Link>

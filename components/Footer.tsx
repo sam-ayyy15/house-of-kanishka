@@ -28,7 +28,7 @@ const columns = [
     title: 'House',
     links: [
       { label: 'The Brand', href: '/the-brand' },
-      { label: 'Login', href: '/login' },
+      { label: 'Account', href: '/account' },
       { label: 'Wishlist', href: '/wishlist' },
       { label: 'Shopping Bag', href: '/bag' },
     ],

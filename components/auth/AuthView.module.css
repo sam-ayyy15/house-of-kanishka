@@ -131,3 +131,74 @@
     padding: 56px var(--pad-x) 80px;
   }
 }
+
+/* ---------- Additions for the real sign-in flow ---------- */
+
+.lede {
+  min-height: 3em;
+  margin: 20px 0 24px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Each step fades in as it replaces the last. */
+.stage {
+  display: flex;
+  flex-direction: column;
+  animation: vr-fade var(--dur-base) var(--ease-out);
+}
+
+.form {
+  animation: none;
+}
+
+.google {
+  width: 100%;
+}
+
+/* "or" between Google and the email form: a hairline with the word in the middle. */
+.or {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--vr-text-muted);
+}
+
+.or::before,
+.or::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--vr-border);
+}
+
+.code {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.4em;
+}
+
+.aside {
+  align-self: flex-start;
+}
+
+.status {
+  color: var(--vr-red);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  margin-top: 4px;
+}
+
+.inner :global(.btn):disabled,
+.links button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}

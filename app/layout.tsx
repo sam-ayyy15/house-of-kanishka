@@ -1,6 +1,9 @@
+import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata, Viewport } from 'next';
+import { AuthEnabledProvider } from '@/components/auth/AuthEnabled';
 import { Footer } from '@/components/Footer';
 import { RevealObserver } from '@/components/RevealObserver';
+import { authEnabled } from '@/lib/auth-config';
 import { heroItalic, sans, script, serif } from './fonts';
 import './globals.css';
 
@@ -23,8 +26,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${serif.variable} ${heroItalic.variable} ${script.variable} ${sans.variable}`}
     >
       <body>
-        {children}
-        <Footer />
+        {/* Accounts and sessions (Clerk). All screens are the site's own; Clerk supplies
+            sign-in, verification emails, password resets and the secure session cookie. */}
+        <AuthEnabledProvider enabled={authEnabled}>
+          {authEnabled ? (
+            <ClerkProvider signInUrl="/login" signUpUrl="/login" afterSignOutUrl="/">
+              {children}
+              <Footer />
+            </ClerkProvider>
+          ) : (
+            <>
+              {children}
+              <Footer />
+            </>
+          )}
+        </AuthEnabledProvider>
         <RevealObserver />
       </body>
     </html>

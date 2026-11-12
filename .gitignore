@@ -11,3 +11,6 @@ reference/images/
 .shots/
 .next-dev.log
 .next-start.log
+# Clerk development keys (keyless mode)
+.clerk/
+.env*.local

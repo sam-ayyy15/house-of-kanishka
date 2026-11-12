@@ -14,7 +14,7 @@ const shop = [
 
 const utility = [
   { label: 'Search', href: '/search' },
-  { label: 'Login', href: '/login' },
+  { label: 'Account', href: '/account' },
   { label: 'Wishlist', href: '/wishlist' },
   { label: 'Shopping Bag', href: '/bag' },
   { label: 'Help', href: '/help' },
