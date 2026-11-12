@@ -6,9 +6,17 @@
   padding-top: var(--header-h);
 }
 
-/* Left: portrait with the red script hanging off its lower edge, as in Who We Are. */
+/* Left: portrait with the red script hanging off its lower edge, as in Who We Are.
+   Its height comes from the screen, never from the form beside it, so the photo and the
+   "Welcome to the house" script stay exactly where they are on Sign in when switching to
+   Create account (a longer form) or any other step. Sticky, so it stays in view while a
+   long form scrolls. */
 .visual {
-  position: relative;
+  position: sticky;
+  top: var(--header-h);
+  align-self: start;
+  height: calc(100svh - var(--header-h));
+  min-height: fit-content; /* never shorter than the photo + script it holds */
   display: flex;
   align-items: center;
   justify-content: center;
