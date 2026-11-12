@@ -169,6 +169,57 @@ html:has(dialog[open]) {
   }
 }
 
+/* ---------- Page transitions (client request) ----------
+   Old page fades out (220 ms), then the new page fades in with a 12 px rise (520 ms),
+   overlapping a little so there is never a blank flash. The header doesn't move. */
+::view-transition {
+  pointer-events: none; /* clicks during the transition reach the live page */
+}
+
+::view-transition-old(.page-out) {
+  animation: vt-page-out 220ms var(--ease-in-out) both;
+}
+
+::view-transition-new(.page-in) {
+  animation: vt-page-in 520ms var(--ease-out) 120ms both;
+}
+
+@keyframes vt-page-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-page-in {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+}
+
+/* The header is anchored: no animation, and only the new one is drawn (no double header). */
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
 /* ---------- Shared UI (extends spec §3.3–3.4) ---------- */
 
 .btn {

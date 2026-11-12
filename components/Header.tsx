@@ -47,7 +47,12 @@ export function Header({ overlayTargetId, mobileLeft = 'logo', onFilter }: Props
 
   return (
     <>
-      <header className={styles.header} data-variant={solid ? 'solid' : 'transparent'}>
+      {/* Named so it stays anchored while pages cross-fade beneath it (globals.css). */}
+      <header
+        className={styles.header}
+        data-variant={solid ? 'solid' : 'transparent'}
+        style={{ viewTransitionName: 'site-header' }}
+      >
         {/* Desktop: three zones */}
         <nav className={`${styles.zone} ${styles.left}`} aria-label="Primary">
           <button
