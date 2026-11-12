@@ -89,38 +89,13 @@ await sharp('reference/images/Elegant Rose Satin Lace Gown.png')
   .toFile(`${OUT}/who-we-are.jpg`);
 console.log('wrote who-we-are.jpg');
 
-// A04 – New Collection model inside the double-ellipse. Outside the ovals the source shows
-// red and giant letters, so that area is replaced with the studio colour sampled near the
-// oval edges (#DDD5D2), so no ring shows when the page applies its own, larger mask.
-{
-  const region = { left: 564, top: 404, width: 472, height: 416 };
-  const base = await sharp(`${V}/05-new-collection.jpg`).extract(region).toBuffer();
-  const ovals = Buffer.from(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${region.width}" height="${region.height}">` +
-      // Feathered edge so the studio fill blends into the photo without a visible ring.
-      `<filter id="f"><feGaussianBlur stdDeviation="8"/></filter><g filter="url(#f)">` +
-      `<ellipse cx="${0.35 * region.width}" cy="${0.5 * region.height}" rx="${0.27 * region.width}" ry="${0.46 * region.height}" fill="#fff"/>` +
-      `<ellipse cx="${0.665 * region.width}" cy="${0.5 * region.height}" rx="${0.27 * region.width}" ry="${0.46 * region.height}" fill="#fff"/></g></svg>`,
-  );
-  const notches = Buffer.from(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${region.width}" height="${region.height}" fill="#DDD5D2">` +
-      `<rect x="${0.48 * region.width}" y="0" width="${0.22 * region.width}" height="${0.14 * region.height}"/>` +
-      `<rect x="${0.3 * region.width}" y="${0.86 * region.height}" width="${0.14 * region.width}" height="${0.14 * region.height}"/></svg>`,
-  );
-  const inside = await sharp(base).ensureAlpha()
-    .composite([{ input: ovals, blend: 'dest-in' }, { input: notches }])
-    .png().toBuffer();
-  // Composite first, then resize (sharp applies resize before composite in one pipeline).
-  const flat = await sharp({ create: { width: region.width, height: region.height, channels: 3, background: '#DDD5D2' } })
-    .composite([{ input: inside }])
-    .png()
-    .toBuffer();
-  await sharp(flat)
-    .resize({ width: region.width * 2, kernel: 'lanczos3' })
-    .jpeg({ quality: 88 })
-    .toFile(`${OUT}/new-collection.jpg`);
-  console.log('wrote new-collection.jpg');
-}
+// A04 – New Collection photo inside the double-ellipse. Raw source photo supplied by the
+// client (1337×1177, ≈ the mask's 1.13 ratio, plain studio background), so it is only
+// re-encoded; the page's SVG mask does the oval shape.
+await sharp('reference/images/Burgundy Roses and Satin Elegance.png')
+  .jpeg({ quality: 90, mozjpeg: true })
+  .toFile(`${OUT}/new-collection.jpg`);
+console.log('wrote new-collection.jpg');
 
 // A06–A11 – Accessories cut-outs (white background). Labels next to them are left out.
 await crop(`${V}/06-accessories.jpg`, { left: 742, top: 338, width: 152, height: 182 }, 'acc-bag.jpg', {
