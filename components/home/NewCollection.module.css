@@ -34,8 +34,16 @@
   display: block;
 }
 
-.giantLine2 {
-  margin-left: -0.62em;
+/* The repeated phrase. white-space: pre keeps the trailing space, so each of the three
+   copies is exactly a third of the track and a one-third shift lands on the next copy. */
+.track {
+  display: inline-block;
+  white-space: pre;
+}
+
+/* Resting crop (also what reduced motion shows): "NEW C…" above "…OLLECTION". */
+.giantLine2 .track {
+  transform: translateX(-12.333%);
 }
 
 /* Double-ellipse photo mask: ~48 % of the width, ~64 % of the height, centred, above the type. */
@@ -115,25 +123,38 @@
   }
 }
 
-/* Scroll-linked drift: the giant letters slide a few percent as the section passes
-   (well under the 10 % parallax limit). Scroll position is the clock, so it is linear
-   and has no duration. Browsers without scroll timelines simply show it still. */
-@keyframes giant-drift {
+/* The giant letters travel continuously along their tilt: the top line slides left, the
+   bottom line slides right, both slowly and at a constant speed (a third of the track,
+   one phrase, per cycle, so the loop is seamless). Paused off screen; still with reduced motion. */
+@keyframes giant-left {
   from {
-    translate: 3.5vw 0;
+    transform: translateX(0);
   }
   to {
-    translate: -3.5vw 0;
+    transform: translateX(-33.333%);
+  }
+}
+
+@keyframes giant-right {
+  from {
+    transform: translateX(-45.667%);
+  }
+  to {
+    transform: translateX(-12.333%);
   }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    .giant {
-      animation: giant-drift linear both;
-      animation-timeline: view();
-      animation-range: entry 0% exit 100%;
-    }
+  .giantLine1 .track {
+    animation: giant-left 48s linear infinite;
+  }
+
+  .giantLine2 .track {
+    animation: giant-right 48s linear infinite;
+  }
+
+  .section[data-inview='false'] .track {
+    animation-play-state: paused;
   }
 }
 

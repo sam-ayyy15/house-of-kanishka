@@ -19,9 +19,15 @@ export function NewCollection({ asHero = false }: { asHero?: boolean }) {
         </clipPath>
       </svg>
 
+      {/* Two lines of the phrase, each repeated so it can slide in a seamless loop. Standing
+          still (reduced motion), they are cropped like the reference: "NEW C" / "OLLECTION". */}
       <p className={styles.giant} aria-hidden="true">
-        <span className={styles.giantLine1}>New C</span>
-        <span className={styles.giantLine2}>ollection</span>
+        <span className={styles.giantLine1}>
+          <span className={styles.track}>New Collection New Collection New Collection </span>
+        </span>
+        <span className={styles.giantLine2}>
+          <span className={styles.track}>New Collection New Collection New Collection </span>
+        </span>
       </p>
 
       <div className={styles.mask}>
