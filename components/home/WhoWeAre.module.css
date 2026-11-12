@@ -56,7 +56,7 @@
   font-family: var(--font-script);
   font-size: 33cqw;
   line-height: 0.75;
-  color: var(--vr-red);
+  color: #d10000; /* client request: script only; brand --vr-red unchanged */
   white-space: nowrap;
   text-align: left;
   transform: rotate(-11deg);
