@@ -15,7 +15,7 @@ const { p } = await open('no-preference');
 console.log('state before scroll:', await p.$eval(`${SEL} [data-reveal="cinema"]`, (e) => e.dataset.revealState));
 await p.locator(SEL).scrollIntoViewIfNeeded();
 const t0 = Date.now();
-for (const t of [1000, 2000, 2300, 2600, 2900, 3200, 3500, 4200]) {
+for (const t of [2200, 2700, 3200, 3700, 4200, 4700]) {
   await p.waitForTimeout(Math.max(0, t - (Date.now() - t0)));
   const photo = await p.$eval(`${SEL} img`, (img) => getComputedStyle(img.parentElement).transform);
   await p.locator(SEL).screenshot({ path: `.shots/who-seq-${t}.png` });
