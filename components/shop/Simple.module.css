@@ -15,6 +15,12 @@
   padding: 24px 0 80px;
 }
 
+/* The house lotus opening above an empty list. */
+.emptyEmblem {
+  width: 56px;
+  color: var(--vr-red);
+}
+
 .emptyText {
   max-width: 24em;
   font-family: var(--font-serif);

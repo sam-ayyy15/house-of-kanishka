@@ -1,0 +1,138 @@
+/* EXTRAPOLATED – no reference design. Type, colour and spacing are the site's own tokens. */
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  padding: 0 var(--pad-x) var(--section-py);
+  overflow-x: clip; /* the pool's bleed must never widen the page */
+}
+
+/* Section title in the house script: same face, red and slant as "Looking for our stories". */
+.title {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-script);
+  font-size: clamp(76px, 10.5vw, 150px);
+  line-height: 1;
+  color: #d10000; /* the script red used on the homepage; brand --vr-red unchanged */
+  white-space: nowrap;
+  transform: rotate(-5deg);
+  pointer-events: none;
+}
+
+/* Whole-pixel type sizes: the line breaking is computed from these exact values. */
+.stage {
+  --fig-h: clamp(420px, 42vw, 600px);
+  --fig-w: calc(var(--fig-h) * var(--fig-ratio));
+  position: relative;
+  width: 100%;
+  max-width: 1120px;
+  min-height: var(--fig-h);
+  font-family: var(--font-serif);
+  font-size: 24px;
+  line-height: 34px;
+}
+
+.figure {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--fig-w);
+  height: var(--fig-h);
+  transform: translateX(-50%);
+  user-select: none;
+}
+
+.figure svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Before the script runs (and without JS): two plain columns either side of the dress. */
+.copy {
+  columns: 2;
+  column-gap: calc(var(--fig-w) + 1.7em);
+  text-align: justify;
+}
+
+.copy p + p {
+  text-indent: 1.5em;
+}
+
+/* The pool the letter is drawn on. Hidden until SilhouetteLetter.tsx has typeset it. */
+.pool {
+  display: none;
+  position: absolute;
+  left: -28px; /* = PAD in SilhouetteLetter.tsx */
+  top: -28px;
+  width: calc(100% + 56px);
+  height: calc(100% + 56px);
+  max-width: none;
+  pointer-events: none;
+}
+
+.stage[data-flow] .pool {
+  display: block;
+}
+
+/* Once typeset: the plain copy stays for screen readers only, and the dress can be dragged. */
+.stage[data-flow] .figure {
+  left: 0;
+  cursor: grab;
+  touch-action: pan-y; /* sideways drags move the dress; vertical ones still scroll the page */
+  will-change: transform;
+}
+
+.stage[data-flow] .figure[data-dragging] {
+  cursor: grabbing;
+}
+
+.stage[data-flow] .copy {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 1023px) {
+  .stage {
+    font-size: 20px;
+    line-height: 29px;
+  }
+}
+
+/* One column; the dress stands at the right edge and the text follows its left side. */
+@media (max-width: 767px) {
+  .section {
+    gap: 24px;
+  }
+
+  .stage {
+    /* Small enough that a short line still fits beside the widest part of the gown. */
+    --fig-h: min(260px, 66vw);
+    font-size: 17px;
+    line-height: 26px;
+  }
+
+  .figure {
+    position: static;
+    float: right;
+    margin-left: 12px;
+    transform: none;
+  }
+
+  .stage[data-flow] .figure {
+    position: absolute;
+    float: none;
+    margin: 0;
+  }
+
+  .copy {
+    columns: 1;
+    text-align: left;
+  }
+}

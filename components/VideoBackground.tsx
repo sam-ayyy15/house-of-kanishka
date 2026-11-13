@@ -7,14 +7,16 @@ type Props = {
   sources: { src: string; type: string }[];
   poster: string;
   className?: string;
+  /** false: plays through once per visit to the page and rests on its last frame. */
+  loop?: boolean;
 };
 
 /**
- * Muted, looping background video (spec §8.1 M1, §12.4 #6, §12.5).
+ * Muted background video, looping unless loop={false} (spec §8.1 M1, §12.4 #6, §12.5).
  * - Loads only when the section is near the viewport.
  * - Shows the poster only, never playing, with prefers-reduced-motion or Save-Data.
  */
-export function VideoBackground({ sources, poster, className }: Props) {
+export function VideoBackground({ sources, poster, className, loop = true }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
   const [load, setLoad] = useState(false);
 
@@ -25,20 +27,29 @@ export function VideoBackground({ sources, poster, className }: Props) {
     const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
     if (reduced || saveData) return;
 
-    const observer = new IntersectionObserver(
+    // Start loading a little before the section arrives.
+    const near = new IntersectionObserver(([entry]) => entry.isIntersecting && setLoad(true), { rootMargin: '200px 0px' });
+    // A loop may start as soon as any of it shows. A film that plays once waits until a good
+    // part of the section is on screen, so its opening isn't spent out of sight.
+    const visible = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setLoad(true);
-          video.play().catch(() => {});
+          // A film that plays once is not started again after it has finished.
+          if (!video.ended) video.play().catch(() => {});
         } else {
           video.pause();
         }
       },
-      { rootMargin: '200px 0px' },
+      loop ? { rootMargin: '200px 0px' } : { threshold: 0.4 },
     );
-    observer.observe(video);
-    return () => observer.disconnect();
-  }, []);
+    near.observe(video);
+    visible.observe(video);
+    return () => {
+      near.disconnect();
+      visible.disconnect();
+    };
+  }, [loop]);
 
   return (
     <video
@@ -46,7 +57,7 @@ export function VideoBackground({ sources, poster, className }: Props) {
       className={`${styles.video} ${className ?? ''}`}
       poster={poster}
       muted
-      loop
+      loop={loop}
       playsInline
       preload="none"
       aria-hidden="true"

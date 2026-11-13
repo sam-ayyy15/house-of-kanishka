@@ -92,8 +92,20 @@
     padding: calc(var(--header-h) + 24px) var(--pad-x) 40px;
   }
 
+  /* Phones only. Her face is at the very top of every frame, so a full-height crop puts it
+     under the header and headline. The film starts just below the headline instead, which
+     puts her face in the open space above the services. The section takes the colour of the
+     film's red wall and the film's top edge fades into it, so there is no visible seam. */
+  .section {
+    --film-top: calc(var(--header-h) + 116px); /* header + headline (2 lines at 36px) + air */
+    background: rgb(172 1 1); /* = the wall in the footage */
+  }
+
   .photo {
-    object-position: 67% 0%; /* keeps the face centred on a narrow screen */
+    top: var(--film-top);
+    height: calc(100% - var(--film-top));
+    object-position: 64% 0%; /* her face, centred on a narrow screen */
+    mask-image: linear-gradient(to bottom, transparent, #000 36px);
   }
 
   .headline {
@@ -117,8 +129,13 @@
   }
 }
 
-/* The photo eases back from a slight zoom on first view; it scales from the top edge so
-   the head, which touches the top of the source, is never cut. */
-.photo {
-  transform-origin: 50% 0;
+/* Moving footage changes under the text from frame to frame: a soft shade at the top and
+   bottom keeps the headline and the three services readable throughout. */
+.shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgb(0 0 0 / 0.32), transparent 34%),
+    linear-gradient(to top, rgb(0 0 0 / 0.5), transparent 52%);
+  pointer-events: none;
 }

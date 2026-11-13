@@ -77,8 +77,9 @@ export const products: Product[] = [
       { src: `${P}/pdp-3.jpg`, alt: 'Back view, stem tied at the waist', fit: 'cover' },
     ],
   },
-  apparel('flowing-halter-dress', 'Flowing Halter Dress', 8095, 'model-magenta-halter', ['midi-maxi', 'party'], 'Magenta',
-    'A halter-neck midi dress cut close to the body, in a saturated magenta.', { isNew: true }), // reference (S4)
+  // Image: client photo (reference/images/Burgundy Satin Halter Dress Model.png, scripts/make-model-cutouts.mjs).
+  apparel('flowing-halter-dress', 'Flowing Halter Dress', 8095, 'model-burgundy-satin-halter', ['midi-maxi', 'party'], 'Burgundy',
+    'A high halter-neck dress in burgundy satin, gathered at the waist and falling to the knee.', { isNew: true }), // reference (S4)
   apparel('patterned-halter-maxi-dress', 'Patterned Halter Maxi Dress', 11900, 'model-patterned-maxi', ['midi-maxi', 'party'], 'Black',
     'A halter maxi dress in a black-and-white print with a tiered, flowing skirt.'),
   apparel('strapless-top-and-trousers', 'Strapless Top and Trousers', 8995, 'model-cream-strapless', ['party'], 'Cream',
@@ -96,12 +97,15 @@ export const products: Product[] = [
         { src: `${P}/plp-pink-back.jpg`, alt: 'Floral Satin Midi Dress, back', fit: 'contain' },
       ],
     }),
-  // reference (S4): the name is "Halter Long Dress" although the photo shows a blazer suit.
-  apparel('halter-long-dress', 'Halter Long Dress', 8095, 'halter-long-dress', ['midi-maxi'], 'Cream',
-    'Shown in cream.', { isNew: true, card: 'photo', gallery: [{ src: `${P}/halter-long-dress.jpg`, alt: 'Halter Long Dress', fit: 'cover' }] }),
+  // reference (S4) name. Image: client photo (reference/images/Burgundy Velvet Gown with Thigh
+  // Slit.png, scripts/make-model-cutouts.mjs), a cut-out like the other dresses.
+  apparel('halter-long-dress', 'Halter Long Dress', 8095, 'model-burgundy-velvet-gown', ['midi-maxi', 'party'], 'Burgundy',
+    'A floor-length halter gown in burgundy velvet, ruched at the hip with a high thigh slit.', { isNew: true }),
+  // Was "Ball Earrings" in the reference (S4); renamed and moved to dresses (client request).
+  // Image: client photo (reference/images/Ivory Satin Halter Gown Portrait.png, scripts/make-model-cutouts.mjs).
+  apparel('ivory-satin', 'Ivory Satin', 8095, 'model-ivory-satin-gown', ['midi-maxi', 'satin'], 'Ivory',
+    'A floor-length halter gown in ivory satin, with a corseted waist and soft draping at the hip.', { isNew: true }),
 
-  accessory('ball-earrings', 'Ball Earrings', 8095, 'ball-earrings', 'jewelry', 'Gold',
-    'Sculptural gold-tone heart earrings.', { isNew: true }), // reference (S4)
   accessory('pack-of-3-rigid-bracelets', 'Pack of 3 Rigid Bracelets', 2000, 'plp-bracelets', 'jewelry', 'Gold',
     'Three rigid bracelets in wood, cream and gold tones.'), // reference (S2)
   accessory('mini-bag-with-metal-handle', 'Mini Bag with Metal Handle', 5500, 'plp-mini-bag', 'bags', 'Gold',
@@ -141,7 +145,7 @@ export const newIn = products.filter((p) => p.isNew);
 // Homepage New Arrivals, S4 editorial row (spec §4.2 variant A).
 export const newArrivals = {
   dress: need('flowing-halter-dress'),
-  earrings: need('ball-earrings'),
+  oval: need('ivory-satin'),
   framed: need('halter-long-dress'),
 };
 

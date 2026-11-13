@@ -122,6 +122,12 @@
   pointer-events: none;
 }
 
+/* The house lotus in white, opening above the closing line. */
+.closingEmblem {
+  position: relative;
+  width: 64px;
+}
+
 .closingText {
   position: relative;
   max-width: 20em;

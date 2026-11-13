@@ -6,6 +6,9 @@
   padding: 104px var(--pad-x) max(140px, 22vw);
   background: var(--vr-white);
   text-align: center;
+  /* The script's letters carry padding for their pen mask; on a phone those boxes reach past
+     the screen edge (the ink itself doesn't) and would let the page scroll sideways. */
+  overflow-x: clip;
 }
 
 .eyebrow {

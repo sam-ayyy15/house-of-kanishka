@@ -1,5 +1,8 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import { DRESS_RATIO, DressSilhouette } from '@/components/brand/DressSilhouette';
+import { SilhouetteLetter } from '@/components/brand/SilhouetteLetter';
+import { Emblem } from '@/components/Emblem';
 import { Eyebrow } from '@/components/Eyebrow';
 import { Handwriting } from '@/components/Handwriting';
 import { Header } from '@/components/Header';
@@ -58,10 +61,13 @@ export default function BrandPage() {
           </div>
         </section>
 
+        <SilhouetteLetter figure={<DressSilhouette />} ratio={DRESS_RATIO} />
+
         <section className={styles.closing}>
           <p className={styles.closingScript} aria-hidden="true" data-reveal="write">
             <Handwriting text="Looking for our stories" decorative />
           </p>
+          <Emblem className={styles.closingEmblem} />
           <p className={styles.closingText}>
             See the season in full, from <em>Golden Hour Paris</em> to <em>Season Of Grace</em>.
           </p>

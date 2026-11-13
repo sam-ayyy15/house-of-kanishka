@@ -17,11 +17,14 @@
   line-height: 1.1;
 }
 
-/* Editorial row (S4). Column widths as % of the content width: ~30 / 22 / 41. */
+/* Editorial row (S4). All three slots are 48.5 % of the content width tall. The oval
+   (22 %) and the frame (41 %) keep their reference widths; the first slot is only as wide
+   as its model photo (0.3 × 48.5 % = 14.55 %), so the space left over splits into two equal
+   gaps and the three dresses sit evenly apart (client request). */
 .row {
   display: grid;
-  grid-template-columns: 30fr 22fr 41fr;
-  column-gap: 3.5%;
+  grid-template-columns: 14.55% 22% 41%;
+  justify-content: space-between;
   align-items: end;
 }
 
@@ -31,29 +34,40 @@
   gap: 18px;
 }
 
-/* Slot 1: cut-out model; its box is as tall as the framed photo so the bottoms align. */
+/* Slot 1's caption stays on one line, running into the gap beside it, so the three
+   captions (and the three photos above them) stay level. */
+.cutout {
+  white-space: nowrap;
+}
+
+/* Slot 1: cut-out model; its box is the photo's own shape, as tall as the other slots.
+   The photo has white space either side of the model; shifting it by that margin makes the
+   visible gap from this model to the oval match the gap from the oval to the frame. */
 .cutoutMedia {
   position: relative;
-  aspect-ratio: 30 / 48.5;
+  aspect-ratio: 0.3;
 }
 
-/* Slot 2: object on a light-grey ellipse, top-aligned so its caption sits higher. */
-.oval {
-  align-self: start;
+.cutoutMedia img {
+  translate: 9.5% 0;
 }
 
+/* Slot 2: a model on a light-grey ellipse. The ellipse is as tall as the other two slots
+   (22 / 48.5 = the cut-out box's height in this narrower column), so the figure stands at
+   the same size as the models beside it and the three captions line up. */
 .ovalMedia {
   position: relative;
-  aspect-ratio: 0.75;
+  aspect-ratio: 22 / 48.5;
   border-radius: 50%;
   overflow: hidden;
   background: var(--vr-grey-oval);
 }
 
-/* Placeholder crop carries its own grey; darken blends it into the CSS oval. */
+/* White ground of the cut-out blended into the oval; same top room as the framed slot. */
 .ovalImg {
   object-fit: contain;
-  padding: 8%;
+  object-position: 50% 100%;
+  padding: 6% 0 0;
   mix-blend-mode: darken;
 }
 
@@ -71,6 +85,14 @@
 
 .cover {
   object-fit: cover;
+}
+
+/* A cut-out (white ground) in the framed slot: whole figure, white blended into the frame. */
+.framedCutout {
+  object-fit: contain;
+  object-position: 50% 100%;
+  padding: 6% 0 0;
+  mix-blend-mode: darken;
 }
 
 .grid {

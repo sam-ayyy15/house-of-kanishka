@@ -11,7 +11,7 @@ import styles from './NewArrivals.module.css';
  * Mobile: the S3 2-column grid of cut-outs without captions.
  */
 export function NewArrivals() {
-  const { dress, earrings, framed } = newArrivals;
+  const { dress, oval, framed } = newArrivals;
   return (
     <section className={styles.section} aria-labelledby="new-arrivals-title">
       <div className={styles.head}>
@@ -27,21 +27,22 @@ export function NewArrivals() {
       <div className={styles.row}>
         <Link href={productHref(dress)} className={`${styles.item} ${styles.cutout}`} data-reveal="rise">
           <div className={styles.cutoutMedia}>
-            <Image src={dress.image} alt={dress.name} fill sizes="30vw" className={styles.contain} />
+            <Image src={dress.image} alt={dress.name} fill sizes="15vw" className={styles.contain} />
           </div>
           <ProductCaption name={dress.name} priceCents={dress.priceCents} />
         </Link>
 
-        <Link href={productHref(earrings)} className={`${styles.item} ${styles.oval}`} data-reveal="rise" style={{ '--reveal-delay': '80ms' } as React.CSSProperties}>
+        <Link href={productHref(oval)} className={`${styles.item} ${styles.oval}`} data-reveal="rise" style={{ '--reveal-delay': '80ms' } as React.CSSProperties}>
           <div className={styles.ovalMedia}>
-            <Image src={earrings.image} alt={earrings.name} fill sizes="22vw" className={styles.ovalImg} />
+            <Image src={oval.image} alt={oval.name} fill sizes="22vw" className={styles.ovalImg} />
           </div>
-          <ProductCaption name={earrings.name} priceCents={earrings.priceCents} />
+          <ProductCaption name={oval.name} priceCents={oval.priceCents} />
         </Link>
 
         <Link href={productHref(framed)} className={`${styles.item} ${styles.framed}`} data-reveal="rise" style={{ '--reveal-delay': '160ms' } as React.CSSProperties}>
           <div className={styles.framedMedia} data-reveal="curtain" style={{ '--reveal-delay': '160ms' } as React.CSSProperties}>
-            <Image src={framed.image} alt={framed.name} fill sizes="41vw" className={styles.cover} />
+            {/* A studio photo fills the frame; a cut-out stands whole inside it. */}
+            <Image src={framed.image} alt={framed.name} fill sizes="41vw" className={framed.card === 'photo' ? styles.cover : styles.framedCutout} />
           </div>
           <ProductCaption name={framed.name} priceCents={framed.priceCents} />
         </Link>

@@ -148,6 +148,8 @@
 
   .lifestyle {
     position: relative;
+    left: auto; /* the desktop placements (.front / .back) would shift them sideways */
+    top: auto;
     height: 380px;
   }
 }

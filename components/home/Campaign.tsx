@@ -14,11 +14,17 @@ const labels = [
 export function Campaign() {
   return (
     <section className={styles.section} aria-label="Campaigns">
-      {/* Placeholder (A02): local-only Ken Burns loop over a reference still. Never ship. */}
+      {/* Client's own campaign film: muted, plays once per visit to the page (poster only with
+          reduced motion or Save-Data). Made from reference/images/v1.MP4 by
+          scripts/make-videos.mjs. */}
       <VideoBackground
         className={styles.video}
-        poster="/placeholders/campaign.jpg"
-        sources={[{ src: '/placeholders/campaign-loop.webm', type: 'video/webm' }]}
+        poster="/media/campaign-poster.jpg"
+        loop={false}
+        sources={[
+          { src: '/media/campaign.webm', type: 'video/webm' },
+          { src: '/media/campaign.mp4', type: 'video/mp4' },
+        ]}
       />
       {labels.map((l, i) => (
         <OverlayLabel

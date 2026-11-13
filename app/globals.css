@@ -339,6 +339,44 @@ html:has(dialog[open]) {
   }
 }
 
+/* 5. Emblem bloom: the lotus (<Emblem>) opens ring by ring from its base, each petal rising
+      out of the flower's heart (scaled from the bottom centre of the emblem). Step --s is
+      the ring; the four rings follow each other 140 ms apart. data-reveal="bloom" opens on
+      first view, data-bloom="load" as soon as it is shown. */
+.emblem {
+  display: block;
+  overflow: visible;
+}
+
+.emblem path {
+  transform-box: view-box;
+  transform-origin: 50% 96%;
+}
+
+@keyframes emblem-bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+[data-reveal='bloom'][data-reveal-state='pending'] {
+  opacity: 1;
+}
+
+[data-reveal='bloom'][data-reveal-state='pending'] path {
+  opacity: 0;
+  transform: scale(0.35);
+}
+
+[data-reveal='bloom'][data-reveal-state='in'] path,
+[data-bloom='load'] path {
+  animation: emblem-bloom 1100ms var(--ease-out) calc(var(--bloom-delay, var(--reveal-delay, 0ms)) + var(--s) * 140ms) both;
+}
+
 /* ---------- Page transitions (client request) ----------
    Old page fades out (220 ms), then the new page fades in with a 12 px rise (520 ms),
    overlapping a little so there is never a blank flash. The header doesn't move. */

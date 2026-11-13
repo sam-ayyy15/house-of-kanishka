@@ -2,11 +2,10 @@ node_modules/
 .next/
 next-env.d.ts
 *.tsbuildinfo
-# Third-party reference media and placeholders made from it: local only, never ship.
-public/placeholders/
+# Third-party reference mockups and video frames: local only, never ship.
+# (public/placeholders/ ships on purpose: private repo, client preview.)
 reference/screenshots/
 reference/video-frames/
-reference/images/
 # Screenshot comparisons
 .shots/
 .next-dev.log

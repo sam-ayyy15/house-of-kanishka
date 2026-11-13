@@ -1,3 +1,9 @@
+/* The house lotus opening above the empty-bag message. */
+.emptyEmblem {
+  width: 64px;
+  color: var(--vr-red);
+}
+
 .empty {
   display: flex;
   flex-direction: column;

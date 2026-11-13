@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { formatPrice } from '@/lib/format';
 import { FREE_SHIPPING_CENTS, getProduct, productHref } from '@/lib/products';
 import { setQty, useStore } from '@/lib/store';
+import { Emblem } from '../Emblem';
 import styles from './BagView.module.css';
 
 /** Resolved bag lines and subtotal, shared by the bag and checkout pages. */
@@ -25,6 +26,7 @@ export function BagView() {
   if (lines.length === 0) {
     return (
       <div className={styles.empty}>
+        <Emblem bloom="load" className={styles.emptyEmblem} />
         <h1 className="page-title">Your bag is empty</h1>
         <Link href="/new-arrivals" className="btn btn-black">
           Shop new arrivals

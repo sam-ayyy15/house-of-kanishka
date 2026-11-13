@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { products } from '@/lib/products';
 import { useStore } from '@/lib/store';
+import { Emblem } from '../Emblem';
 import { ProductGrid } from '../plp/ProductGrid';
 import styles from './Simple.module.css';
 
@@ -23,6 +24,7 @@ export function WishlistView() {
       </div>
       {saved.length === 0 ? (
         <div className={styles.empty}>
+          <Emblem bloom="load" className={styles.emptyEmblem} />
           <p className={styles.emptyText}>Tap the heart on any piece to keep it here.</p>
           <Link href="/new-arrivals" className="btn btn-black">
             Shop new arrivals

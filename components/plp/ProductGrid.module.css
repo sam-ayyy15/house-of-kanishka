@@ -43,6 +43,12 @@
   mix-blend-mode: darken;
 }
 
+/* Model cut-outs: a little room above the head, so the hover zoom (3 %, from the feet)
+   never pushes the head past the top of the card. */
+.media[data-card='cutout'] img {
+  padding-top: 3%;
+}
+
 .media[data-card='photo'] img {
   object-fit: cover;
   object-position: 50% 30%;

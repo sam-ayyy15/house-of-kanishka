@@ -10,7 +10,7 @@ const ROUTES = process.argv.slice(2).length ? process.argv.slice(2) : [
 ];
 const SEED = JSON.stringify({
   bag: [{ slug: 'carnivorous-rose-blazer', size: 'S/36', qty: 1 }, { slug: 'wool-beret', size: 'One size', qty: 2 }],
-  wishlist: ['flowing-halter-dress', 'pyramid-leather-tote', 'ball-earrings'],
+  wishlist: ['flowing-halter-dress', 'pyramid-leather-tote', 'ivory-satin'],
 });
 mkdirSync('.shots/tour', { recursive: true });
 const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome' });

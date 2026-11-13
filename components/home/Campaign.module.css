@@ -56,26 +56,3 @@
     bottom: 32px;
   }
 }
-
-/* Scroll-linked depth: the footage is drawn 10 % larger and drifts 4 % each way as the
-   section crosses the screen (CSS scroll timeline; still where unsupported or with
-   reduced motion). */
-@keyframes campaign-parallax {
-  from {
-    translate: 0 -4%;
-  }
-  to {
-    translate: 0 4%;
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    .video {
-      scale: 1.1;
-      animation: campaign-parallax linear both;
-      animation-timeline: view();
-      animation-range: cover;
-    }
-  }
-}

@@ -1,7 +1,7 @@
-import Image from 'next/image';
 import { Phone, RefreshCw, Truck } from 'lucide-react';
 import { RiseWords } from '../RiseWords';
 import { UnderlineLink } from '../UnderlineLink';
+import { VideoBackground } from '../VideoBackground';
 import styles from './Promo.module.css';
 
 // Spec §4.7 copy; threshold in EUR (approved, Q7). All three links open the Help page,
@@ -27,12 +27,24 @@ const services = [
   },
 ];
 
-/** Homepage §4.7: full-bleed photo, headline top-left, three services along the bottom. */
+/** Homepage §4.7: full-bleed film, headline top-left, three services along the bottom. */
 export function Promo() {
   return (
     <section className={styles.section} aria-labelledby="promo-title">
-      {/* Placeholder (A05): local-only crop of the reference. Never ship. */}
-      <Image src="/placeholders/promo.jpg" alt="" fill sizes="100vw" className={styles.photo} data-reveal="settle" />
+      {/* Client's own promo film: muted, plays once per visit to the page, and only while the
+          section is on screen
+          (poster only with reduced motion or Save-Data). Made from reference/images/v2.MP4 by
+          scripts/make-videos.mjs. */}
+      <VideoBackground
+        className={styles.photo}
+        poster="/media/promo-poster.jpg"
+        loop={false}
+        sources={[
+          { src: '/media/promo.webm', type: 'video/webm' },
+          { src: '/media/promo.mp4', type: 'video/mp4' },
+        ]}
+      />
+      <div className={styles.shade} aria-hidden="true" />
 
       <h2 id="promo-title" className={styles.headline} data-reveal="words">
         <RiseWords text="Up to 50% Off." />

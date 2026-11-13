@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { collections, collectionHref } from '@/lib/collections';
+import { Emblem } from './Emblem';
 import styles from './Footer.module.css';
 
 const columns = [
@@ -41,6 +42,7 @@ export function Footer() {
     <footer className={styles.footer}>
       <div className={styles.top}>
         <Link href="/" className={styles.logo}>
+          <Emblem className={styles.emblem} />
           House of Kanishka
         </Link>
         <nav className={styles.columns} aria-label="Footer">

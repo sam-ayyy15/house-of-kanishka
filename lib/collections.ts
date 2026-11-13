@@ -18,7 +18,7 @@ export const collections: Collection[] = [
     title: ['ASH X COS', '2025'],
     hero: { kind: 'video' },
     intro: 'Colour in motion: the campaign in pieces.',
-    products: ['flowing-halter-dress', 'floral-satin-midi-dress', 'wool-beret', 'ball-earrings', 'printed-silk-scarf'],
+    products: ['flowing-halter-dress', 'floral-satin-midi-dress', 'wool-beret', 'ivory-satin', 'printed-silk-scarf'],
   },
   {
     slug: 'golden-hour-paris',
@@ -34,7 +34,7 @@ export const collections: Collection[] = [
     title: ['Midnight', 'Rôse'],
     hero: { kind: 'photo', src: '/placeholders/hero.jpg', position: '90% 0%', positionMobile: '53% 0%' },
     intro: 'After dark: deep tones, gold and a single rose.',
-    products: ['carnivorous-rose-blazer', 'patterned-halter-maxi-dress', 'ball-earrings', 'rectangular-sunglasses', 'pyramid-leather-tote'],
+    products: ['carnivorous-rose-blazer', 'patterned-halter-maxi-dress', 'ivory-satin', 'rectangular-sunglasses', 'pyramid-leather-tote'],
   },
   {
     slug: 'autumn-edition-paris',

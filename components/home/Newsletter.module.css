@@ -58,6 +58,52 @@
   text-transform: uppercase;
 }
 
+/* The lotus inside the email field (client request). Pale at rest so the field reads as
+   the reference; darker while in use; brand red, with a small lift, once the address is a
+   valid email. Only colour and transform change. */
+.field {
+  position: relative;
+  display: flex;
+}
+
+.input {
+  padding-right: 62px; /* room for the lotus */
+}
+
+.fieldEmblem {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  width: 32px;
+  margin-top: -10px; /* half its height (32 × 810/1278) */
+  color: #b4b4b4;
+  pointer-events: none;
+  transition: color var(--dur-base) ease;
+}
+
+.field:has(.input:focus) .fieldEmblem {
+  color: var(--vr-black);
+}
+
+@keyframes emblem-lift {
+  40% {
+    transform: translateY(-3px) scale(1.14);
+  }
+}
+
+.field:has(.input:valid:not(:placeholder-shown)) .fieldEmblem {
+  color: var(--vr-red);
+  animation: emblem-lift 700ms var(--ease-out);
+}
+
+.thanksEmblem {
+  display: inline-block;
+  width: 26px;
+  margin-right: 12px;
+  vertical-align: -2px;
+  color: var(--vr-red);
+}
+
 /* EXTRAPOLATED – no reference design: heading reflows, form stacks full width. */
 @media (max-width: 767px) {
   .section {
@@ -75,6 +121,7 @@
     gap: 10px;
   }
 
+  .field,
   .input,
   .button {
     width: 100%;
