@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import type { Product } from '@/lib/products';
 import { Drawer } from '../Drawer';
 import { Header } from '../Header';
+import { RiseWords } from '../RiseWords';
 import { ProductGrid } from './ProductGrid';
 import styles from './Listing.module.css';
 
@@ -69,7 +70,9 @@ export function Listing({ title, products, tabs, initialTag = '', interstitial, 
       <Header mobileLeft="filter" onFilter={() => setFilterOpen(true)} />
       <main className={`page-solid ${styles.main}`}>
         <div className={styles.titleRow}>
-          <h1 className={styles.title}>{title}</h1>
+          <h1 className={styles.title} data-rise="load">
+            <RiseWords text={title} />
+          </h1>
           <button type="button" className={styles.filter} onClick={() => setFilterOpen(true)}>
             Filter{activeFilters ? ` (${activeFilters})` : ''}
           </button>

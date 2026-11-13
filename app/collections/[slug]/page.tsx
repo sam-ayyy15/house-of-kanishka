@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { NewCollection } from '@/components/home/NewCollection';
 import { ProductGrid } from '@/components/plp/ProductGrid';
+import { RiseWords } from '@/components/RiseWords';
 import { UnderlineLink } from '@/components/UnderlineLink';
 import { VideoBackground } from '@/components/VideoBackground';
 import { collectionHref, collections, getCollection } from '@/lib/collections';
@@ -66,13 +67,17 @@ export default async function CollectionPage({ params }: Params) {
 
         <section className={styles.intro}>
           <p className={styles.eyebrow}>{collection.eyebrow}</p>
-          <h1 className={styles.title}>{collection.title.join(' ')}</h1>
-          <p className={styles.introText}>{collection.intro}</p>
+          <h1 className={styles.title} data-reveal="words">
+            <RiseWords text={collection.title.join(' ')} />
+          </h1>
+          <p className={styles.introText} data-reveal="rise" style={{ '--reveal-delay': '220ms' } as React.CSSProperties}>
+            {collection.intro}
+          </p>
         </section>
 
         <ProductGrid products={pieces} />
 
-        <nav className={styles.next} aria-label="Next collection">
+        <nav className={styles.next} aria-label="Next collection" data-reveal="rise">
           <p className={styles.eyebrow}>Next</p>
           <UnderlineLink href={collectionHref(next.slug)} className={styles.nextLink}>
             {next.title.join(' ')}

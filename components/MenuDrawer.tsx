@@ -27,8 +27,8 @@ export function MenuDrawer({ open, onClose }: { open: boolean; onClose: () => vo
     <Drawer open={open} onClose={onClose} side="left" label="Menu">
       <nav aria-label="Menu" className={styles.nav}>
         <ul className={styles.primary}>
-          {shop.map((l) => (
-            <li key={l.href}>
+          {shop.map((l, i) => (
+            <li key={l.href} style={{ '--i': i } as React.CSSProperties}>
               <Link href={l.href} onClick={onClose} className={styles.primaryLink}>
                 {l.label}
               </Link>
@@ -38,8 +38,8 @@ export function MenuDrawer({ open, onClose }: { open: boolean; onClose: () => vo
 
         <p className={styles.heading}>Collections</p>
         <ul className={styles.secondary}>
-          {collections.map((c) => (
-            <li key={c.slug}>
+          {collections.map((c, i) => (
+            <li key={c.slug} style={{ '--i': shop.length + 1 + i } as React.CSSProperties}>
               <Link href={collectionHref(c.slug)} onClick={onClose} className={styles.secondaryLink}>
                 {c.title.join(' ')}
               </Link>
@@ -48,8 +48,8 @@ export function MenuDrawer({ open, onClose }: { open: boolean; onClose: () => vo
         </ul>
 
         <ul className={styles.utility}>
-          {utility.map((l) => (
-            <li key={l.href}>
+          {utility.map((l, i) => (
+            <li key={l.href} style={{ '--i': shop.length + collections.length + 2 + i * 0.5 } as React.CSSProperties}>
               <Link href={l.href} onClick={onClose} className={styles.utilityLink}>
                 {l.label}
               </Link>

@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { Eyebrow } from '@/components/Eyebrow';
+import { Handwriting } from '@/components/Handwriting';
 import { Header } from '@/components/Header';
+import { RiseWords } from '@/components/RiseWords';
 import { UnderlineLink } from '@/components/UnderlineLink';
 import styles from './page.module.css';
 
@@ -27,14 +29,16 @@ export default function BrandPage() {
 
         <section className={styles.statement}>
           <Eyebrow>Who we are</Eyebrow>
-          <p className={styles.statementText} data-reveal="rise">
-            Inspired by Parisian elegance and modern simplicity, we create pieces that move with you,{' '}
-            <em>effortlessly complementing your life and style</em>
+          <p className={styles.statementText} data-reveal="words">
+            <RiseWords text="Inspired by Parisian elegance and modern simplicity, we create pieces that move with you," />{' '}
+            <em>
+              <RiseWords text="effortlessly complementing your life and style" from={14} />
+            </em>
           </p>
         </section>
 
         <section className={styles.split}>
-          <div className={styles.splitPhoto} data-reveal="fade">
+          <div className={styles.splitPhoto} data-reveal="curtain">
             <Image src="/placeholders/who-we-are.jpg" alt="" fill sizes="(max-width: 767px) 100vw, 46vw" />
           </div>
           <div className={styles.notes}>
@@ -55,8 +59,8 @@ export default function BrandPage() {
         </section>
 
         <section className={styles.closing}>
-          <p className={styles.closingScript} aria-hidden="true">
-            Looking for our stories
+          <p className={styles.closingScript} aria-hidden="true" data-reveal="write">
+            <Handwriting text="Looking for our stories" decorative />
           </p>
           <p className={styles.closingText}>
             See the season in full, from <em>Golden Hour Paris</em> to <em>Season Of Grace</em>.

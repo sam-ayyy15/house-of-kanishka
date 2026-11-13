@@ -71,3 +71,14 @@
     padding: 64px var(--pad-x) 48px;
   }
 }
+
+/* The hero photo eases back from a slight zoom on load. */
+@keyframes collection-settle {
+  from {
+    scale: 1.045;
+  }
+}
+
+.heroPhoto {
+  animation: collection-settle 1800ms var(--ease-out) both;
+}

@@ -25,8 +25,9 @@ export function ProductGrid({ products, captions = 'always', columns = 5 }: Prop
       // A grid of objects only (accessories) uses 4:5 tiles instead of full-length boxes.
       data-tiles={products.every((p) => p.card === 'tile') || undefined}
     >
-      {products.map((p) => (
-        <li key={p.slug}>
+      {products.map((p, i) => (
+        // Cards rise in on first view, one after another across the row.
+        <li key={p.slug} data-reveal="rise" style={{ '--reveal-delay': `${(i % columns) * 70}ms` } as React.CSSProperties}>
           <Link href={productHref(p)} className={styles.card}>
             <div className={styles.media} data-card={p.card}>
               <Image src={p.image} alt={p.name} fill sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 20vw" />

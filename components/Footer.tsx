@@ -44,8 +44,8 @@ export function Footer() {
           House of Kanishka
         </Link>
         <nav className={styles.columns} aria-label="Footer">
-          {columns.map((col) => (
-            <div key={col.title}>
+          {columns.map((col, i) => (
+            <div key={col.title} data-reveal="rise" style={{ '--reveal-delay': `${i * 80}ms` } as React.CSSProperties}>
               <h2 className={styles.heading}>{col.title}</h2>
               <ul className={styles.list}>
                 {col.links.map((l) => (

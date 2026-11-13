@@ -109,3 +109,15 @@
     font-size: 34px;
   }
 }
+
+/* On load the details rise in just after the title's words. */
+@keyframes pdp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+.info {
+  animation: pdp-rise var(--dur-slow) var(--ease-out) 260ms both;
+}

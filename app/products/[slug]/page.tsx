@@ -4,6 +4,7 @@ import { Header } from '@/components/Header';
 import { PdpGallery } from '@/components/pdp/PdpGallery';
 import { PdpInfo } from '@/components/pdp/PdpInfo';
 import { ProductGrid } from '@/components/plp/ProductGrid';
+import { RiseWords } from '@/components/RiseWords';
 import { getProduct, products } from '@/lib/products';
 import styles from './page.module.css';
 
@@ -35,7 +36,9 @@ export default async function ProductPage({ params }: Params) {
           One or two photos: EXTRAPOLATED – no reference design: a split, with the photo
           beside the details so the page is never left half empty. */}
       <main className={styles.main} data-layout={product.gallery.length >= 3 ? 'row' : 'split'}>
-        <h1 className={styles.title}>{product.name}</h1>
+        <h1 className={styles.title} data-rise="load">
+          <RiseWords text={product.name} />
+        </h1>
         <div className={styles.info}>
           <PdpInfo product={product} />
         </div>
@@ -45,8 +48,8 @@ export default async function ProductPage({ params }: Params) {
       </main>
       {related.length > 0 && (
         <section className={styles.related} aria-labelledby="related-title">
-          <h2 id="related-title" className={styles.relatedTitle}>
-            You may also like
+          <h2 id="related-title" className={styles.relatedTitle} data-reveal="words">
+            <RiseWords text="You may also like" />
           </h2>
           <ProductGrid products={related} />
         </section>

@@ -81,3 +81,22 @@
     font-size: 38px;
   }
 }
+
+/* Opening: the links rise in one after another behind the sliding panel. @starting-style
+   gives them their "before" state each time the dialog opens; nothing is hidden at rest. */
+@media (prefers-reduced-motion: no-preference) {
+  :global(dialog[open]) .nav li,
+  :global(dialog[open]) .heading {
+    transition:
+      opacity 500ms var(--ease-out) calc(140ms + var(--i, 4.5) * 45ms),
+      transform 500ms var(--ease-out) calc(140ms + var(--i, 4.5) * 45ms);
+  }
+
+  @starting-style {
+    :global(dialog[open]) .nav li,
+    :global(dialog[open]) .heading {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+}
