@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { newArrivals, newArrivalsMobile, productHref } from '@/lib/products';
 import { ProductCaption } from '../ProductCaption';
+import { RiseWords } from '../RiseWords';
 import { UnderlineLink } from '../UnderlineLink';
 import styles from './NewArrivals.module.css';
 
@@ -14,8 +15,11 @@ export function NewArrivals() {
   return (
     <section className={styles.section} aria-labelledby="new-arrivals-title">
       <div className={styles.head}>
-        <h2 id="new-arrivals-title" className={styles.title}>
-          <span className={styles.our}>Our </span>New Arrivals
+        <h2 id="new-arrivals-title" className={styles.title} data-reveal="words">
+          <span className={styles.our}>
+            <RiseWords text="Our" />{' '}
+          </span>
+          <RiseWords text="New Arrivals" from={1} />
         </h2>
         <UnderlineLink href="/new-arrivals">View all</UnderlineLink>
       </div>
@@ -36,7 +40,7 @@ export function NewArrivals() {
         </Link>
 
         <Link href={productHref(framed)} className={`${styles.item} ${styles.framed}`} data-reveal="rise" style={{ '--reveal-delay': '160ms' } as React.CSSProperties}>
-          <div className={styles.framedMedia}>
+          <div className={styles.framedMedia} data-reveal="curtain" style={{ '--reveal-delay': '160ms' } as React.CSSProperties}>
             <Image src={framed.image} alt={framed.name} fill sizes="41vw" className={styles.cover} />
           </div>
           <ProductCaption name={framed.name} priceCents={framed.priceCents} />

@@ -30,7 +30,7 @@ export function NewCollection({ asHero = false }: { asHero?: boolean }) {
         </span>
       </p>
 
-      <div className={styles.mask}>
+      <div className={styles.mask} data-reveal="fade">
         {/* Placeholder (A04): local-only crop of the reference. Never ship. */}
         <Image src="/placeholders/new-collection.jpg" alt="" fill sizes="(max-width: 767px) 88vw, 48vw" />
       </div>
@@ -41,8 +41,9 @@ export function NewCollection({ asHero = false }: { asHero?: boolean }) {
         lines={['Golden', 'Hour Paris']}
         className={`${styles.label} ${styles.tl} ${asHero ? styles.tlHero : ''}`}
         titleClassName={styles.tlTitle}
+        revealDelay={250}
       />
-      <OverlayLabel href="/collections/season-of-grace" eyebrow="New Collection" lines={['Season', 'Of Grace']} className={`${styles.label} ${styles.br}`} />
+      <OverlayLabel href="/collections/season-of-grace" eyebrow="New Collection" lines={['Season', 'Of Grace']} className={`${styles.label} ${styles.br}`} revealDelay={400} />
     </section>
   );
 }

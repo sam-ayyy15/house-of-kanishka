@@ -31,8 +31,8 @@ export function Accessories() {
           <span id="accessories-title">Accessories</span>
         </Eyebrow>
         <ul className={styles.categories}>
-          {items.map((it) => (
-            <li key={it.n}>
+          {items.map((it, i) => (
+            <li key={it.n} data-reveal="rise" style={{ '--reveal-delay': `${i * 70}ms` } as React.CSSProperties}>
               <Link href={`/accessories?type=${it.tag}`} className={styles.category} data-n={it.n}>
                 <span className={styles.index}>({it.n})</span>
                 {it.category}

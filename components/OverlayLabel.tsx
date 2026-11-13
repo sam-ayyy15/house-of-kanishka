@@ -9,12 +9,19 @@ type Props = {
   className?: string;
   titleClassName?: string;
   style?: React.CSSProperties;
+  /** Rise in on first scroll into view, after this many ms (for staggering labels). */
+  revealDelay?: number;
 };
 
 /** Eyebrow + serif title, white on photo or red (spec §3.6). Destinations are [M]. */
-export function OverlayLabel({ eyebrow, lines, href = '#', className, titleClassName, style }: Props) {
+export function OverlayLabel({ eyebrow, lines, href = '#', className, titleClassName, style, revealDelay }: Props) {
   return (
-    <Link href={href} className={`${styles.label} ${className ?? ''}`} style={style}>
+    <Link
+      href={href}
+      className={`${styles.label} ${className ?? ''}`}
+      data-reveal={revealDelay === undefined ? undefined : 'rise'}
+      style={revealDelay === undefined ? style : ({ ...style, '--reveal-delay': `${revealDelay}ms` } as React.CSSProperties)}
+    >
       <span className={styles.eyebrow}>{eyebrow}</span>
       <span className={`${styles.title} ${titleClassName ?? ''}`}>
         {lines.map((line, i) => (

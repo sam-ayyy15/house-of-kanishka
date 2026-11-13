@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Phone, RefreshCw, Truck } from 'lucide-react';
+import { RiseWords } from '../RiseWords';
 import { UnderlineLink } from '../UnderlineLink';
 import styles from './Promo.module.css';
 
@@ -31,16 +32,21 @@ export function Promo() {
   return (
     <section className={styles.section} aria-labelledby="promo-title">
       {/* Placeholder (A05): local-only crop of the reference. Never ship. */}
-      <Image src="/placeholders/promo.jpg" alt="" fill sizes="100vw" className={styles.photo} />
+      <Image src="/placeholders/promo.jpg" alt="" fill sizes="100vw" className={styles.photo} data-reveal="settle" />
 
-      <h2 id="promo-title" className={styles.headline}>
-        Up to 50% Off.
-        <br /> Don’t miss out
+      <h2 id="promo-title" className={styles.headline} data-reveal="words">
+        <RiseWords text="Up to 50% Off." />
+        <br /> <RiseWords text="Don’t miss out" from={4} />
       </h2>
 
       <ul className={styles.services}>
-        {services.map(({ Icon, title, body, link, href }) => (
-          <li key={title} className={styles.service}>
+        {services.map(({ Icon, title, body, link, href }, i) => (
+          <li
+            key={title}
+            className={styles.service}
+            data-reveal="rise"
+            style={{ '--reveal-delay': `${350 + i * 110}ms` } as React.CSSProperties}
+          >
             <Icon size={18} strokeWidth={1.25} aria-hidden="true" />
             <h3 className={styles.title}>{title}</h3>
             <p className={styles.body}>{body}</p>

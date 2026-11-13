@@ -16,11 +16,19 @@ export function Campaign() {
     <section className={styles.section} aria-label="Campaigns">
       {/* Placeholder (A02): local-only Ken Burns loop over a reference still. Never ship. */}
       <VideoBackground
+        className={styles.video}
         poster="/placeholders/campaign.jpg"
         sources={[{ src: '/placeholders/campaign-loop.webm', type: 'video/webm' }]}
       />
-      {labels.map((l) => (
-        <OverlayLabel key={l.key} href={l.href} eyebrow={l.eyebrow} lines={[...l.lines]} className={`${styles.label} ${styles[l.key]}`} />
+      {labels.map((l, i) => (
+        <OverlayLabel
+          key={l.key}
+          href={l.href}
+          eyebrow={l.eyebrow}
+          lines={[...l.lines]}
+          className={`${styles.label} ${styles[l.key]}`}
+          revealDelay={i * 110}
+        />
       ))}
     </section>
   );

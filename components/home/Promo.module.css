@@ -116,3 +116,9 @@
     width: auto;
   }
 }
+
+/* The photo eases back from a slight zoom on first view; it scales from the top edge so
+   the head, which touches the top of the source, is never cut. */
+.photo {
+  transform-origin: 50% 0;
+}

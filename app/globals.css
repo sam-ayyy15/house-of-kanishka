@@ -250,6 +250,16 @@ html:has(dialog[open]) {
   transition: transform 1700ms var(--ease-out) var(--reveal-delay, 0ms);
 }
 
+/* 2b. Settle: a full-bleed photo eases back from a slight zoom on first view. */
+[data-reveal='settle'][data-reveal-state='pending'] {
+  opacity: 1;
+  scale: 1.08;
+}
+
+[data-reveal='settle'][data-reveal-state='in'] {
+  transition: scale 2400ms var(--ease-out);
+}
+
 /* 3. Handwriting: <Handwriting> splits a script phrase into letters; each is uncovered by
       a slanted pen edge and lands with a brief wet-ink soften (same recipe as Who We Are).
       data-write="load" writes on page load; data-reveal="write" on first scroll into view. */

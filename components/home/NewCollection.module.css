@@ -179,3 +179,20 @@
     animation-play-state: paused;
   }
 }
+
+/* First view: the ovals open up from 90 % while fading in (labels follow via the shared
+   reveal). The origin is the mask's top-left corner, which is the point the centring
+   transform pins to the section, so the shape grows in place. */
+.mask {
+  transform-origin: 0 0;
+}
+
+.mask[data-reveal-state='pending'] {
+  scale: 0.9;
+}
+
+.mask[data-reveal-state='in'] {
+  transition:
+    opacity var(--dur-slow) var(--ease-out),
+    scale 1500ms var(--ease-out);
+}

@@ -5,9 +5,9 @@ import { chromium } from 'playwright-core';
 import { mkdirSync } from 'node:fs';
 const out = process.argv[2];
 mkdirSync(out, { recursive: true });
-const routes = ['/', '/dresses', '/new-arrivals', '/accessories', '/products/carnivorous-rose-blazer',
+const routes = (process.argv[3] ? process.argv[3].split(',') : ['/', '/dresses', '/new-arrivals', '/accessories', '/products/carnivorous-rose-blazer',
   '/products/flowing-halter-dress', '/the-brand', '/collections/golden-hour-paris', '/collections/midnight-rose',
-  '/login', '/help', '/bag', '/search', '/wishlist', '/checkout'];
+  '/login', '/help', '/bag', '/search', '/wishlist', '/checkout']);
 const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome' });
 for (const [w, h] of [[1440, 900], [393, 852]]) {
   const ctx = await b.newContext({ viewport: { width: w, height: h }, reducedMotion: 'reduce' });
