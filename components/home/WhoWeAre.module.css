@@ -140,32 +140,54 @@
   margin: 0 -0.3em;
 }
 
+/* The pen edge and wet-ink blur exist only while a letter is being written (they live in the
+   keyframes). Once it has finished it is plain text, with no mask or filter left on it, so
+   Safari can't keep it as a soft, low-resolution layer. */
 @keyframes who-pen {
   from {
+    /* 110deg: the edge runs parallel to the script's right-leaning stems. */
+    -webkit-mask-image: linear-gradient(110deg, #000 38%, transparent 56%);
+    mask-image: linear-gradient(110deg, #000 38%, transparent 56%);
+    -webkit-mask-size: 320% 100%;
+    mask-size: 320% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: 100% 0;
     mask-position: 100% 0;
     filter: blur(1.5px);
     opacity: 0.75;
   }
   60% {
+    -webkit-mask-image: linear-gradient(110deg, #000 38%, transparent 56%);
+    mask-image: linear-gradient(110deg, #000 38%, transparent 56%);
+    -webkit-mask-size: 320% 100%;
+    mask-size: 320% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
     filter: blur(0.5px);
     opacity: 1;
   }
   to {
+    -webkit-mask-image: linear-gradient(110deg, #000 38%, transparent 56%);
+    mask-image: linear-gradient(110deg, #000 38%, transparent 56%);
+    -webkit-mask-size: 320% 100%;
+    mask-size: 320% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: 0 0;
     mask-position: 0 0;
     filter: blur(0);
     opacity: 1;
   }
 }
 
-.media[data-reveal-state='pending'] .ch,
-.media[data-reveal-state='in'] .ch {
-  /* 110deg: the edge runs parallel to the script's right-leaning stems. */
-  mask-image: linear-gradient(110deg, #000 38%, transparent 56%);
-  mask-size: 320% 100%;
-  mask-repeat: no-repeat;
-  mask-position: 100% 0;
+/* Not written yet: the letters are simply not there. */
+.media[data-reveal-state='pending'] .ch {
+  opacity: 0;
 }
 
+/* backwards: the first keyframe (hidden by the mask) holds during the delay; when the
+   animation ends the letter returns to its own, unmasked style. */
 .media[data-reveal-state='in'] .ch {
-  animation: who-pen 480ms cubic-bezier(0.37, 0, 0.63, 1) var(--start) both;
+  animation: who-pen 480ms cubic-bezier(0.37, 0, 0.63, 1) var(--start) backwards;
 }
