@@ -37,10 +37,7 @@ export function Promo() {
       <VideoBackground
         className={styles.photo}
         poster="/media/promo-poster.jpg"
-        sources={[
-          { src: '/media/promo.webm', type: 'video/webm; codecs="vp8"' },
-          { src: '/media/promo.mp4', type: 'video/mp4' },
-        ]}
+        sources={[{ src: '/media/promo.mp4', type: 'video/mp4' }]}
       />
       <div className={styles.shade} aria-hidden="true" />
 

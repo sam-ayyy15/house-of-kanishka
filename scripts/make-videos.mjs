@@ -2,19 +2,20 @@
 //
 //   npm run videos
 //
-// For each film: a light WebM (the originals are 9–11 MB for 4 s), the original MP4 as the
-// fallback for browsers without WebM, and a poster (first frame).
+// For each film: the original MP4 is copied to public/media (every browser plays H.264) and a
+// poster is made from its first frame.
 //
-// No system ffmpeg needed: Chrome decodes the films, sharp writes the images, and
-// Playwright's bundled ffmpeg (VP8 only, fed JPEG frames) writes the WebM.
+// The site no longer ships a WebM. The WebMs this script used to write were frozen (the
+// canvas frame grab returned the same picture every time), and Chrome, Edge and Firefox
+// choose WebM first, so visitors saw a still image. Don't reintroduce one without checking
+// that its frames actually change.
+//
+// No system ffmpeg needed: Chrome decodes the films and sharp writes the images.
 import { chromium } from 'playwright-core';
 import sharp from 'sharp';
-import { spawn } from 'node:child_process';
 import { copyFileSync, mkdirSync, readFileSync } from 'node:fs';
-import { homedir } from 'node:os';
 
 const CHROME = process.env.CHROME ?? '/usr/bin/google-chrome';
-const FFMPEG = process.env.FFMPEG ?? `${homedir()}/.cache/ms-playwright/ffmpeg-1011/ffmpeg-linux`;
 const OUT = 'public/media';
 const ORIGIN = 'http://films.local';
 mkdirSync(OUT, { recursive: true });
@@ -78,26 +79,13 @@ async function frame(i, fps) {
   return Buffer.from(data.split(',')[1], 'base64');
 }
 
-// ---------- Light WebM + MP4 fallback + poster for each film ----------
+// ---------- MP4 + poster for each film ----------
 for (const [file, name] of [['v1.MP4', 'campaign'], ['v2.MP4', 'promo']]) {
   const film = await open(file);
-  const count = Math.floor(film.duration * film.fps);
-  const ffmpeg = spawn(
-    FFMPEG,
-    ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-c:v', 'mjpeg', '-r', String(film.fps), '-i', 'pipe:0',
-      '-c:v', 'libvpx', '-b:v', '2600k', '-quality', 'good', '-cpu-used', '1', '-auto-alt-ref', '0', '-an', `${OUT}/${name}.webm`],
-    { stdio: ['pipe', 'inherit', 'inherit'] },
-  );
-  for (let i = 0; i < count; i++) {
-    const png = await frame(i, film.fps);
-    const jpeg = await sharp(png).jpeg({ quality: 96, chromaSubsampling: '4:4:4' }).toBuffer();
-    if (!ffmpeg.stdin.write(jpeg)) await new Promise((resolve) => ffmpeg.stdin.once('drain', resolve));
-    if (i === 0) await sharp(png).jpeg({ quality: 86, mozjpeg: true }).toFile(`${OUT}/${name}-poster.jpg`);
-  }
-  ffmpeg.stdin.end();
-  await new Promise((resolve) => ffmpeg.on('close', resolve));
+  const png = await frame(0, film.fps);
+  await sharp(png).jpeg({ quality: 86, mozjpeg: true }).toFile(`${OUT}/${name}-poster.jpg`);
   copyFileSync(`reference/images/${file}`, `${OUT}/${name}.mp4`);
-  console.log(`${name}: ${count} frames at ${film.fps} fps, ${film.width}x${film.height}`);
+  console.log(`${name}: ${film.width}x${film.height}, ${film.duration.toFixed(1)} s at ${film.fps} fps`);
 }
 
 await browser.close();

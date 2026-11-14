@@ -20,10 +20,7 @@ export function Campaign() {
       <VideoBackground
         className={styles.video}
         poster="/media/campaign-poster.jpg"
-        sources={[
-          { src: '/media/campaign.webm', type: 'video/webm; codecs="vp8"' },
-          { src: '/media/campaign.mp4', type: 'video/mp4' },
-        ]}
+        sources={[{ src: '/media/campaign.mp4', type: 'video/mp4' }]}
       />
       {labels.map((l, i) => (
         <OverlayLabel
