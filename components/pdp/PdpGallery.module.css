@@ -36,6 +36,13 @@
   mix-blend-mode: darken;
 }
 
+/* The whole tile opens the viewer. */
+.open {
+  position: absolute;
+  inset: 0;
+  cursor: zoom-in;
+}
+
 /* EXTRAPOLATED – no reference design: tablet portrait keeps a lone photo from growing too large. */
 @media (min-width: 768px) and (max-width: 1023px) {
   .gallery[data-count='1'] {

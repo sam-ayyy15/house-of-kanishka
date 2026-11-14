@@ -1,0 +1,285 @@
+.look {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  align-items: center;
+  padding: 0 var(--pad-x);
+}
+
+.look + .look {
+  margin-top: clamp(72px, 9vw, 140px);
+}
+
+.photo {
+  position: relative;
+  grid-column: span var(--span);
+}
+
+.frame {
+  position: relative;
+  width: 100%;
+  max-height: 86vh;
+  background: #e9e9e7;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  grid-column: auto / span calc(12 - var(--span));
+  padding: 0 clamp(0px, 3vw, 56px);
+}
+
+/* Every other look puts the photo on the right. */
+.look[data-flip] .photo {
+  order: 2;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: clamp(40px, 5.4vw, 84px);
+  line-height: 1.02;
+}
+
+.title em {
+  font-style: italic;
+}
+
+.copy {
+  max-width: 28em;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.shop {
+  align-self: stretch;
+  margin-top: 14px;
+}
+
+.shopTitle {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--vr-border);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.pieces {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.piece {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: baseline;
+  gap: 4px 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--vr-border);
+  font-size: 14px;
+  transition: background-color var(--dur-base) ease;
+}
+
+.pieceName {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.piecePrice {
+  font-variant-numeric: tabular-nums;
+}
+
+.pieceQuick {
+  font-size: 12px;
+}
+
+.piece[data-active] .pieceName {
+  color: var(--vr-red);
+}
+
+.pieceName {
+  transition: color var(--dur-fast) ease;
+}
+
+/* ---------- Tags on the photo ---------- */
+
+.spots {
+  position: absolute;
+  inset: 0;
+}
+
+.spot {
+  position: absolute;
+  z-index: 1;
+  width: 0;
+  height: 0;
+}
+
+/* The tags arrive after the photo has risen in, one after another. */
+.photo[data-reveal-state='pending'] .tag {
+  opacity: 0;
+}
+
+.photo[data-reveal-state='in'] .tag {
+  animation: tag-in var(--dur-slow) var(--ease-out) calc(700ms + var(--n) * 160ms) both;
+}
+
+.tag {
+  position: absolute;
+  left: -16px;
+  top: -16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--vr-black);
+  background: rgb(255 255 255 / 0.94);
+  font-size: 18px;
+  line-height: 1;
+  touch-action: manipulation;
+  transition:
+    background-color var(--dur-fast) ease,
+    color var(--dur-fast) ease,
+    transform var(--dur-base) var(--ease-out);
+}
+
+.tag:focus-visible {
+  outline: 1px solid var(--vr-black);
+  outline-offset: 3px;
+}
+
+.spot[data-open] .tag {
+  background: var(--vr-black);
+  color: var(--vr-white);
+}
+
+.card {
+  position: absolute;
+  z-index: 2;
+  width: 210px;
+  padding: 14px 16px 12px;
+  border: 1px solid var(--vr-border);
+  background: var(--vr-white);
+  box-shadow: 0 8px 32px rgb(0 0 0 / 0.1);
+  animation: card-in var(--dur-base) var(--ease-out) both;
+}
+
+.card[hidden] {
+  display: none;
+}
+
+/* Opens away from the nearest edges of the photo. */
+.spot[data-x='left'] .card {
+  left: -16px;
+}
+
+.spot[data-x='right'] .card {
+  right: -16px;
+}
+
+.spot[data-y='down'] .card {
+  top: 26px;
+}
+
+.spot[data-y='up'] .card {
+  bottom: 26px;
+}
+
+.cardName {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.cardPrice {
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.cardActions {
+  display: flex;
+  gap: 18px;
+  margin-top: 12px;
+}
+
+.cardActions :global(.text-link) {
+  font-size: 12px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tag:hover {
+    background: var(--vr-black);
+    color: var(--vr-white);
+  }
+}
+
+@keyframes tag-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Tablet and phone: photo, then text. */
+@media (max-width: 1023px) {
+  .look {
+    row-gap: 28px;
+  }
+
+  .photo,
+  .text {
+    grid-column: 1 / -1;
+  }
+
+  .look[data-flip] .photo {
+    order: 0;
+  }
+
+  .text {
+    padding: 0;
+  }
+
+  /* A tall photo shouldn't fill the screen on its own. */
+  .photo {
+    justify-self: center;
+    width: min(100%, 560px);
+  }
+
+  .look .frame {
+    max-height: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .photo {
+    width: 100%;
+  }
+
+  .card {
+    width: 190px;
+  }
+
+  .pieceQuick {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}

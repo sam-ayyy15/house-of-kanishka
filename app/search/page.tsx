@@ -2,7 +2,11 @@ import type { Metadata } from 'next';
 import { Header } from '@/components/Header';
 import { SearchView } from '@/components/shop/SearchView';
 
-export const metadata: Metadata = { title: 'Search · House of Kanishka' };
+export const metadata: Metadata = {
+  title: 'Search · House of Kanishka',
+  description: 'Search House of Kanishka: pieces, colours and categories.',
+  robots: { index: false, follow: true },
+};
 
 export default function SearchPage() {
   return (

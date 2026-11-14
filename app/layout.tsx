@@ -1,15 +1,23 @@
 import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata, Viewport } from 'next';
 import { AuthEnabledProvider } from '@/components/auth/AuthEnabled';
+import { MiniBag } from '@/components/bag/MiniBag';
+import { QuickView } from '@/components/bag/QuickView';
+import { CookieConsent } from '@/components/CookieConsent';
 import { Footer } from '@/components/Footer';
 import { RevealObserver } from '@/components/RevealObserver';
 import { authEnabled } from '@/lib/auth-config';
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site';
 import { heroItalic, sans, script, serif } from './fonts';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'House of Kanishka',
-  description: 'House of Kanishka: Parisian elegance and modern simplicity.',
+  metadataBase: new URL(SITE_URL),
+  title: SITE_NAME,
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  openGraph: { type: 'website', siteName: SITE_NAME, title: SITE_NAME, description: SITE_DESCRIPTION, locale: 'en_GB' },
+  twitter: { card: 'summary_large_image', title: SITE_NAME, description: SITE_DESCRIPTION },
 };
 
 export const viewport: Viewport = {
@@ -44,6 +52,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </>
           )}
         </AuthEnabledProvider>
+        {/* Slide-out panels opened from anywhere: the bag after an add, and quick view. */}
+        <MiniBag />
+        <QuickView />
+        <CookieConsent />
         <RevealObserver />
       </body>
     </html>

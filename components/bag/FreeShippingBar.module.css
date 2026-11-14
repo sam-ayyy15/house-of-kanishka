@@ -1,0 +1,28 @@
+.bar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.text {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.text strong {
+  font-weight: 500;
+}
+
+.track {
+  height: 2px;
+  background: var(--vr-border);
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  background: var(--vr-red);
+  transform-origin: left;
+  transition: transform 900ms var(--ease-out);
+}

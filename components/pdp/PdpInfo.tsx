@@ -1,15 +1,20 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { formatPrice } from '@/lib/format';
-import type { Product } from '@/lib/products';
+import { colourwaysOf, type Product } from '@/lib/products';
 import { addToBag, toggleWishlist, useStore } from '@/lib/store';
 import { SIZE_CHART } from '@/lib/sizes';
+import { openMiniBag, selectColour, useUI } from '@/lib/ui';
+import { SizeGuide } from './SizeGuide';
 import styles from './PdpInfo.module.css';
 
 /**
- * PDP info column (spec §6.1–6.2): tabs, colour and size selects, ADD TO CART with the price
- * inside, and the wishlist button. Bag and wishlist are saved in this browser.
+ * PDP info column (spec §6.1–6.2): tabs, colour swatches and size select, ADD TO CART with the
+ * price inside, and the wishlist button. Bag and wishlist are saved in this browser. Adding
+ * slides the bag in. On phones a bar with the same button stays at the bottom of the screen
+ * while the real one is out of view.
  */
 export function PdpInfo({ product }: { product: Product }) {
   const tabs = ['Description', 'Details', 'Shipping & Returns', 'Size Guide'];
@@ -17,6 +22,12 @@ export function PdpInfo({ product }: { product: Product }) {
   const [active, setActive] = useState(0);
   const [size, setSize] = useState(product.sizes[0]);
   const [added, setAdded] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
+  const [stuck, setStuck] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const purchaseRef = useRef<HTMLDivElement>(null);
+  const colours = colourwaysOf(product);
+  const colour = useUI().colour[product.slug] ?? product.colour;
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const wished = useStore().wishlist.includes(product.slug);
 
@@ -26,6 +37,38 @@ export function PdpInfo({ product }: { product: Product }) {
     const t = setTimeout(() => setAdded(false), 2000);
     return () => clearTimeout(t);
   }, [added]);
+
+  useEffect(() => setMounted(true), []);
+
+  // The bottom bar (phones) shows while the real button is off screen, and not over the footer.
+  useEffect(() => {
+    const purchase = purchaseRef.current;
+    const footer = document.querySelector('footer');
+    if (!purchase) return;
+    let purchaseIn = false;
+    let footerIn = false;
+    const update = () => setStuck(!purchaseIn && !footerIn);
+    const a = new IntersectionObserver(([e]) => {
+      purchaseIn = e.isIntersecting;
+      update();
+    });
+    const b = new IntersectionObserver(([e]) => {
+      footerIn = e.isIntersecting;
+      update();
+    });
+    a.observe(purchase);
+    if (footer) b.observe(footer);
+    return () => {
+      a.disconnect();
+      b.disconnect();
+    };
+  }, []);
+
+  function add() {
+    addToBag(product.slug, size);
+    setAdded(true);
+    openMiniBag();
+  }
 
   // WAI-ARIA tabs: arrow keys move between tabs, Home/End jump to the ends (spec §12.4 #7).
   function onKeyDown(e: React.KeyboardEvent) {
@@ -118,13 +161,26 @@ export function PdpInfo({ product }: { product: Product }) {
       ))}
 
       <div className={styles.selects}>
-        <label className={styles.select}>
-          <span className="visually-hidden">Colour</span>
-          <select defaultValue={product.colour}>
-            <option>{product.colour}</option>
-          </select>
-          <span className={styles.swatch} aria-hidden="true" />
-        </label>
+        <div className={styles.colour} role="radiogroup" aria-label="Colour">
+          <p className={styles.label}>
+            Colour <span>{colour}</span>
+          </p>
+          <div className={styles.swatches}>
+            {colours.map((c) => (
+              <button
+                key={c.name}
+                type="button"
+                role="radio"
+                aria-checked={c.name === colour}
+                aria-label={c.name}
+                title={c.name}
+                className={styles.swatch}
+                style={{ '--hex': c.hex } as React.CSSProperties}
+                onClick={() => selectColour(product.slug, c.name)}
+              />
+            ))}
+          </div>
+        </div>
         <label className={styles.select}>
           <span className="visually-hidden">Size</span>
           <select value={size} onChange={(e) => setSize(e.target.value)}>
@@ -136,17 +192,15 @@ export function PdpInfo({ product }: { product: Product }) {
             <path d="m2 4 4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.25" />
           </svg>
         </label>
+        {!oneSize && (
+          <button type="button" className={`text-link ${styles.guide}`} onClick={() => setGuideOpen(true)}>
+            Size guide
+          </button>
+        )}
       </div>
 
-      <div className={styles.purchase}>
-        <button
-          type="button"
-          className={`btn btn-red ${styles.addToCart}`}
-          onClick={() => {
-            addToBag(product.slug, size);
-            setAdded(true);
-          }}
-        >
+      <div className={styles.purchase} ref={purchaseRef}>
+        <button type="button" className={`btn btn-red ${styles.addToCart}`} onClick={add}>
           <span aria-live="polite">{added ? 'Added to bag' : 'Add to cart'}</span>
           <span>{formatPrice(product.priceCents, { withCode: true })}</span>
         </button>
@@ -167,6 +221,29 @@ export function PdpInfo({ product }: { product: Product }) {
           </svg>
         </button>
       </div>
+
+      {/* Phones only (CSS): the same purchase, kept in reach. Rendered on the page body: the info
+          column's entrance animation would otherwise become the bar's positioning parent. */}
+      {mounted &&
+        createPortal(
+          <div className={styles.sticky} data-show={stuck || undefined} inert={!stuck}>
+            <label className={styles.stickySize}>
+              <span className="visually-hidden">Size</span>
+              <select value={size} onChange={(e) => setSize(e.target.value)} disabled={oneSize}>
+                {product.sizes.map((s) => (
+                  <option key={s}>{s}</option>
+                ))}
+              </select>
+            </label>
+            <button type="button" className={`btn btn-red ${styles.stickyAdd}`} onClick={add}>
+              <span>Add to cart</span>
+              <span>{formatPrice(product.priceCents)}</span>
+            </button>
+          </div>,
+          document.body,
+        )}
+
+      <SizeGuide open={guideOpen} onClose={() => setGuideOpen(false)} sizes={product.sizes} onPick={setSize} />
     </div>
   );
 }

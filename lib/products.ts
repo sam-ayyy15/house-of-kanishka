@@ -6,6 +6,12 @@ export type Category = 'dresses' | 'tailoring' | 'accessories';
 
 export type GalleryImage = { src: string; alt: string; fit: 'cover' | 'contain' };
 
+/**
+ * A colour a piece comes in. `gallery` is that colour's own set of photos; when it is left out
+ * the piece's main gallery is shown. Add one entry per colour once the photography exists.
+ */
+export type Colourway = { name: string; hex: string; gallery?: GalleryImage[] };
+
 export type Product = {
   slug: string;
   name: string;
@@ -23,7 +29,35 @@ export type Product = {
   description: string;
   details: string[];
   gallery: GalleryImage[];
+  /** Every colour the piece comes in. Without it, the piece has just its own `colour`. */
+  colourways?: Colourway[];
 };
+
+/** Swatch colours for the colour names used in the catalogue. */
+export const COLOUR_HEX: Record<string, string> = {
+  Black: '#141414',
+  Burgundy: '#6e1424',
+  Cream: '#eee5d3',
+  Brown: '#6d4b37',
+  Pink: '#e2a0b7',
+  Ivory: '#f3eee2',
+  Gold: '#c9a55c',
+  Red: '#a20f15',
+};
+
+export function colourwaysOf(p: Product): Colourway[] {
+  return p.colourways ?? [{ name: p.colour, hex: COLOUR_HEX[p.colour] ?? '#999999' }];
+}
+
+/** The photos to show for a colour (falls back to the piece's main gallery). */
+export function galleryFor(p: Product, colour?: string): GalleryImage[] {
+  return colourwaysOf(p).find((c) => c.name === colour)?.gallery ?? p.gallery;
+}
+
+/** A second photo for hover: the first gallery image that isn't the card image. */
+export function altImage(p: Product): GalleryImage | undefined {
+  return p.gallery.find((g) => g.src !== p.image);
+}
 
 const P = '/placeholders';
 const APPAREL_SIZES = ['XS/34', 'S/36', 'M/38', 'L/40', 'XL/42'];

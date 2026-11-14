@@ -99,3 +99,16 @@
     margin-top: 56px;
   }
 }
+
+/* "Cookie preferences": reads as a link in the bottom line. */
+.bottomLink {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bottomLink:hover {
+    color: var(--vr-black);
+  }
+}

@@ -10,7 +10,11 @@ import { RiseWords } from '@/components/RiseWords';
 import { UnderlineLink } from '@/components/UnderlineLink';
 import styles from './page.module.css';
 
-export const metadata: Metadata = { title: 'The Brand · House of Kanishka' };
+export const metadata: Metadata = {
+  title: 'The Brand · House of Kanishka',
+  description: 'Inspired by Parisian elegance and modern simplicity, we create pieces that move with you.',
+  alternates: { canonical: '/the-brand' },
+};
 
 /**
  * The Brand. EXTRAPOLATED – no reference design. The opening statement is the homepage

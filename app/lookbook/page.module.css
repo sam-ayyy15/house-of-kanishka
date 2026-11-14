@@ -1,0 +1,50 @@
+.main {
+  padding-top: var(--header-h);
+  padding-bottom: var(--section-py);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: clamp(56px, 8vw, 112px) var(--pad-x) clamp(64px, 8vw, 120px);
+  text-align: center;
+}
+
+.heading {
+  font-family: var(--font-serif);
+  font-size: clamp(48px, 8vw, 120px);
+  line-height: 1;
+}
+
+.heading em {
+  font-style: italic;
+}
+
+.lead {
+  max-width: 32em;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.closing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  padding: clamp(88px, 11vw, 160px) var(--pad-x) 0;
+  text-align: center;
+}
+
+.closingText {
+  max-width: 18em;
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 4vw, 56px);
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+.closingText em {
+  font-style: italic;
+}

@@ -6,7 +6,11 @@ import { HelpIndex } from '@/components/info/HelpIndex';
 import { SIZE_CHART } from '@/lib/sizes';
 import styles from './page.module.css';
 
-export const metadata: Metadata = { title: 'Help · House of Kanishka' };
+export const metadata: Metadata = {
+  title: 'Help · House of Kanishka',
+  description: 'Shipping, returns, size guide and how to reach us.',
+  alternates: { canonical: '/help' },
+};
 
 const topics = [
   { id: 'shipping', n: '01', label: 'Shipping' },

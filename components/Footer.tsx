@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { collections, collectionHref } from '@/lib/collections';
+import { CookiePreferencesLink } from './CookiePreferencesLink';
 import { Emblem } from './Emblem';
 import styles from './Footer.module.css';
 
@@ -10,6 +11,7 @@ const columns = [
       { label: 'New Arrivals', href: '/new-arrivals' },
       { label: 'Dresses', href: '/dresses' },
       { label: 'Accessories', href: '/accessories' },
+      { label: 'Lookbook', href: '/lookbook' },
     ],
   },
   {
@@ -64,7 +66,9 @@ export function Footer() {
       </div>
       <div className={styles.bottom}>
         <p>© {new Date().getFullYear()} House of Kanishka</p>
-        <p>Prices in EUR</p>
+        <p>
+          Prices in EUR · <CookiePreferencesLink className={styles.bottomLink} />
+        </p>
       </div>
     </footer>
   );

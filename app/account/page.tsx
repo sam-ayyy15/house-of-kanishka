@@ -5,7 +5,10 @@ import { AccountView } from '@/components/auth/AccountView';
 import { Header } from '@/components/Header';
 import { authEnabled } from '@/lib/auth-config';
 
-export const metadata: Metadata = { title: 'Account · House of Kanishka' };
+export const metadata: Metadata = {
+  title: 'Account · House of Kanishka',
+  robots: { index: false, follow: false },
+};
 
 // The page checks sign-in itself (Clerk's recommended resource-based check), so it stays
 // protected even if the proxy's path matching ever misses it.

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { formatPrice } from '@/lib/format';
 import { FREE_SHIPPING_CENTS, getProduct, productHref } from '@/lib/products';
 import { setQty, useStore } from '@/lib/store';
+import { FreeShippingBar } from '../bag/FreeShippingBar';
 import { Emblem } from '../Emblem';
 import styles from './BagView.module.css';
 
@@ -84,11 +85,7 @@ export function BagView() {
             <dd>{freeShipping ? 'Free' : 'Calculated at checkout'}</dd>
           </div>
         </dl>
-        {!freeShipping && (
-          <p className="muted">
-            Add {formatPrice(FREE_SHIPPING_CENTS - subtotal)} more for free shipping.
-          </p>
-        )}
+        <FreeShippingBar subtotal={subtotal} />
         <Link href="/checkout" className="btn btn-red btn-split">
           <span>Checkout</span>
           <span>{formatPrice(subtotal, { withCode: true })}</span>

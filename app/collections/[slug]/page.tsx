@@ -19,7 +19,12 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const c = getCollection((await params).slug);
-  return { title: c ? `${c.title.join(' ')} · House of Kanishka` : 'House of Kanishka' };
+  if (!c) return { title: 'House of Kanishka' };
+  return {
+    title: `${c.title.join(' ')} · House of Kanishka`,
+    description: c.intro,
+    alternates: { canonical: `/collections/${c.slug}` },
+  };
 }
 
 /** Campaign / collection landing page. EXTRAPOLATED – no reference design. */

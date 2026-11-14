@@ -9,6 +9,7 @@ const shop = [
   { label: 'New Arrivals', href: '/new-arrivals' },
   { label: 'Dresses', href: '/dresses' },
   { label: 'Accessories', href: '/accessories' },
+  { label: 'Lookbook', href: '/lookbook' },
   { label: 'The Brand', href: '/the-brand' },
 ];
 

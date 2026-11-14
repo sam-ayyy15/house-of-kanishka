@@ -7,7 +7,10 @@ import { Eyebrow } from '@/components/Eyebrow';
 import { Header } from '@/components/Header';
 import { authEnabled } from '@/lib/auth-config';
 
-export const metadata: Metadata = { title: 'Login · House of Kanishka' };
+export const metadata: Metadata = {
+  title: 'Login · House of Kanishka',
+  robots: { index: false, follow: false },
+};
 
 export default function LoginPage() {
   return (

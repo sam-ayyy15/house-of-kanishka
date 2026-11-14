@@ -17,6 +17,19 @@
   gap: 16px;
 }
 
+/* The photo and its quick view button; the button can't sit inside the link. */
+.frame {
+  position: relative;
+}
+
+.mediaLink {
+  display: block;
+}
+
+.captionLink {
+  display: block;
+}
+
 /* Full-length cut-outs float on white; ~434px tall at 1440 (S2). */
 .media {
   position: relative;
@@ -29,6 +42,138 @@
   object-position: 50% 100%;
   transform-origin: 50% 100%;
   transition: transform var(--dur-slow) var(--ease-out);
+}
+
+/* The second photo (back view) sits on top and fades in on hover. Same crop as the first. */
+.media .second {
+  object-fit: contain;
+  object-position: 50% 100%;
+  transform-origin: 50% 100%;
+  padding-top: 3%;
+  opacity: 0;
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+}
+
+.media .second[data-fit='cover'] {
+  object-fit: cover;
+  object-position: 50% 30%;
+  transform-origin: 50% 50%;
+  padding-top: 0;
+}
+
+/* Quick view lives under the photo, on the price line, so it never covers the piece. */
+.meta {
+  position: relative;
+}
+
+/* On hover or keyboard focus it slides in from the right (opacity + a short move), and a thin
+   line draws under it from the left. */
+.quick {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 18px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  touch-action: manipulation;
+  opacity: 0;
+  transform: translateX(14px);
+  transition:
+    opacity var(--dur-fast) ease,
+    transform var(--dur-base) var(--ease-out);
+}
+
+.quick :global(.quick-plus) {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.quick::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-base) var(--ease-out) 120ms;
+}
+
+.quick:focus-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.quick:focus-visible::after {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .quick {
+    opacity: 1;
+    transform: none;
+  }
+
+  .card:hover .quick::after {
+    transform: scaleX(1);
+  }
+
+  /* The price steps aside a little as the link arrives. */
+  .card:hover .quick:hover::after {
+    transform: scaleX(1);
+  }
+
+  .frame:hover .media .second {
+    opacity: 1;
+  }
+}
+
+/* Touch screens and narrow windows: no hover, so a small square + sits at the right of the
+   line under the photo, always. */
+@media (hover: none), (pointer: coarse), (max-width: 767px) {
+  .meta {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    min-height: 32px;
+  }
+
+  .quick {
+    position: static;
+    flex: none;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-left: auto;
+    border: 1px solid var(--vr-border);
+    background: var(--vr-white);
+    opacity: 1;
+    transform: none;
+  }
+
+  .quick :global(.quick-text) {
+    display: none;
+  }
+
+  .quick :global(.quick-plus) {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .quick::after {
+    display: none;
+  }
 }
 
 /* Objects sit centred on the grey tile; darken drops the crop's own light background. */
@@ -70,7 +215,7 @@
   transition: opacity var(--dur-fast) ease;
 }
 
-.grid[data-captions='hover'] .card:focus-visible .caption {
+.grid[data-captions='hover'] .card:focus-within .caption {
   opacity: 1;
 }
 

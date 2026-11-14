@@ -50,6 +50,137 @@
   appearance: none;
 }
 
+/* Suggestions while typing: a plain list under the box, words first, then pieces. */
+.suggestions {
+  display: flex;
+  flex-direction: column;
+  width: min(640px, 100%);
+  margin: -12px 0 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+  border: 1px solid var(--vr-border);
+  border-top: 0;
+  animation: s-fade var(--dur-base) var(--ease-out) both;
+}
+
+.suggestion > * {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 100%;
+  padding: 13px 18px;
+  font-size: 15px;
+  text-align: left;
+  transition: background-color var(--dur-fast) ease;
+}
+
+.suggestion + .suggestion {
+  border-top: 1px solid var(--vr-border);
+}
+
+.suggestion span {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--vr-text-muted);
+}
+
+/* Recent and popular searches when the box is empty. */
+.quick {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: min(640px, 100%);
+  animation: s-fade var(--dur-slow) var(--ease-out) both;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.groupTitle {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--vr-text-muted);
+}
+
+.clear {
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.chips,
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chips button,
+.filters button {
+  height: 38px;
+  padding: 0 16px;
+  border: 1px solid var(--vr-border);
+  background: var(--vr-white);
+  font-size: 14px;
+  touch-action: manipulation;
+  transition:
+    border-color var(--dur-fast) ease,
+    background-color var(--dur-fast) ease,
+    color var(--dur-fast) ease;
+}
+
+.filters button span {
+  margin-left: 4px;
+  color: var(--vr-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.filters button[aria-pressed='true'] {
+  border-color: var(--vr-black);
+  background: var(--vr-black);
+  color: var(--vr-white);
+}
+
+.filters button[aria-pressed='true'] span {
+  color: inherit;
+  opacity: 0.7;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .suggestion > a:hover,
+  .suggestion > button:hover {
+    background: var(--vr-grey-tile);
+  }
+
+  .chips button:hover,
+  .filters button:hover {
+    border-color: var(--vr-black);
+  }
+}
+
+@keyframes s-fade {
+  from {
+    opacity: 0;
+  }
+}
+
 /* (01) New Arrivals (02) Dresses (03) Accessories: the Accessories category list. */
 .browse {
   display: flex;

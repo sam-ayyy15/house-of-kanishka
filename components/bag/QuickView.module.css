@@ -1,0 +1,106 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.media {
+  position: relative;
+  aspect-ratio: 0.815;
+  margin-bottom: 8px;
+  background: var(--vr-grey-tile);
+  overflow: hidden;
+}
+
+.media img {
+  object-fit: contain;
+  padding: 6%;
+  mix-blend-mode: darken;
+}
+
+.media[data-card='photo'] img {
+  object-fit: cover;
+  padding: 0;
+  mix-blend-mode: normal;
+}
+
+.name {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 3.4vw, 38px);
+  line-height: 1.12;
+}
+
+.price {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.label {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.label span {
+  margin-left: 6px;
+  color: var(--vr-text-muted);
+  letter-spacing: 0.02em;
+}
+
+.sizes {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.chip {
+  min-width: 64px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--vr-border);
+  background: var(--vr-white);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  touch-action: manipulation;
+  transition:
+    border-color var(--dur-fast) ease,
+    background-color var(--dur-fast) ease,
+    color var(--dur-fast) ease;
+}
+
+.chip[aria-pressed='true'] {
+  border-color: var(--vr-black);
+  background: var(--vr-black);
+  color: var(--vr-white);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .chip:hover {
+    border-color: var(--vr-black);
+  }
+}
+
+.add {
+  margin-top: 8px;
+}
+
+.add[aria-disabled='true'] {
+  background: var(--vr-grey-tile);
+  color: var(--vr-text-muted);
+  cursor: default;
+}
+
+.add + a {
+  align-self: flex-start;
+  margin-top: 6px;
+}

@@ -3,7 +3,11 @@ import { EditorialBlock } from '@/components/plp/EditorialBlock';
 import { Listing } from '@/components/plp/Listing';
 import { DRESS_TABS, dresses, dressesFirstRow } from '@/lib/products';
 
-export const metadata: Metadata = { title: 'Dresses · House of Kanishka' };
+export const metadata: Metadata = {
+  title: 'Dresses · House of Kanishka',
+  description: 'Midi and maxi dresses, jumpsuits, satin and evening pieces from House of Kanishka.',
+  alternates: { canonical: '/dresses' },
+};
 
 /** PLP "Dresses" (spec §5, S2). */
 export default async function DressesPage({ searchParams }: { searchParams: Promise<{ type?: string }> }) {

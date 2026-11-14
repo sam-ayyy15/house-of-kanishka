@@ -1,0 +1,120 @@
+/* Fills the screen on white. Fades in, like the drawers' backdrop. */
+.dialog {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--vr-white);
+  color: var(--vr-black);
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    overlay var(--dur-base) allow-discrete,
+    display var(--dur-base) allow-discrete;
+}
+
+.dialog[open] {
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+}
+
+@starting-style {
+  .dialog[open] {
+    opacity: 0;
+  }
+}
+
+.bar,
+.foot {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px var(--header-pad-x);
+}
+
+.count {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+}
+
+.close {
+  padding: 8px 0;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+}
+
+.stage {
+  --ox: 50%;
+  --oy: 50%;
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  cursor: zoom-in;
+  touch-action: pan-y;
+  user-select: none;
+  background: var(--vr-grey-tile);
+}
+
+.stage[data-zoom] {
+  cursor: zoom-out;
+  touch-action: none;
+}
+
+/* A new photo fades in; zoom is a scale from the point that was clicked. */
+.photo {
+  position: absolute;
+  inset: 0;
+  transform-origin: var(--ox) var(--oy);
+  transition: transform 600ms var(--ease-out);
+  animation: lb-fade var(--dur-base) var(--ease-out) both;
+}
+
+.stage[data-zoom] .photo {
+  transform: scale(2.2);
+}
+
+.photo img {
+  object-fit: contain;
+  padding: 2%;
+  mix-blend-mode: darken;
+  pointer-events: none;
+}
+
+.foot button:disabled {
+  visibility: hidden;
+}
+
+.hint {
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--vr-text-muted);
+}
+
+@keyframes lb-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .hint {
+    display: none;
+  }
+}
