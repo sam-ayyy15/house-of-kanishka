@@ -92,9 +92,20 @@
     transform: translateY(-50%) rotate(-25deg);
   }
 
+  /* The oval is 88vw wide at a 0.62 aspect, so ~142vw tall. It sits below the label and the
+     section is always tall enough to hold all of it: on a short screen (browser bars showing)
+     the section grows past the viewport rather than clipping the oval. On a tall screen the
+     oval is centred in the space below the label. */
+  .section {
+    --oval-top: calc(var(--header-h) + 24px + 112px);
+    --oval-h: 141.9vw;
+    --oval-bottom: 32px;
+    min-height: max(100svh, calc(var(--oval-top) + var(--oval-h) + var(--oval-bottom)));
+  }
+
   .mask {
     left: 50%;
-    top: 30%;
+    top: calc(var(--oval-top) + max(0px, (100svh - var(--oval-top) - var(--oval-h) - var(--oval-bottom)) / 2));
     width: 88vw;
     aspect-ratio: 0.62;
     transform: translateX(-50%);
