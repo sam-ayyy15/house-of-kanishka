@@ -1,5 +1,6 @@
 import { Header } from '@/components/Header';
 import { Accessories } from '@/components/home/Accessories';
+import { Announcement } from '@/components/home/Announcement';
 import { Campaign } from '@/components/home/Campaign';
 import { Hero } from '@/components/home/Hero';
 import { NewArrivals } from '@/components/home/NewArrivals';
@@ -32,6 +33,7 @@ export default function HomePage() {
       <Header overlayTargetId="hero" />
       <main>
         <Hero />
+        <Announcement />
         <NewArrivals />
         <Campaign />
         <WhoWeAre />

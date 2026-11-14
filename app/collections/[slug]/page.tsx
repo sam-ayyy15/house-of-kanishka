@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Header } from '@/components/Header';
 import { NewCollection } from '@/components/home/NewCollection';
 import { ProductGrid } from '@/components/plp/ProductGrid';
@@ -71,6 +72,11 @@ export default async function CollectionPage({ params }: Params) {
         </div>
 
         <section className={styles.intro}>
+          <Breadcrumbs
+            align="center"
+            className={styles.crumbs}
+            items={[{ label: 'Home', href: '/' }, { label: collection.title.join(' ') }]}
+          />
           <p className={styles.eyebrow}>{collection.eyebrow}</p>
           <h1 className={styles.title} data-reveal="words">
             <RiseWords text={collection.title.join(' ')} />

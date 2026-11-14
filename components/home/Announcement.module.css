@@ -1,0 +1,273 @@
+/* No backdrop: the ribbons start below the hero photo, on the white above New Arrivals. The band
+   begins --gap below the photo; the white ribbon is tilted, so its higher end needs that much room
+   to clear the photo's bottom edge. Everything that moves is a transform. */
+.band {
+  --gap: 26px;
+  position: relative;
+  z-index: 2;
+  height: clamp(118px, 10vw, 150px);
+  margin-top: var(--gap);
+  /* Clip sideways only: the ribbons are wider than the page, and may spill below the band. */
+  overflow-x: clip;
+  overflow-y: visible;
+  color: var(--vr-black);
+  /* Let clicks through; the front ribbon takes its own. */
+  pointer-events: none;
+}
+
+.ribbons {
+  position: absolute;
+  inset: 0;
+}
+
+.ribbon {
+  --rh: clamp(66px, 6.4vw, 96px);
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  top: var(--top);
+  height: var(--rh);
+  display: flex;
+  align-items: center;
+  /* Clip sideways only: the script's loops may rise a little above and below the ribbon. */
+  overflow-x: clip;
+  overflow-y: visible;
+  transform: rotate(var(--rot));
+}
+
+/* In front: white, with red script and black serif. A red edge, and a fine red line just inside it
+   (like stitching), so it reads against the white page as well as the dark photo. */
+.front {
+  --rot: -1.5deg;
+  --top: 0px; /* its top edge is the band's top edge */
+  --from: -7%;
+  z-index: 2;
+  pointer-events: auto;
+  background: var(--vr-white);
+  border-block: 2px solid var(--vr-red);
+  box-shadow:
+    inset 0 0 0 5px var(--vr-white),
+    inset 0 0 0 6px var(--vr-red),
+    0 6px 18px rgb(0 0 0 / 0.14);
+}
+
+/* Behind: deep burgundy, in white, with the same stitching in white. Decorative. */
+.back {
+  --rot: 1.5deg;
+  --top: clamp(80px, 7.6vw, 112px);
+  --from: 7%;
+  --rh: clamp(54px, 5.2vw, 78px);
+  z-index: 1;
+  background: #5a0a10;
+  color: var(--vr-white);
+  border-block: 2px solid #5a0a10;
+  box-shadow:
+    inset 0 0 0 5px #5a0a10,
+    inset 0 0 0 6px rgb(255 255 255 / 0.9);
+}
+
+.track {
+  display: flex;
+  flex: none;
+  align-items: center;
+  width: max-content;
+  will-change: transform;
+}
+
+.group {
+  display: flex;
+  flex: none;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+
+.link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: clamp(12px, 1.2vw, 20px);
+  white-space: nowrap;
+}
+
+/* The same two voices as the rest of the site: script for the headline word, serif italic for the line. */
+.script {
+  font-family: var(--font-script);
+  font-size: clamp(30px, 3.1vw, 46px);
+  line-height: 1;
+  color: var(--vr-red);
+}
+
+.text {
+  font-family: var(--font-serif);
+  font-size: clamp(17px, 1.7vw, 25px);
+  font-style: italic;
+  line-height: 1;
+  color: var(--vr-black);
+}
+
+.back .script {
+  font-size: clamp(25px, 2.6vw, 38px);
+  color: var(--vr-white);
+}
+
+.back .text {
+  font-size: clamp(15px, 1.5vw, 22px);
+  color: #f0cfd0;
+}
+
+/* The lotus between the messages. */
+.sep {
+  flex: none;
+  width: clamp(30px, 3vw, 44px);
+  margin: 0 clamp(34px, 3.6vw, 64px);
+  color: var(--vr-red);
+}
+
+.back .sep {
+  width: clamp(26px, 2.5vw, 36px);
+  color: #c46a70;
+}
+
+/* Hovering a headline: the serif line draws an underline from the left. */
+.front .link {
+  position: relative;
+}
+
+.front .link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 1px;
+  background: var(--vr-red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.front .link:focus-visible {
+  outline: 1px solid var(--vr-red);
+  outline-offset: 8px;
+}
+
+.front .link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .front .link:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+/* ---------- Motion (only for those who have not asked for less) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* The two ribbons drift in opposite directions, slowly: a third of the track is one full run. */
+  .front .track {
+    animation: ribbon-left 70s linear infinite;
+  }
+
+  .back .track {
+    animation: ribbon-right 90s linear infinite;
+  }
+
+  /* They never stop on their own. They slow to a halt only under the pointer or on keyboard
+     focus (so a headline can be clicked), and while the band is off screen. */
+  .band:hover .track,
+  .band:has(a:focus-visible) .track,
+  .band[data-inview='false'] .track {
+    animation-play-state: paused;
+  }
+
+  /* First view: the ribbons unroll into place from either side. */
+  .ribbons[data-reveal-state='in'] .ribbon {
+    animation: ribbon-in 1300ms var(--ease-out) backwards;
+  }
+
+  .ribbons[data-reveal-state='in'] .back {
+    animation-delay: 160ms;
+  }
+}
+
+@keyframes ribbon-left {
+  to {
+    transform: translateX(-33.3333%);
+  }
+}
+
+@keyframes ribbon-right {
+  from {
+    transform: translateX(-33.3333%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes ribbon-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--from)) rotate(var(--rot));
+  }
+}
+
+/* Reduced motion: nothing moves. One message per ribbon, centred. */
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .group:nth-child(n + 2),
+  .item:nth-child(n + 2),
+  .sep {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .band {
+    --gap: 14px;
+    height: 116px;
+  }
+
+  .ribbon {
+    --rh: 58px;
+    left: -12%;
+    right: -12%;
+  }
+
+  .front {
+    --rot: -2.4deg;
+  }
+
+  .back {
+    --rot: 2.4deg;
+    --top: 66px;
+    --rh: 48px;
+  }
+
+  .script {
+    font-size: 28px;
+  }
+
+  .text {
+    font-size: 16px;
+  }
+
+  .back .script {
+    font-size: 23px;
+  }
+
+  .back .text {
+    font-size: 14px;
+  }
+}

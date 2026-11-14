@@ -21,6 +21,10 @@
   text-align: center;
 }
 
+.crumbs {
+  margin-bottom: 14px;
+}
+
 .eyebrow {
   font-size: 14px;
   font-weight: 500;

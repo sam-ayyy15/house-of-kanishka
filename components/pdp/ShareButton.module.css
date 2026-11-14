@@ -1,0 +1,84 @@
+.wrap {
+  position: relative;
+  flex: none;
+}
+
+/* Opens under the button, right edges aligned. Rises and fades in, like the lookbook cards. */
+.menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 20;
+  width: 232px;
+  border: 1px solid var(--vr-border);
+  background: var(--vr-white);
+  box-shadow: 0 8px 32px rgb(0 0 0 / 0.1);
+  animation: share-in var(--dur-base) var(--ease-out) both;
+}
+
+.menu[data-up] {
+  top: auto;
+  bottom: calc(100% + 10px);
+}
+
+.heading {
+  padding: 14px 16px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--vr-text-muted);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list li {
+  border-top: 1px solid var(--vr-border);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 13px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-align: left;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  transition: background-color var(--dur-fast) ease;
+}
+
+.item span[aria-hidden] {
+  color: var(--vr-text-muted);
+}
+
+.item:focus-visible {
+  outline: none;
+  background: var(--vr-grey-tile);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .item:hover {
+    background: var(--vr-grey-tile);
+  }
+}
+
+@keyframes share-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (max-width: 767px) {
+  .menu {
+    width: min(260px, calc(100vw - 2 * var(--pad-x)));
+  }
+}

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Header } from '@/components/Header';
 import { PdpGallery } from '@/components/pdp/PdpGallery';
 import { PdpInfo } from '@/components/pdp/PdpInfo';
@@ -42,6 +43,13 @@ export default async function ProductPage({ params }: Params) {
     .filter((p) => p.slug !== product.slug && (p.category === product.category || product.category === 'tailoring'))
     .slice(0, 5);
 
+  // The listing this piece belongs to (tailoring has no page of its own: it is shown with the new arrivals).
+  const section = {
+    dresses: { label: 'Dresses', href: '/dresses' },
+    accessories: { label: 'Accessories', href: '/accessories' },
+    tailoring: { label: 'New Arrivals', href: '/new-arrivals' },
+  }[product.category];
+
   // Structured data, so search engines can show the price and availability.
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -71,6 +79,10 @@ export default async function ProductPage({ params }: Params) {
           One or two photos: EXTRAPOLATED – no reference design: a split, with the photo
           beside the details so the page is never left half empty. */}
       <main className={styles.main} data-layout={product.gallery.length >= 3 ? 'row' : 'split'}>
+        <Breadcrumbs
+          className={styles.crumbs}
+          items={[{ label: 'Home', href: '/' }, section, { label: product.name }]}
+        />
         <h1 className={styles.title} data-rise="load">
           <RiseWords text={product.name} />
         </h1>

@@ -7,6 +7,7 @@ import { colourwaysOf, type Product } from '@/lib/products';
 import { addToBag, toggleWishlist, useStore } from '@/lib/store';
 import { SIZE_CHART } from '@/lib/sizes';
 import { openMiniBag, selectColour, useUI } from '@/lib/ui';
+import { ShareButton } from './ShareButton';
 import { SizeGuide } from './SizeGuide';
 import styles from './PdpInfo.module.css';
 
@@ -220,6 +221,7 @@ export function PdpInfo({ product }: { product: Product }) {
             />
           </svg>
         </button>
+        <ShareButton name={product.name} image={product.image} className={styles.wishlist} />
       </div>
 
       {/* Phones only (CSS): the same purchase, kept in reach. Rendered on the page body: the info
