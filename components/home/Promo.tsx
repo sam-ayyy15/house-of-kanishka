@@ -31,16 +31,14 @@ const services = [
 export function Promo() {
   return (
     <section className={styles.section} aria-labelledby="promo-title">
-      {/* Client's own promo film: muted, plays once per visit to the page, and only while the
-          section is on screen
-          (poster only with reduced motion or Save-Data). Made from reference/images/v2.MP4 by
+      {/* Client's own promo film: muted, loops continuously while the section is
+          on screen (poster only with reduced motion or Save-Data). Made from reference/images/v2.MP4 by
           scripts/make-videos.mjs. */}
       <VideoBackground
         className={styles.photo}
         poster="/media/promo-poster.jpg"
-        loop={false}
         sources={[
-          { src: '/media/promo.webm', type: 'video/webm' },
+          { src: '/media/promo.webm', type: 'video/webm; codecs="vp8"' },
           { src: '/media/promo.mp4', type: 'video/mp4' },
         ]}
       />

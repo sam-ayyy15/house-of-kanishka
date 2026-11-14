@@ -43,7 +43,7 @@ export default async function CollectionPage({ params }: Params) {
               {collection.hero.kind === 'video' ? (
                 <VideoBackground
                   poster="/placeholders/campaign.jpg"
-                  sources={[{ src: '/placeholders/campaign-loop.webm', type: 'video/webm' }]}
+                  sources={[{ src: '/placeholders/campaign-loop.webm', type: 'video/webm; codecs="vp8"' }]}
                 />
               ) : (
                 <Image

@@ -14,15 +14,14 @@ const labels = [
 export function Campaign() {
   return (
     <section className={styles.section} aria-label="Campaigns">
-      {/* Client's own campaign film: muted, plays once per visit to the page (poster only with
-          reduced motion or Save-Data). Made from reference/images/v1.MP4 by
+      {/* Client's own campaign film: muted, loops continuously while the section is on
+          screen (poster only with reduced motion or Save-Data). Made from reference/images/v1.MP4 by
           scripts/make-videos.mjs. */}
       <VideoBackground
         className={styles.video}
         poster="/media/campaign-poster.jpg"
-        loop={false}
         sources={[
-          { src: '/media/campaign.webm', type: 'video/webm' },
+          { src: '/media/campaign.webm', type: 'video/webm; codecs="vp8"' },
           { src: '/media/campaign.mp4', type: 'video/mp4' },
         ]}
       />
