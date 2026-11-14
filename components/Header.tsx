@@ -99,13 +99,13 @@ export function Header({ overlayTargetId, mobileLeft = 'logo', onFilter }: Props
             }
           />
           <Link href="/bag" className={styles.navLink}>
-            Shopping Bag ({count})
+            Shopping Bag{count > 0 && ` (${count})`}
           </Link>
         </nav>
 
         {/* Mobile: icons only */}
         <div className={styles.icons}>
-          <Link href="/bag" className={styles.iconBtn} aria-label={`Shopping bag, ${count} items`}>
+          <Link href="/bag" className={styles.iconBtn} aria-label={count > 0 ? `Shopping bag, ${count} ${count === 1 ? 'item' : 'items'}` : 'Shopping bag, empty'}>
             <BagIcon size={24} />
             {count > 0 && <span className={styles.badge}>{count}</span>}
           </Link>

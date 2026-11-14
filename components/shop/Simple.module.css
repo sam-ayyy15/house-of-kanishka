@@ -18,7 +18,7 @@
 /* The house lotus opening above an empty list. */
 .emptyEmblem {
   width: 56px;
-  color: var(--vr-red);
+  color: var(--vr-black);
 }
 
 .emptyText {
