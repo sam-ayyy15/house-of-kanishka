@@ -1,0 +1,168 @@
+/* Branded 404 / error / offline pages. Same type scale, colours and calm motion as the site. */
+.stage {
+  position: relative;
+  min-height: 100svh;
+  padding-top: var(--header-h);
+  isolation: isolate;
+}
+
+/* The cloth fills the stage below the header. */
+.backdrop {
+  position: absolute;
+  inset: var(--header-h) 0 0;
+  z-index: -1;
+}
+
+/* A soft dark pool behind the words, so white type always has contrast whatever the satin does. */
+.backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 46% 42% at 50% 52%, rgb(22 0 3 / 0.34), rgb(22 0 3 / 0) 100%);
+  pointer-events: none;
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  min-height: calc(100svh - var(--header-h));
+  padding: 0 var(--pad-x);
+  justify-content: center;
+  text-align: center;
+  color: var(--vr-white);
+}
+
+.lotus {
+  width: clamp(64px, 6vw, 88px);
+  color: var(--vr-white);
+}
+
+/* House script, like the section titles on the home page, in white on the cloth. */
+.script {
+  font-family: var(--font-script);
+  font-size: clamp(54px, 7vw, 104px);
+  line-height: 1;
+  transform: rotate(-4deg);
+  margin: 4px 0 -6px;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: clamp(34px, 4.6vw, 66px);
+  line-height: 1.1;
+  text-wrap: balance;
+  max-width: 14em;
+}
+
+.lede {
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 30em;
+  color: rgb(255 255 255 / 0.9);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px 28px;
+  margin-top: 10px;
+}
+
+.btnLight {
+  background: var(--vr-white);
+  color: var(--vr-black);
+}
+
+.linkLight {
+  color: var(--vr-white);
+}
+
+/* ---------- Error page (white, petals) ---------- */
+.plain {
+  position: relative;
+  min-height: 100svh;
+  padding-top: var(--header-h);
+  overflow: clip;
+  isolation: isolate;
+}
+
+.petals {
+  position: absolute;
+  inset: var(--header-h) 0 0;
+  z-index: -1;
+}
+
+.plain .copy {
+  color: var(--vr-black);
+}
+
+.plain .lede {
+  color: var(--vr-black);
+}
+
+.plain .script {
+  color: var(--vr-red);
+  transform: rotate(-4deg);
+}
+
+.digest {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vr-text-muted);
+}
+
+/* ---------- Entrance: the same rise the site's titles use ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .copy > * {
+    animation: vr-rise var(--dur-slow) var(--ease-out) both;
+  }
+
+  .copy > :nth-child(2) {
+    animation-delay: 120ms;
+  }
+
+  .copy > :nth-child(3) {
+    animation-delay: 220ms;
+  }
+
+  .copy > :nth-child(4) {
+    animation-delay: 320ms;
+  }
+
+  .copy > :nth-child(5) {
+    animation-delay: 420ms;
+  }
+}
+
+@media (max-width: 767px) {
+  .copy {
+    gap: 18px;
+  }
+
+  .script {
+    font-size: clamp(48px, 15vw, 72px);
+  }
+
+  .lede {
+    font-size: 14px;
+  }
+}
+
+/* The lotus anchor on the error page: the plain logo until the 3D petals are ready to replace it. */
+.mark {
+  width: clamp(104px, 11vw, 160px);
+  aspect-ratio: 1278 / 810;
+}
+
+.mark[data-hidden] {
+  opacity: 0;
+}
+
+.mark svg {
+  width: 100%;
+}

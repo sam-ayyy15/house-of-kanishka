@@ -6,6 +6,18 @@ const nextConfig: NextConfig = {
   // The repo sits on a Windows drive (/mnt/c) under WSL, where file-change events
   // don't arrive. Poll in dev; drop this if the project moves into the WSL filesystem.
   watchOptions: { pollIntervalMs: 1000 },
+  // The service worker must always be fetched fresh, so a new version reaches visitors at once.
+  async headers() {
+    return [
+      {
+        source: '/sw.js',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+          { key: 'Service-Worker-Allowed', value: '/' },
+        ],
+      },
+    ];
+  },
   // The three customer-care pages were merged into /help.
   async redirects() {
     return [

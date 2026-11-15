@@ -4,8 +4,11 @@ import { AuthEnabledProvider } from '@/components/auth/AuthEnabled';
 import { MiniBag } from '@/components/bag/MiniBag';
 import { QuickView } from '@/components/bag/QuickView';
 import { CookieConsent } from '@/components/CookieConsent';
+import { Intro } from '@/components/Intro';
+import { INTRO_SCRIPT } from '@/components/intro-script';
 import { Footer } from '@/components/Footer';
 import { RevealObserver } from '@/components/RevealObserver';
+import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister';
 import { authEnabled } from '@/lib/auth-config';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site';
 import { heroItalic, sans, script, serif } from './fonts';
@@ -36,7 +39,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       // ignores attribute differences on this one tag only; the rest of the page is checked.
       suppressHydrationWarning
     >
+      <head>
+        {/* Decides, before the first paint, whether the opening title plays (see Intro). */}
+        <script dangerouslySetInnerHTML={{ __html: INTRO_SCRIPT }} />
+      </head>
       <body>
+        <Intro />
         {/* Accounts and sessions (Clerk). All screens are the site's own; Clerk supplies
             sign-in, verification emails, password resets and the secure session cookie. */}
         <AuthEnabledProvider enabled={authEnabled}>
@@ -57,6 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <QuickView />
         <CookieConsent />
         <RevealObserver />
+        <ServiceWorkerRegister />
       </body>
     </html>
   );

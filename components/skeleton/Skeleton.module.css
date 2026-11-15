@@ -1,0 +1,294 @@
+/* Loading skeletons. Same grid, tile sizes and type scale as the pages they stand in for, so
+   nothing jumps when the real page arrives. Quiet by design: pale tiles that breathe (opacity
+   only), a faint lotus in each photo tile, and one thin red line that travels under the header. */
+.root {
+  position: relative;
+}
+
+/* The travelling line: a hairline in brand red, sliding along the foot of the header. */
+.bar {
+  position: fixed;
+  top: var(--header-h);
+  left: 0;
+  right: 0;
+  z-index: 5;
+  height: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--vr-red);
+  transform: translateX(-100%);
+}
+
+.tile {
+  position: relative;
+  background: var(--vr-grey-tile);
+  overflow: hidden;
+}
+
+/* A faint lotus (the real emblem) in the middle of every photo tile. */
+.mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(40px, 24%, 76px);
+  transform: translate(-50%, -50%);
+  color: #dedede;
+}
+
+.line {
+  display: block;
+  height: 12px;
+  background: var(--vr-grey-tile);
+}
+
+.title {
+  height: clamp(28px, 3.6vw, 52px);
+  width: clamp(160px, 22vw, 340px);
+  background: var(--vr-grey-tile);
+}
+
+/* ---------- Listing ---------- */
+.titleRow {
+  padding: calc(var(--header-h) + 24px) var(--pad-x) 0;
+}
+
+.toolbar {
+  display: flex;
+  gap: 26px;
+  padding: 26px var(--pad-x) 40px;
+}
+
+.toolbar .line {
+  width: 72px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 48px var(--gutter);
+  margin: 0;
+  padding: 0 var(--pad-x) var(--section-py);
+  list-style: none;
+}
+
+.grid[data-columns='4'] {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.media {
+  height: clamp(300px, 30vw, 440px);
+}
+
+.caption {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.caption .line:first-child {
+  width: 70%;
+}
+
+.caption .line:last-child {
+  width: 34%;
+}
+
+/* ---------- Product page ---------- */
+.pdp {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    'title info'
+    'gallery gallery';
+  column-gap: var(--gutter);
+  padding: calc(var(--header-h) + 24px) var(--header-pad-x) var(--section-py);
+}
+
+.pdpTitle {
+  grid-area: title;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 54px;
+}
+
+.pdpTitle .title {
+  width: min(78%, 420px);
+}
+
+.pdpInfo {
+  grid-area: info;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 640px;
+  padding-top: 54px;
+}
+
+.pdpInfo .line:nth-child(1) {
+  width: 90%;
+}
+
+.pdpInfo .line:nth-child(2) {
+  width: 76%;
+}
+
+.pdpInfo .line:nth-child(3) {
+  width: 84%;
+}
+
+.pdpInfo .select {
+  height: 48px;
+  background: var(--vr-grey-tile);
+}
+
+.pdpInfo .cta {
+  height: 48px;
+  margin-top: 6px;
+  background: var(--vr-border);
+}
+
+.pdpGallery {
+  grid-area: gallery;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 31px;
+  margin-top: 64px;
+}
+
+.pdpGallery .tile {
+  aspect-ratio: 0.815;
+}
+
+/* ---------- Plain page ---------- */
+.plain {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 760px;
+  padding: calc(var(--header-h) + 48px) var(--pad-x) var(--section-py);
+}
+
+.plain .line:nth-child(odd) {
+  width: 92%;
+}
+
+.plain .line:nth-child(even) {
+  width: 78%;
+}
+
+/* ---------- Motion ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .tile,
+  .line,
+  .title,
+  .select,
+  .cta {
+    animation: sk-breathe 2.2s var(--ease-in-out) infinite;
+  }
+
+  /* Neighbours breathe a beat apart, like a slow wave across the page. */
+  .card:nth-child(5n + 2) .tile,
+  .pdpGallery .tile:nth-child(2) {
+    animation-delay: 180ms;
+  }
+
+  .card:nth-child(5n + 3) .tile,
+  .pdpGallery .tile:nth-child(3) {
+    animation-delay: 360ms;
+  }
+
+  .card:nth-child(5n + 4) .tile {
+    animation-delay: 540ms;
+  }
+
+  .card:nth-child(5n) .tile {
+    animation-delay: 720ms;
+  }
+
+  .bar::after {
+    animation: sk-line 1.8s var(--ease-in-out) infinite;
+  }
+}
+
+@keyframes sk-breathe {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes sk-line {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar::after {
+    transform: none;
+    opacity: 0.35;
+  }
+}
+
+/* ---------- Narrow screens: same breakpoints as the real pages ---------- */
+@media (max-width: 1023px) {
+  .grid,
+  .grid[data-columns='4'] {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .pdp {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'title'
+      'info'
+      'gallery';
+    row-gap: 32px;
+  }
+
+  .pdpTitle,
+  .pdpInfo {
+    padding-top: 0;
+    max-width: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .grid,
+  .grid[data-columns='4'] {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 0;
+    padding: 0 8px var(--section-py);
+  }
+
+  .card {
+    padding: 0 4px;
+  }
+
+  .toolbar {
+    padding-bottom: 28px;
+    gap: 18px;
+  }
+
+  .pdpGallery {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin: 0 calc(-1 * var(--header-pad-x));
+  }
+
+  .pdpGallery .tile:nth-child(n + 2) {
+    display: none;
+  }
+}
