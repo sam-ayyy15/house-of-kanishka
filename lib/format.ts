@@ -1,8 +1,10 @@
 /**
- * Price format from the reference (spec §10): "€" prefix, comma decimals, e.g. €80,95.
- * No common locale puts € before the number with a comma decimal, so it is built by hand.
+ * Prices are whole Indian rupees. Shown with the rupee sign in front and Indian digit grouping
+ * (thousands, then lakhs and crores), e.g. ₹8,100 or ₹1,25,000. The reference mockups used euros
+ * (€80,95); the shop sells in India, so the currency was changed (client request).
  */
-export function formatPrice(cents: number, { withCode = false } = {}): string {
-  const value = (cents / 100).toFixed(2).replace('.', ',');
-  return `€${value}${withCode ? ' EUR' : ''}`;
+const inr = new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 });
+
+export function formatPrice(rupees: number, { withCode = false } = {}): string {
+  return `₹${inr.format(Math.round(rupees))}${withCode ? ' INR' : ''}`;
 }

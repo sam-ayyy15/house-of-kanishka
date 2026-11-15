@@ -11,20 +11,23 @@
 }
 
 .logo {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 18px;
+  align-items: center; /* the lotus sits on the name's centre line */
+  gap: 18px; /* about a quarter of the lotus's height */
   align-self: start;
   justify-self: start;
   font-family: var(--font-serif);
-  font-size: clamp(34px, 3.4vw, 48px);
+  /* The name is the quieter of the two; the lotus above it leads. */
+  font-size: clamp(22px, 2vw, 28px);
   line-height: 1;
+  text-align: center;
 }
 
-/* The house lotus above the wordmark, opening as the footer comes into view. */
+/* The house lotus above the wordmark, opening as the footer comes into view. About 0.6 times
+   the width of the name, so the two read as one lockup. */
 .emblem {
-  width: 1.15em;
+  width: clamp(88px, 7.4vw, 112px);
 }
 
 .columns {
@@ -98,6 +101,17 @@
   .bottom {
     margin-top: 56px;
   }
+}
+
+/* The ® is set a little larger than the line around it (about 1.35 times), as the font's own is
+   tiny at 12px, in the same grey as the rest of the line. line-height 0 keeps it from making the
+   line any taller. */
+.mark {
+  display: inline-block;
+  margin-right: 0.1em;
+  font-size: 1.35em;
+  line-height: 0;
+  vertical-align: -0.06em;
 }
 
 /* "Cookie preferences": reads as a link in the bottom line. */

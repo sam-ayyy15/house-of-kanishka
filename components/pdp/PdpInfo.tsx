@@ -94,9 +94,9 @@ export function PdpInfo({ product }: { product: Product }) {
         <li key={d}>{d}</li>
       ))}
     </ul>,
-    // Promo section copy (spec §4.7), currency in EUR (approved).
+    // Promo section copy (spec §4.7), currency in INR.
     <p key="s">
-      Enjoy free shipping on all orders above €350. Not the right fit? No problem. We offer hassle-free returns
+      Enjoy free shipping on all orders above ₹35,000. Not the right fit? No problem. We offer hassle-free returns
       within 30 days of purchase.
     </p>,
     oneSize ? (
@@ -203,7 +203,7 @@ export function PdpInfo({ product }: { product: Product }) {
       <div className={styles.purchase} ref={purchaseRef}>
         <button type="button" className={`btn btn-red ${styles.addToCart}`} onClick={add}>
           <span aria-live="polite">{added ? 'Added to bag' : 'Add to cart'}</span>
-          <span>{formatPrice(product.priceCents, { withCode: true })}</span>
+          <span>{formatPrice(product.price, { withCode: true })}</span>
         </button>
         <button
           type="button"
@@ -239,7 +239,7 @@ export function PdpInfo({ product }: { product: Product }) {
             </label>
             <button type="button" className={`btn btn-red ${styles.stickyAdd}`} onClick={add}>
               <span>Add to cart</span>
-              <span>{formatPrice(product.priceCents)}</span>
+              <span>{formatPrice(product.price)}</span>
             </button>
           </div>,
           document.body,

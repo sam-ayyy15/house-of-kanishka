@@ -26,7 +26,7 @@ const GIANT = 'Help Help Help Help Help Help ';
  * Promo links. EXTRAPOLATED – no reference design. It is built from the site's own devices:
  * the red field with giant travelling black letters (New Collection), the numbered index
  * (Accessories), and the soft grey blob with a script watermark (the Dresses editorial block).
- * Only the policies stated on the homepage (free shipping above €350, 30-day returns,
+ * Only the policies stated on the homepage (free shipping above ₹35,000, 30-day returns,
  * 24/7 support) are given as facts; the rest is marked as still to come.
  */
 export default function HelpPage() {
@@ -64,8 +64,8 @@ export default function HelpPage() {
               <span className={styles.index}>(01)</span>Free Shipping
             </h2>
             <div className={styles.topicBody} data-reveal="rise" style={{ '--reveal-delay': '80ms' } as React.CSSProperties}>
-              <p className={styles.lead}>Enjoy free shipping on all orders above €350. Get your favorite styles delivered to your door.</p>
-              <p className="muted">Delivery times and costs for orders under €350 will be listed here.</p>
+              <p className={styles.lead}>Enjoy free shipping on all orders above ₹35,000. Get your favorite styles delivered to your door.</p>
+              <p className="muted">Delivery times and costs for orders under ₹35,000 will be listed here.</p>
             </div>
           </section>
 

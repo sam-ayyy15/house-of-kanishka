@@ -50,8 +50,8 @@ export function Listing({ title, products, tabs, initialTag = '', interstitial, 
         (!colours.length || colours.includes(p.colour)) &&
         (!sizes.length || p.sizes.some((s) => sizes.includes(s))),
     );
-    if (sort === 'asc') list = [...list].sort((a, b) => a.priceCents - b.priceCents);
-    if (sort === 'desc') list = [...list].sort((a, b) => b.priceCents - a.priceCents);
+    if (sort === 'asc') list = [...list].sort((a, b) => a.price - b.price);
+    if (sort === 'desc') list = [...list].sort((a, b) => b.price - a.price);
     if (sort === 'new') list = [...list].sort((a, b) => Number(!!b.isNew) - Number(!!a.isNew));
     return list;
   }, [products, tag, colours, sizes, sort]);

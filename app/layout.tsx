@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: SITE_NAME,
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
-  openGraph: { type: 'website', siteName: SITE_NAME, title: SITE_NAME, description: SITE_DESCRIPTION, locale: 'en_GB' },
+  openGraph: { type: 'website', siteName: SITE_NAME, title: SITE_NAME, description: SITE_DESCRIPTION, locale: 'en_IN' },
   twitter: { card: 'summary_large_image', title: SITE_NAME, description: SITE_DESCRIPTION },
 };
 

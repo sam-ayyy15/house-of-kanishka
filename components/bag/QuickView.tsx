@@ -22,7 +22,7 @@ function Body({ product }: { product: Product }) {
       </div>
 
       <h2 className={styles.name}>{product.name}</h2>
-      <p className={styles.price}>{formatPrice(product.priceCents)}</p>
+      <p className={styles.price}>{formatPrice(product.price)}</p>
 
       <p className={styles.label}>
         Colour <span>{colours.map((c) => c.name).join(', ')}</span>
@@ -53,7 +53,7 @@ function Body({ product }: { product: Product }) {
         }}
       >
         <span aria-live="polite">{size ? 'Add to cart' : 'Select a size'}</span>
-        <span>{formatPrice(product.priceCents, { withCode: true })}</span>
+        <span>{formatPrice(product.price, { withCode: true })}</span>
       </button>
 
       <Link href={productHref(product)} className="text-link" onClick={closeQuickView}>

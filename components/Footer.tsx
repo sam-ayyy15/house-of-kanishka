@@ -65,9 +65,13 @@ export function Footer() {
         </nav>
       </div>
       <div className={styles.bottom}>
-        <p>© {new Date().getFullYear()} House of Kanishka</p>
         <p>
-          Prices in EUR · <CookiePreferencesLink className={styles.bottomLink} />
+          {/* The registered-trademark sign gets its own, larger size: in the 12px line the font's
+              built-in ® is a speck. It stays a real character, so it is still read as "registered". */}
+          <span className={styles.mark}>®</span> {new Date().getFullYear()} House of Kanishka
+        </p>
+        <p>
+          Prices in INR · <CookiePreferencesLink className={styles.bottomLink} />
         </p>
       </div>
     </footer>

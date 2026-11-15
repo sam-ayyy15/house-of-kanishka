@@ -55,7 +55,7 @@ export function MiniBag() {
                       </button>
                     </div>
                   </div>
-                  <p className={styles.price}>{formatPrice(product.priceCents * qty)}</p>
+                  <p className={styles.price}>{formatPrice(product.price * qty)}</p>
                 </li>
               ))}
             </ul>

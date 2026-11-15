@@ -57,7 +57,7 @@ export function ProductGrid({ products, captions = 'always', columns = 5 }: Prop
               <div className={styles.meta}>
                 {/* The caption repeats the link; the photo link above is the one in the tab order. */}
                 <Link href={productHref(p)} className={styles.captionLink} tabIndex={-1} aria-hidden="true">
-                  <ProductCaption name={p.name} priceCents={p.priceCents} className={styles.caption} />
+                  <ProductCaption name={p.name} price={p.price} className={styles.caption} />
                 </Link>
                 <QuickViewButton slug={p.slug} name={p.name} className={styles.quick} />
               </div>

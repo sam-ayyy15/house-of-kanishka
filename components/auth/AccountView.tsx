@@ -20,7 +20,7 @@ const message = (e: unknown) => {
 };
 
 const when = (d: Date) =>
-  new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(d);
+  new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(d);
 
 /**
  * Account management: profile, email, password, connected sign-in methods, signed-in

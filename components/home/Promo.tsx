@@ -4,13 +4,13 @@ import { UnderlineLink } from '../UnderlineLink';
 import { VideoBackground } from '../VideoBackground';
 import styles from './Promo.module.css';
 
-// Spec §4.7 copy; threshold in EUR (approved, Q7). All three links open the Help page,
+// Spec §4.7 copy; threshold in INR. All three links open the Help page,
 // each at its own topic.
 const services = [
   {
     Icon: Truck,
     title: 'Free Shipping',
-    body: 'Enjoy free shipping on all orders above €350. Get your favorite styles delivered to your door.',
+    body: 'Enjoy free shipping on all orders above ₹35,000. Get your favorite styles delivered to your door.',
     link: 'View all', href: '/help#shipping',
   },
   {

@@ -105,7 +105,7 @@ export function CheckoutView() {
                   {size} · Qty {qty}
                 </p>
               </div>
-              <p className={styles.price}>{formatPrice(product.priceCents * qty)}</p>
+              <p className={styles.price}>{formatPrice(product.price * qty)}</p>
             </li>
           ))}
         </ul>

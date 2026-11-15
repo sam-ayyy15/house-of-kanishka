@@ -29,14 +29,14 @@ export function NewArrivals() {
           <div className={styles.cutoutMedia}>
             <Image src={dress.image} alt={dress.name} fill sizes="15vw" className={styles.contain} />
           </div>
-          <ProductCaption name={dress.name} priceCents={dress.priceCents} />
+          <ProductCaption name={dress.name} price={dress.price} />
         </Link>
 
         <Link href={productHref(oval)} className={`${styles.item} ${styles.oval}`} data-reveal="rise" style={{ '--reveal-delay': '80ms' } as React.CSSProperties}>
           <div className={styles.ovalMedia}>
             <Image src={oval.image} alt={oval.name} fill sizes="22vw" className={styles.ovalImg} />
           </div>
-          <ProductCaption name={oval.name} priceCents={oval.priceCents} />
+          <ProductCaption name={oval.name} price={oval.price} />
         </Link>
 
         <Link href={productHref(framed)} className={`${styles.item} ${styles.framed}`} data-reveal="rise" style={{ '--reveal-delay': '160ms' } as React.CSSProperties}>
@@ -44,7 +44,7 @@ export function NewArrivals() {
             {/* A studio photo fills the frame; a cut-out stands whole inside it. */}
             <Image src={framed.image} alt={framed.name} fill sizes="41vw" className={framed.card === 'photo' ? styles.cover : styles.framedCutout} />
           </div>
-          <ProductCaption name={framed.name} priceCents={framed.priceCents} />
+          <ProductCaption name={framed.name} price={framed.price} />
         </Link>
       </div>
 

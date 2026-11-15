@@ -1,4 +1,5 @@
 // Local mock catalogue until a commerce backend is connected (spec §12.1).
+// Prices are whole Indian rupees (the euro placeholders from the reference, converted at ₹100 to €1).
 // Images are local-only placeholders (public/placeholders, git-ignored).
 // Names and prices marked "reference" come from the mockups; everything else is placeholder.
 
@@ -15,7 +16,7 @@ export type Colourway = { name: string; hex: string; gallery?: GalleryImage[] };
 export type Product = {
   slug: string;
   name: string;
-  priceCents: number;
+  price: number;
   /** Card image. */
   image: string;
   /** How cards show it: a cut-out on white, an object on a grey tile, or a framed photo. */
@@ -64,12 +65,12 @@ const APPAREL_SIZES = ['XS/34', 'S/36', 'M/38', 'L/40', 'XL/42'];
 const ONE_SIZE = ['One size'];
 
 function apparel(
-  slug: string, name: string, priceCents: number, file: string, tags: string[], colour: string,
+  slug: string, name: string, price: number, file: string, tags: string[], colour: string,
   description: string, extra: Partial<Product> = {},
 ): Product {
   const image = `${P}/${file}.jpg`;
   return {
-    slug, name, priceCents, image, card: 'cutout', category: 'dresses', tags, colour, sizes: APPAREL_SIZES, description,
+    slug, name, price, image, card: 'cutout', category: 'dresses', tags, colour, sizes: APPAREL_SIZES, description,
     details: ['Placeholder details: composition and care information will be added here.'],
     gallery: [{ src: image, alt: name, fit: 'contain' }],
     ...extra,
@@ -77,12 +78,12 @@ function apparel(
 }
 
 function accessory(
-  slug: string, name: string, priceCents: number, file: string, tag: string, colour: string,
+  slug: string, name: string, price: number, file: string, tag: string, colour: string,
   description: string, extra: Partial<Product> = {},
 ): Product {
   const image = `${P}/${file}.jpg`;
   return {
-    slug, name, priceCents, image, card: 'tile', category: 'accessories', tags: [tag], colour, sizes: ONE_SIZE, description,
+    slug, name, price, image, card: 'tile', category: 'accessories', tags: [tag], colour, sizes: ONE_SIZE, description,
     details: ['Placeholder details: materials and dimensions will be added here.'],
     gallery: [{ src: image, alt: name, fit: 'contain' }],
     ...extra,
@@ -93,7 +94,7 @@ export const products: Product[] = [
   {
     slug: 'carnivorous-rose-blazer',
     name: 'Carnivorous Rose Blazer - Black/White Silk Rose', // reference (S1)
-    priceCents: 50200, // reference
+    price: 50200, // reference
     image: `${P}/pdp-2.jpg`,
     card: 'photo',
     category: 'tailoring',
@@ -112,11 +113,11 @@ export const products: Product[] = [
     ],
   },
   // Image: client photo (reference/images/Burgundy Satin Halter Dress Model.png, scripts/make-model-cutouts.mjs).
-  apparel('flowing-halter-dress', 'Flowing Halter Dress', 8095, 'model-burgundy-satin-halter', ['midi-maxi', 'party'], 'Burgundy',
+  apparel('flowing-halter-dress', 'Flowing Halter Dress', 8100, 'model-burgundy-satin-halter', ['midi-maxi', 'party'], 'Burgundy',
     'A high halter-neck dress in burgundy satin, gathered at the waist and falling to the knee.', { isNew: true }), // reference (S4)
   apparel('patterned-halter-maxi-dress', 'Patterned Halter Maxi Dress', 11900, 'model-patterned-maxi', ['midi-maxi', 'party'], 'Black',
     'A halter maxi dress in a black-and-white print with a tiered, flowing skirt.'),
-  apparel('strapless-top-and-trousers', 'Strapless Top and Trousers', 8995, 'model-cream-strapless', ['party'], 'Cream',
+  apparel('strapless-top-and-trousers', 'Strapless Top and Trousers', 9000, 'model-cream-strapless', ['party'], 'Cream',
     'A cream strapless top worn over matching straight-leg trousers.', { isNew: true }),
   apparel('chain-belt-midi-dress', 'Chain Belt Midi Dress', 9800, 'model-brown-midi', ['midi-maxi'], 'Brown',
     'A sleeveless brown midi dress, finished with a chain belt at the hip.', { isNew: true }),
@@ -133,11 +134,11 @@ export const products: Product[] = [
     }),
   // reference (S4) name. Image: client photo (reference/images/Burgundy Velvet Gown with Thigh
   // Slit.png, scripts/make-model-cutouts.mjs), a cut-out like the other dresses.
-  apparel('halter-long-dress', 'Halter Long Dress', 8095, 'model-burgundy-velvet-gown', ['midi-maxi', 'party'], 'Burgundy',
+  apparel('halter-long-dress', 'Halter Long Dress', 8100, 'model-burgundy-velvet-gown', ['midi-maxi', 'party'], 'Burgundy',
     'A floor-length halter gown in burgundy velvet, ruched at the hip with a high thigh slit.', { isNew: true }),
   // Was "Ball Earrings" in the reference (S4); renamed and moved to dresses (client request).
   // Image: client photo (reference/images/Ivory Satin Halter Gown Portrait.png, scripts/make-model-cutouts.mjs).
-  apparel('ivory-satin', 'Ivory Satin', 8095, 'model-ivory-satin-gown', ['midi-maxi', 'satin'], 'Ivory',
+  apparel('ivory-satin', 'Ivory Satin', 8100, 'model-ivory-satin-gown', ['midi-maxi', 'satin'], 'Ivory',
     'A floor-length halter gown in ivory satin, with a corseted waist and soft draping at the hip.', { isNew: true }),
 
   accessory('pack-of-3-rigid-bracelets', 'Pack of 3 Rigid Bracelets', 2000, 'plp-bracelets', 'jewelry', 'Gold',
@@ -221,4 +222,5 @@ export const ACCESSORY_TABS = [
   { label: 'Hats', tag: 'hats' },
 ];
 
-export const FREE_SHIPPING_CENTS = 35000; // €350 (approved, Q7)
+// Free delivery from ₹35,000 (the €350 rule from the reference, at ₹100 to €1).
+export const FREE_SHIPPING = 35000;

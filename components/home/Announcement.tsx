@@ -4,7 +4,7 @@ import styles from './Announcement.module.css';
 
 /** The news. `script` is set in the house script, `text` in the serif beside it. Copy is from the site itself. */
 const NEWS = [
-  { script: 'Free shipping', text: 'on all orders above €350', href: '/help#shipping' },
+  { script: 'Free shipping', text: 'on all orders above ₹35,000', href: '/help#shipping' },
   { script: 'Easy returns', text: 'within 30 days, hassle-free', href: '/help#returns' },
   { script: 'Golden Hour Paris', text: 'the new collection', href: '/collections/golden-hour-paris' },
 ];

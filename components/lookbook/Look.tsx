@@ -87,14 +87,14 @@ export function Look({ look, flip }: { look: LookData; flip: boolean }) {
                   type="button"
                   className={styles.tag}
                   aria-expanded={open}
-                  aria-label={`${product.name}, ${formatPrice(product.priceCents)}`}
+                  aria-label={`${product.name}, ${formatPrice(product.price)}`}
                   onClick={() => setActive(open ? null : slug)}
                 >
                   <span aria-hidden="true">+</span>
                 </button>
                 <div className={styles.card} hidden={!open}>
                   <p className={styles.cardName}>{product.name}</p>
-                  <p className={styles.cardPrice}>{formatPrice(product.priceCents)}</p>
+                  <p className={styles.cardPrice}>{formatPrice(product.price)}</p>
                   <div className={styles.cardActions}>
                     <Link href={productHref(product)} className="text-link">
                       View
@@ -135,7 +135,7 @@ export function Look({ look, flip }: { look: LookData; flip: boolean }) {
                 <Link href={productHref(product)} className={styles.pieceName}>
                   {product.name}
                 </Link>
-                <span className={styles.piecePrice}>{formatPrice(product.priceCents)}</span>
+                <span className={styles.piecePrice}>{formatPrice(product.price)}</span>
                 <button type="button" className={`text-link ${styles.pieceQuick}`} onClick={() => openQuickView(product.slug)}>
                   Quick view
                 </button>

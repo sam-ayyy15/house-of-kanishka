@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/format';
-import { FREE_SHIPPING_CENTS, getProduct, productHref } from '@/lib/products';
+import { FREE_SHIPPING, getProduct, productHref } from '@/lib/products';
 import { setQty, useStore } from '@/lib/store';
 import { FreeShippingBar } from '../bag/FreeShippingBar';
 import { Emblem } from '../Emblem';
@@ -16,8 +16,8 @@ export function useBag() {
     const product = getProduct(l.slug);
     return product ? [{ ...l, product }] : [];
   });
-  const subtotal = lines.reduce((n, l) => n + l.product.priceCents * l.qty, 0);
-  return { lines, subtotal, freeShipping: subtotal >= FREE_SHIPPING_CENTS };
+  const subtotal = lines.reduce((n, l) => n + l.product.price * l.qty, 0);
+  return { lines, subtotal, freeShipping: subtotal >= FREE_SHIPPING };
 }
 
 /** Shopping bag. EXTRAPOLATED – no reference design. */
@@ -64,7 +64,7 @@ export function BagView() {
                 </div>
               </div>
               <div className={styles.lineEnd}>
-                <p className={styles.price}>{formatPrice(product.priceCents * qty)}</p>
+                <p className={styles.price}>{formatPrice(product.price * qty)}</p>
                 <button type="button" className="text-link" onClick={() => setQty(product.slug, size, 0)}>
                   Remove
                 </button>

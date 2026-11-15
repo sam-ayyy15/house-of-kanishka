@@ -64,8 +64,8 @@ export default async function ProductPage({ params }: Params) {
     offers: {
       '@type': 'Offer',
       url: `${SITE_URL}${productHref(product)}`,
-      priceCurrency: 'EUR',
-      price: (product.priceCents / 100).toFixed(2),
+      priceCurrency: 'INR',
+      price: product.price.toFixed(2),
       availability: 'https://schema.org/InStock',
       itemCondition: 'https://schema.org/NewCondition',
     },

@@ -38,14 +38,14 @@ export function EditorialBlock() {
         <div className={styles.productMedia} style={{ aspectRatio: 1 }}>
           <Image src={bracelets.image} alt="" fill sizes="(max-width: 767px) 45vw, 13vw" className={styles.blend} />
         </div>
-        <ProductCaption name={bracelets.name} priceCents={bracelets.priceCents} align="center" className={styles.caption} />
+        <ProductCaption name={bracelets.name} price={bracelets.price} align="center" className={styles.caption} />
       </Link>
 
       <Link href={productHref(miniBag)} className={`${styles.product} ${styles.miniBag}`}>
         <div className={styles.productMedia} style={{ aspectRatio: 130 / 124 }}>
           <Image src={miniBag.image} alt="" fill sizes="(max-width: 767px) 45vw, 20vw" className={styles.blend} />
         </div>
-        <ProductCaption name={miniBag.name} priceCents={miniBag.priceCents} align="center" className={styles.caption} />
+        <ProductCaption name={miniBag.name} price={miniBag.price} align="center" className={styles.caption} />
       </Link>
 
       <Link href="/products/floral-satin-midi-dress" className={`${styles.lifestyle} ${styles.front}`}>
