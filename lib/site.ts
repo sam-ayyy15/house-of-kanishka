@@ -2,4 +2,4 @@
 // Set NEXT_PUBLIC_SITE_URL (in Vercel's environment settings) once the real domain is chosen.
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://house-of-kanishka.vercel.app').replace(/\/$/, '');
 export const SITE_NAME = 'House of Kanishka';
-export const SITE_DESCRIPTION = 'House of Kanishka: Parisian elegance and modern simplicity. Dresses, tailoring and accessories, in small collections.';
+export const SITE_DESCRIPTION = 'House of Kanishka: Timeless silhouettes and contemporary allure. Dresses, tailoring and accessories, in small collections.';

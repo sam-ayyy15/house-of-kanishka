@@ -10,7 +10,7 @@ const services = [
   {
     Icon: Truck,
     title: 'Free Shipping',
-    body: 'Enjoy free shipping on all orders above ₹35,000. Get your favorite styles delivered to your door.',
+    body: 'Enjoy free shipping on all orders above ₹3,500. Get your favorite styles delivered to your door.',
     link: 'View all', href: '/help#shipping',
   },
   {

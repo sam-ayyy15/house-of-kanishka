@@ -96,7 +96,7 @@ export function PdpInfo({ product }: { product: Product }) {
     </ul>,
     // Promo section copy (spec §4.7), currency in INR.
     <p key="s">
-      Enjoy free shipping on all orders above ₹35,000. Not the right fit? No problem. We offer hassle-free returns
+      Enjoy free shipping on all orders above ₹3,500. Not the right fit? No problem. We offer hassle-free returns
       within 30 days of purchase.
     </p>,
     oneSize ? (

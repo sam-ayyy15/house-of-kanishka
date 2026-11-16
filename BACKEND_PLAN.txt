@@ -1,0 +1,284 @@
+HOUSE OF KANISHKA – BACKEND BUILD PLAN
+Final version: 15 November 2026. Work starts 16 November 2026.
+====================================================================
+
+
+1. DECISIONS
+--------------------------------------------------------------------
+Database and storage   Supabase (PostgreSQL + Storage), region Mumbai (ap-south-1)
+Server code            Next.js Route Handlers (app/api/*) and Server Actions, in TypeScript
+Accounts               Clerk (already built), connected to Supabase as a
+                       third-party sign-in provider, so Supabase's access rules
+                       (row-level security) know who each customer is
+Payments               Razorpay with our own checkout form: the form is ours, and Razorpay's
+                       own payment window takes the card/UPI details
+                       (UPI, cards, net banking, wallets) + Cash on Delivery
+Order emails           Resend + React Email (sent from our own domain)
+Newsletter             Brevo (free plan), with double opt-in
+Shipping               Shiprocket (Lite plan), tracking page we build ourselves(LATER NOT NOW)
+Bill / invoice PDF     @react-pdf/renderer, saved in Supabase Storage
+Search                 Postgres full-text search + pg_trgm (for typo tolerance)
+Spam protection        Cloudflare Turnstile + rate limits
+Hosting                Vercel free (Hobby) plan
+Budget                 Free plans only. No paid plans for now.
+Domain                 Bought.will use after backend finishes.
+
+
+2. BUSINESS ANSWERS
+--------------------------------------------------------------------
+GST registered         NO. Issue a "bill of supply" (no tax lines). Ready to switch to
+                       GST invoices if the business registers later.
+                       Check with an accountant (CA): selling goods to customers in other states
+                       can require GST registration whatever the turnover.
+Cash on Delivery       YES. The customer confirms the order by a free email link. The
+                       COD order limit and COD on/off are admin settings.
+Free shipping from     Rs 350 (the current code says Rs 35,000, which was a mistake). With
+                       every product above Rs 350, every order ships free.
+                       The fee for smaller orders is an admin setting.
+Shipping area          India only.
+Returns                7 days, refunded to the original payment method
+                       (COD orders: to the customer's bank account or UPI ID).
+Business details       Placeholder details for now, clearly marked so they are easy to replace.
+Admin users            Founder only. The admin area must be hidden.
+
+
+3. DESIGN AND MOTION RULES (apply to EVERY phase)
+--------------------------------------------------------------------
+Every new screen, state, form, email and document must look like the
+current site and feel luxurious and premium.
+
+Look
+- Colours only from the design tokens in spec section 12.2
+  (--vr-red #A20F15, black, white, greys).
+- The site's existing serif, script and sans fonts and type sizes.
+  Square corners everywhere.
+- Reuse the existing components: Eyebrow, UnderlineLink, btn/field
+  classes, Drawer, Breadcrumbs, Emblem (lotus), Handwriting, RiseWords,
+  RevealObserver, the skeleton loaders, the error/offline page styles.
+  Anything new must be designed to match them.
+
+Motion: luxurious, advanced, with a premium feel
+- Covers payment, checkout, invoice, shipping/tracking pages, customer
+  forms, the account area and the admin area.
+- Extends the existing motion: lotus bloom, handwritten
+  script, rising words, scroll reveals, soft fades.
+- Premium = smooth and deliberate: slow, expressive easing, layered
+  timing (headline, then details, then actions), content revealed through masks,
+  numbers counting up, smooth transitions between screens, small
+  responses to hover and focus.
+- Animate only position, scale and opacity (CSS transform and opacity),
+  smooth (60 fps) on mid-range phones. Every animation can be
+  interrupted, never blocks a click, and long sequences can be skipped.
+- Visitors who turn off motion in their device settings (prefers-reduced-motion)
+  get the finished state straight away.
+- Existing spec pages keep their current motion. New motion is for new screens
+  and states only.
+
+Checks before a phase counts as done
+- Luxury motion rules applied while building, motion QA afterwards.
+- Screenshots at 1440 px and 393 px, compared with the existing pages.
+
+Outside the site
+- Emails and the PDF bill use the site's fonts, red and the lotus
+  (no animation, because emails and PDFs can't animate).
+- The Razorpay payment window can only take the brand red and our logo; our own
+  animation before and after it hides the handover.
+
+
+4. THE PHASES
+====================================================================
+
+PHASE 0 – SETUP AND POLICY PAGES
+--------------------------------------------------------------------
+- Supabase project (Mumbai) connected to Clerk as a third-party sign-in provider.
+- Supabase CLI: database migrations, generated TypeScript types,
+  and a database connection that only runs on the server.
+- Startup check for environment variables (zod), updated .env.example.
+- A cloudflared tunnel so webhooks (Clerk, Razorpay, Shiprocket) reach this computer while testing.
+- GitHub Actions: a ping every few days so the free database doesn't pause, plus
+  a nightly database backup.
+- Change the free-shipping limit from Rs 35,000 to Rs 350 (lib/products.ts,
+  the free-shipping bar, the promo text).
+- New pages: Terms, Privacy, Refund (7 days), Shipping (India only),
+  Contact (placeholder business details). Linked from the footer. Razorpay
+  requires these pages before it activates the account.
+- Motion: headings rise in, text reveals as you scroll, a sticky contents
+  list highlights the current section, the existing underline effect on links.
+
+PHASE 1 – PRODUCTS IN THE DATABASE
+--------------------------------------------------------------------
+- Tables: products, variants (size x colour), inventory, collections,
+  lookbook looks and hotspots, homepage content. Access rules (row-level security)
+  on every table.
+- Move the data from lib/products.ts, lib/collections.ts and lib/lookbook.ts
+  into the database.
+- Pages read from Supabase, cached, and refreshed whenever a product changes.
+- Search moves to Postgres (keeping the typo tolerance and suggestions).
+- Placeholder photos stay local only (they must never be published).
+- Pages must look and move exactly as they do now (screenshot comparison).
+- Motion: sold-out sizes fade with a fine strike-through, and "few left" fades in.
+
+Launch scope: DRESSES ONLY. Accessories launch later as a "coming soon" teaser
+- Accessories stay in the database. Each product has a status: draft / preview / live
+  (preview = only the founder sees it on the real site). Each category has a launch switch:
+  Accessories = "coming soon".
+- While coming soon:
+  * The homepage Accessories section and /accessories keep their current design,
+    but show "Accessories – coming soon" and a "Notify me" email sign-up instead of
+    prices and buttons. Sign-ups go to a launch-waitlist table (with consent) and Brevo.
+  * Accessory product pages are not public (404), and are left out of search, suggestions,
+    the sitemap and New Arrivals.
+  * Collections (e.g. ASH X COS: wool beret, silk scarf) and lookbook hotspots
+    leave accessories out or show them as "coming soon" (not clickable).
+  * The server refuses accessories in a bag, wishlist or checkout (also covers bags
+    saved earlier).
+- At launch: the founder flips the switch in the admin area, everything goes live together,
+  pages refresh straight away, and the waitlist gets a launch email.
+- Motion: the coming-soon state uses the site's motion style (soft fade-in of the text,
+  the lotus blooms when someone signs up for "Notify me").
+
+PHASE 2 – CUSTOMERS, ACCOUNT AREA, LOGIN, FORMS
+--------------------------------------------------------------------
+Backend
+- Clerk webhook copies each account into a profiles table (and anonymises it when the account is deleted).
+- Saved addresses, a consent record (who agreed to what, and when).
+- Bag and wishlist saved to the account. A guest's bag is merged in
+  at sign-in.
+- Newsletter: Brevo with double opt-in, plus our own subscriber table.
+- Contact form: saved in Supabase and emailed to us, with Turnstile and rate limits.
+- Customers can export their data and delete their account (required by India's DPDP Act).
+
+Login page
+- After signing in, the customer returns to the page they came from (checkout or product
+  page). Only addresses on our own site are allowed. The default is /account.
+- "Sign in for faster checkout" at checkout (guests can still check out without an account).
+- Add sign-in by email code (free in Clerk) alongside password and Google.
+- Motion after signing in: the form fades out, the lotus blooms, and "Welcome back" is
+  written in script before moving on.
+
+Account area (currently /account shows settings only)
+- /account               Overview: handwritten "Welcome back, [name]", the latest
+                         order and how far it has got, quick links
+- /account/addresses     Saved addresses, default address
+- /account/wishlist      The saved wishlist
+- /account/preferences   Newsletter and marketing consent
+- /account/settings      Today's account page, moved here unchanged
+                         (profile, email, password, devices, sign out, delete)
+- Navigation: serif section links, a left column on desktop, scrollable tabs on
+  mobile, and a red line that slides to the current section.
+
+Motion for every customer form (login, account, addresses, newsletter, contact)
+- Labels float up, a fine red line draws under the field being typed in,
+  error messages slide down gently (no shaking), buttons show the lotus while busy,
+  success shows a lotus bloom with handwritten thanks. Saved addresses
+  rearrange smoothly when one is added or removed.
+
+PHASE 3 – CHECKOUT, PAYMENTS, CASH ON DELIVERY
+--------------------------------------------------------------------
+- The server checks every field: contact details, phone (required), address, India PIN code.
+- Prices are re-checked against the database. Stock is held for 15 minutes and
+  released by Supabase pg_cron (the free Vercel plan only runs scheduled jobs once a day).
+- Shipping: free from Rs 350, with the fee for smaller orders set in the admin area.
+- Online payment: the server creates a Razorpay order, Razorpay's payment window
+  opens (brand red, our logo, customer details already filled in), the server checks
+  the payment signature, and the payment.captured webhook is the final word.
+  Each order is processed only once, even if the webhook arrives more than once.
+- Cash on delivery: the order is marked "awaiting confirmation" and
+  the customer confirms it by an email link. COD order limit and on/off in the admin area.
+- Everything is built and tested in Razorpay test mode.
+- Motion: checkout steps (Contact, Delivery, Payment) fold into
+  summaries once done; the order total counts up; the chosen payment method
+  expands; a white veil with the lotus appears before the Razorpay window opens;
+  "Confirming payment" shows the lotus opening. Smooth recovery screens
+  when the payment window is closed, the payment fails, a retry is needed, or
+  the customer comes back from a UPI app.
+
+PHASE 4 – ORDERS, BILL OF SUPPLY, EMAILS
+--------------------------------------------------------------------
+- Order lifecycle (placed, paid or COD-confirmed, packed, shipped, delivered,
+  refunded) and order numbers.
+- Bill of supply PDF (no GST), saved in Storage, with placeholder business details.
+- Order emails through Resend from our own domain (confirmation, shipped,
+  delivered, refund), with DNS records set up for our domain.
+- Account: /account/orders and /account/orders/[id], with a bill download.
+- Confirmation page animation: the lotus opens, a paper sheet slides up, the
+  lines rise one by one, the amounts count up, the total is written in script,
+  and a red lotus stamp ("Paid", or "To pay on delivery" for COD)
+  presses down; then the action buttons fade in. It plays once and can be skipped,
+  and shows the finished invoice for visitors who turn motion off.
+- Motion: orders in the account expand to show their details; opening the bill moves
+  smoothly into its preview.
+
+PHASE 5 – SHIPPING, TRACKING, REFUNDS(LATER AS NOT DECIDED STILL)but create an asthetic page for it with animation
+--------------------------------------------------------------------
+
+
+PHASE 6 – HIDDEN ADMIN AREA (FOUNDER ONLY)
+--------------------------------------------------------------------
+- Access: only the founder's Clerk user ID (stored as an environment variable).
+  Everyone else, even signed-in customers, sees the normal 404 page.
+- Never linked from the site, left out of the sitemap, marked noindex, at a less
+  obvious address than /admin. Every action is checked again on the server and logged.
+- Category launch switches (Accessories: coming soon / live), product status
+  (draft / preview / live), and the launch waitlist with a "send launch email" button.
+- Manage: products, stock, orders (including confirming COD), refunds,
+  shipping fee, COD settings, homepage content, newsletter subscribers,
+  contact messages. Sales report as a spreadsheet (CSV), low-stock emails.
+- Motion: smooth page changes, key numbers count up, charts draw
+  themselves in, table rows appear one by one, smooth reordering when sorting or
+  filtering, side panels for editing, an instant red check when something is saved,
+  a gentle confirmation panel for risky actions. Every animation is short and can be
+  interrupted, so it never slows down the work.
+
+PHASE 7 – CHECKS AND LAUNCH
+--------------------------------------------------------------------
+- Tests that the access rules hold (no customer can see another customer's data), plus a security review.
+- Sentry (error tracking), UptimeRobot (downtime alerts), analytics only after cookie consent.
+- Test that a backup can actually be restored.
+- End-to-end Playwright tests: a paid order and a COD order.
+- Screenshot comparison of every new page at 1440 px and 393 px, and motion QA
+  on every new animation (smoothness, loading speed, reduced motion, real phones).
+- Razorpay account check (KYC), live payment keys, email DNS on our domain.
+- Hosting stays on the free Vercel plan for now.
+
+PHASE 8 – AFTER LAUNCH (choose later)
+--------------------------------------------------------------------
+WhatsApp chat link, delivery date shown on product pages, reviews with photos,
+discount codes, gift cards and gift wrap, back-in-stock alerts, loyalty points,
+size recommender, push notifications. All follow section 3.
+
+
+5. BEFORE PHASE 0 – TO DO
+====================================================================
+Free accounts to create
+- Supabase: new project, region Mumbai (ap-south-1)
+- Razorpay: sign up (test payment keys work right away, the account check (KYC) can wait)
+- Resend: sign up, add the domain (Claude will give you the DNS records)
+- Brevo: sign up
+- Cloudflare: free account (for Turnstile only)
+- GitHub: push this repo to a PRIVATE repository
+
+
+Optional: Docker Desktop, Settings > Resources > WSL integration ON
+(only needed to run Supabase locally).
+
+Already in place: Node 24, Git, Clerk keys in .env.local.
+
+Packages Claude will add as each phase starts
+- Phase 0: @supabase/supabase-js, zod, server-only
+- Phase 3: razorpay
+- Phase 4: resend, @react-email/components, @react-pdf/renderer
+- Phase 7: vitest, @sentry/nextjs
+(No ORM: we use the Supabase client with generated types, so the
+access rules always apply.)
+
+
+6. FREE PLAN LIMITS TO REMEMBER 
+====================================================================
+- Supabase: 500 MB database, 1 GB files, pauses after 7 days with no activity
+- Clerk: about 50,000 returning users a month; no SMS login or two-factor sign-in
+- Resend: about 3,000 emails a month, 100 a day
+- Brevo: 300 emails a day, Brevo branding in emails
+- Razorpay: no setup fee; about 2% + GST per payment (new merchants may get
+  0% for 90 days or the first Rs 5 lakh)
+- Vercel Hobby: scheduled jobs once a day only

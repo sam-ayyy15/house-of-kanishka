@@ -26,9 +26,9 @@ export function WhoWeAre() {
         <span id="who-we-are-title">Who we are</span>
       </Eyebrow>
       <p className={styles.statement} data-reveal="rise">
-        Inspired by Parisian elegance and modern simplicity,
-        <br className={styles.br} /> we create pieces that move with you, <em>effortlessly</em>
-        <br className={styles.br} /> <em>complementing your life and style</em>
+        Inspired by timeless silhouettes and contemporary allure,
+        <br className={styles.br} /> we create pieces that embrace your elegance, <em>effortlessly</em>
+        <br className={styles.br} /> <em>defining your own kind of beauty.</em>
       </p>
 
       {/* data-reveal="cinema": on first view the photo zooms in, then the script is written

@@ -12,7 +12,7 @@ import styles from './page.module.css';
 
 export const metadata: Metadata = {
   title: 'The Brand · House of Kanishka',
-  description: 'Inspired by Parisian elegance and modern simplicity, we create pieces that move with you.',
+  description: 'Inspired by timeless silhouettes and contemporary allure, we create pieces that embrace your elegance.',
   alternates: { canonical: '/the-brand' },
 };
 
@@ -37,9 +37,9 @@ export default function BrandPage() {
         <section className={styles.statement}>
           <Eyebrow>Who we are</Eyebrow>
           <p className={styles.statementText} data-reveal="words">
-            <RiseWords text="Inspired by Parisian elegance and modern simplicity, we create pieces that move with you," />{' '}
+            <RiseWords text="Inspired by timeless silhouettes and contemporary allure, we create pieces that embrace your elegance," />{' '}
             <em>
-              <RiseWords text="effortlessly complementing your life and style" from={14} />
+              <RiseWords text="effortlessly defining your own kind of beauty." from={14} />
             </em>
           </p>
         </section>

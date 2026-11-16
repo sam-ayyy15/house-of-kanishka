@@ -1,0 +1,13 @@
+import { chromium } from 'playwright-core';
+const [,, w = '1440', h = '900', tag = 'd'] = process.argv;
+const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+const page = await (await browser.newContext({ viewport: { width: +w, height: +h } })).newPage();
+const logs = []; page.on('console', (m) => m.type() === 'error' && logs.push(m.text().slice(0, 400)));
+await page.goto('http://localhost:3000/zz-cloth', { waitUntil: 'commit', timeout: 180000 });
+await page.waitForFunction(() => window.__ready, null, { timeout: 60000 });
+await page.waitForTimeout(3500);
+await page.screenshot({ path: `.shots/cloth-${tag}-a.png` });
+await page.waitForTimeout(4000);
+await page.screenshot({ path: `.shots/cloth-${tag}-b.png` });
+console.log(logs.join('|') || 'ok');
+await browser.close();

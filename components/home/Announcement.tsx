@@ -4,16 +4,16 @@ import styles from './Announcement.module.css';
 
 /** The news. `script` is set in the house script, `text` in the serif beside it. Copy is from the site itself. */
 const NEWS = [
-  { script: 'Free shipping', text: 'on all orders above ₹35,000', href: '/help#shipping' },
+  { script: 'Free shipping', text: 'on all orders above ₹3,500', href: '/help#shipping' },
   { script: 'Easy returns', text: 'within 30 days, hassle-free', href: '/help#returns' },
   { script: 'Golden Hour Paris', text: 'the new collection', href: '/collections/golden-hour-paris' },
 ];
 
 /** The house voice, on the second ribbon (decorative): lines from "Who we are". */
 const HOUSE = [
-  { script: 'Parisian elegance', text: 'and modern simplicity' },
-  { script: 'Effortlessly', text: 'complementing your life and style' },
-  { script: 'House of Kanishka', text: 'made to move with you' },
+  { script: 'Timeless silhouettes', text: 'and contemporary allure' },
+  { script: 'Effortlessly', text: 'defining your own kind of beauty' },
+  { script: 'House of Kanishka', text: 'made to embrace your elegance' },
 ];
 
 /** Three copies of the run, so a one-third slide lands exactly on the next copy: no seam, any screen width. */

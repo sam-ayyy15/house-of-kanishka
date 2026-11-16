@@ -222,5 +222,5 @@ export const ACCESSORY_TABS = [
   { label: 'Hats', tag: 'hats' },
 ];
 
-// Free delivery from ₹35,000 (the €350 rule from the reference, at ₹100 to €1).
-export const FREE_SHIPPING = 35000;
+// Free delivery from ₹3,500 (the €350 rule from the reference, at ₹100 to €1).
+export const FREE_SHIPPING = 3500;

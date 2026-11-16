@@ -30,7 +30,7 @@ export default function OpengraphImage() {
         </svg>
         <div style={{ display: 'flex', fontSize: 84, letterSpacing: -1 }}>{SITE_NAME}</div>
         <div style={{ display: 'flex', fontSize: 28, letterSpacing: 4, textTransform: 'uppercase', opacity: 0.85 }}>
-          Parisian elegance · modern simplicity
+          Timeless silhouettes · contemporary allure
         </div>
       </div>
     ),
