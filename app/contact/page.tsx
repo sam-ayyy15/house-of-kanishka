@@ -25,7 +25,7 @@ const sections: PolicySection[] = [
     id: 'details',
     title: 'Our details',
     content: (
-      // PLACEHOLDER business details (lib/business.ts): replace before launch.
+      // Business details come from lib/business.ts.
       <dl>
         <dt>Business</dt>
         <dd>{BUSINESS.legalName}</dd>
@@ -42,8 +42,12 @@ const sections: PolicySection[] = [
         <dd>
           <a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a>
         </dd>
-        <dt>Phone</dt>
-        <dd>{BUSINESS.phone}</dd>
+        {BUSINESS.phone && (
+          <>
+            <dt>Phone</dt>
+            <dd>{BUSINESS.phone}</dd>
+          </>
+        )}
         <dt>Hours</dt>
         <dd>{BUSINESS.hours}</dd>
       </dl>
