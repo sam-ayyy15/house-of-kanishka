@@ -25,3 +25,7 @@
 ## Stack
 - Next.js (App Router) + React. Use CSS custom properties from spec section 12.2.
 - Square corners everywhere. Brand red is #A20F15.
+
+## New frontend during the backend phases
+- Before building any new screen, read `DESIGN_GUIDE.md` (tokens, type, page patterns, motion vocabulary, recipes) and follow it.
+- The backend plan is `BACKEND_PLAN.txt`.

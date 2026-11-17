@@ -7,20 +7,30 @@
     "build": "next build",
     "start": "next start",
     "lint": "tsc --noEmit",
+    "test": "node --test tests/*.test.ts",
+    "test:access": "node --env-file=.env.local scripts/check-access.mjs",
+    "test:orders": "node --env-file=.env.local scripts/check-orders.mjs",
     "shots": "node scripts/screenshot.mjs",
     "videos": "node scripts/make-videos.mjs",
-    "placeholders": "node scripts/make-placeholders.mjs && node scripts/make-campaign-loop.mjs && rm -rf .next/dev/cache/images .next/cache/images"
+    "placeholders": "node scripts/make-placeholders.mjs && node scripts/make-campaign-loop.mjs && rm -rf .next/dev/cache/images .next/cache/images",
+    "tunnel": "bash scripts/tunnel.sh",
+    "db:push": "supabase db push --remote",
+    "db:types": "supabase gen types typescript --remote > lib/supabase/types.ts",
+    "db:new": "supabase migration new"
   },
   "dependencies": {
     "@chenglou/pretext": "^1.0.0",
     "@clerk/nextjs": "^7.9.25",
     "@react-three/fiber": "^9.8.2",
+    "@supabase/supabase-js": "^2.119.0",
     "@types/three": "^0.187.0",
     "lucide-react": "^1.72.0",
     "next": "^16.4.6",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "three": "^0.187.0"
+    "server-only": "^0.0.1",
+    "three": "^0.187.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",

@@ -70,9 +70,51 @@
 }
 
 .inner {
+  position: relative;
+  width: min(100%, 420px);
+}
+
+.content {
   display: flex;
   flex-direction: column;
-  width: min(100%, 420px);
+  transition: opacity var(--dur-base) ease;
+}
+
+/* Signed in: the form fades out and the welcome takes its place. */
+.content[data-leaving] {
+  opacity: 0;
+}
+
+.welcome {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* The welcome on its own (after Google sign-in): give it the height a form would have. */
+.welcomeOnly {
+  min-height: 420px;
+}
+
+.welcomeEmblem {
+  width: clamp(72px, 7vw, 96px);
+  color: var(--vr-red);
+}
+
+.welcomeScript {
+  margin: 0;
+  font-family: var(--font-script);
+  font-size: clamp(64px, 7vw, 104px);
+  line-height: 1;
+  color: #d10000; /* the site's script red */
+  white-space: nowrap;
+  transform: rotate(-5deg);
 }
 
 .title {
@@ -185,13 +227,15 @@
   background: var(--vr-border);
 }
 
-.code {
+.code input {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.4em;
 }
 
-.aside {
-  align-self: flex-start;
+.asides {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
 }
 
 .status {

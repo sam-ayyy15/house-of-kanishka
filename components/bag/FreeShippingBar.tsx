@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { formatPrice } from '@/lib/format';
-import { FREE_SHIPPING } from '@/lib/products';
+import { useCatalog } from '../CatalogProvider';
 import styles from './FreeShippingBar.module.css';
 
 /**
@@ -10,7 +10,8 @@ import styles from './FreeShippingBar.module.css';
  * moves with transform (scaleX), easing in when it first appears and each time the bag changes.
  */
 export function FreeShippingBar({ subtotal }: { subtotal: number }) {
-  const progress = Math.min(1, subtotal / FREE_SHIPPING);
+  const { freeShipping: FREE_SHIPPING } = useCatalog();
+  const progress = FREE_SHIPPING > 0 ? Math.min(1, subtotal / FREE_SHIPPING) : 1;
   const done = subtotal >= FREE_SHIPPING;
   // Starts empty and fills on the next frame, so it animates in rather than appearing full.
   const [shown, setShown] = useState(0);

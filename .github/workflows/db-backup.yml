@@ -1,0 +1,33 @@
+# Nightly copy of the whole database (the free Supabase plan has no backups of its own).
+# The dump is encrypted with a passphrase before it is stored as a private workflow artifact,
+# and kept for 30 days. To restore: download, decrypt with the same passphrase, then psql < dump.sql
+#   gpg --batch --passphrase "$BACKUP_PASSPHRASE" -d backup.sql.gz.gpg | gunzip | psql "$SUPABASE_DB_URL"
+name: Database backup
+on:
+  schedule:
+    - cron: '40 20 * * *' # every night, 02:10 India time
+  workflow_dispatch:
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install PostgreSQL 17 client
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client-17
+      - name: Dump and encrypt
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          /usr/lib/postgresql/17/bin/pg_dump "$SUPABASE_DB_URL" --no-owner --no-privileges \
+            --schema=public --schema=storage | gzip \
+            | gpg --batch --symmetric --cipher-algo AES256 --passphrase "$BACKUP_PASSPHRASE" -o backup.sql.gz.gpg
+          ls -lh backup.sql.gz.gpg
+      - uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ github.run_id }}
+          path: backup.sql.gz.gpg
+          retention-days: 30

@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { formatPrice } from '@/lib/format';
-import { colourwaysOf, type Product } from '@/lib/products';
+import { colourwaysOf, LOW_STOCK, soldOut, stockOf, type Product } from '@/lib/products';
 import { addToBag, toggleWishlist, useStore } from '@/lib/store';
 import { SIZE_CHART } from '@/lib/sizes';
 import { openMiniBag, selectColour, useUI } from '@/lib/ui';
@@ -21,7 +21,10 @@ export function PdpInfo({ product }: { product: Product }) {
   const tabs = ['Description', 'Details', 'Shipping & Returns', 'Size Guide'];
   const id = useId();
   const [active, setActive] = useState(0);
-  const [size, setSize] = useState(product.sizes[0]);
+  // Start on the first size that is in stock.
+  const [size, setSize] = useState(product.sizes.find((s) => stockOf(product, s) > 0) ?? product.sizes[0]);
+  const gone = soldOut(product);
+  const left = stockOf(product, size);
   const [added, setAdded] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
   const [stuck, setStuck] = useState(false);
@@ -66,6 +69,7 @@ export function PdpInfo({ product }: { product: Product }) {
   }, []);
 
   function add() {
+    if (left <= 0) return;
     addToBag(product.slug, size);
     setAdded(true);
     openMiniBag();
@@ -186,9 +190,17 @@ export function PdpInfo({ product }: { product: Product }) {
           <span className="visually-hidden">Size</span>
           <select value={size} onChange={(e) => setSize(e.target.value)}>
             {product.sizes.map((s) => (
-              <option key={s}>{s}</option>
+              <option key={s} value={s} disabled={stockOf(product, s) <= 0}>
+                {stockOf(product, s) <= 0 ? `${s} – Sold out` : s}
+              </option>
             ))}
           </select>
+          {/* Fades in under the size when only a few are left. */}
+          {left > 0 && left <= LOW_STOCK && (
+            <span key={size} className={styles.few} role="status">
+              Few left
+            </span>
+          )}
           <svg className={styles.chevron} width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
             <path d="m2 4 4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.25" />
           </svg>
@@ -201,8 +213,8 @@ export function PdpInfo({ product }: { product: Product }) {
       </div>
 
       <div className={styles.purchase} ref={purchaseRef}>
-        <button type="button" className={`btn btn-red ${styles.addToCart}`} onClick={add}>
-          <span aria-live="polite">{added ? 'Added to bag' : 'Add to cart'}</span>
+        <button type="button" className={`btn btn-red ${styles.addToCart}`} onClick={add} disabled={gone} data-sold-out={gone || undefined}>
+          <span aria-live="polite">{gone ? 'Sold out' : added ? 'Added to bag' : 'Add to cart'}</span>
           <span>{formatPrice(product.price, { withCode: true })}</span>
         </button>
         <button
@@ -233,12 +245,14 @@ export function PdpInfo({ product }: { product: Product }) {
               <span className="visually-hidden">Size</span>
               <select value={size} onChange={(e) => setSize(e.target.value)} disabled={oneSize}>
                 {product.sizes.map((s) => (
-                  <option key={s}>{s}</option>
+                  <option key={s} value={s} disabled={stockOf(product, s) <= 0}>
+                    {stockOf(product, s) <= 0 ? `${s} – Sold out` : s}
+                  </option>
                 ))}
               </select>
             </label>
-            <button type="button" className={`btn btn-red ${styles.stickyAdd}`} onClick={add}>
-              <span>Add to cart</span>
+            <button type="button" className={`btn btn-red ${styles.stickyAdd}`} onClick={add} disabled={gone} data-sold-out={gone || undefined}>
+              <span>{gone ? 'Sold out' : 'Add to cart'}</span>
               <span>{formatPrice(product.price)}</span>
             </button>
           </div>,

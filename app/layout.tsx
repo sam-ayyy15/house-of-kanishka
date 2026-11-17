@@ -3,13 +3,16 @@ import type { Metadata, Viewport } from 'next';
 import { AuthEnabledProvider } from '@/components/auth/AuthEnabled';
 import { MiniBag } from '@/components/bag/MiniBag';
 import { QuickView } from '@/components/bag/QuickView';
+import { CatalogProvider } from '@/components/CatalogProvider';
 import { CookieConsent } from '@/components/CookieConsent';
 import { Intro } from '@/components/Intro';
 import { INTRO_SCRIPT } from '@/components/intro-script';
 import { Footer } from '@/components/Footer';
 import { RevealObserver } from '@/components/RevealObserver';
+import { StoreSync } from '@/components/StoreSync';
 import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister';
 import { authEnabled } from '@/lib/auth-config';
+import { getCatalog } from '@/lib/catalog';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site';
 import { heroItalic, sans, script, serif } from './fonts';
 import './globals.css';
@@ -28,7 +31,10 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // The pieces on sale, for the client-side bag, wishlist, quick view and search.
+  const catalog = await getCatalog();
+  const collectionLinks = catalog.collections.map((c) => ({ slug: c.slug, title: c.title }));
   return (
     <html
       lang="en"
@@ -45,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Intro />
+        <CatalogProvider products={catalog.products} collections={collectionLinks} freeShipping={catalog.settings.freeShippingThreshold}>
         {/* Accounts and sessions (Clerk). All screens are the site's own; Clerk supplies
             sign-in, verification emails, password resets and the secure session cookie. */}
         <AuthEnabledProvider enabled={authEnabled}>
@@ -52,6 +59,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <ClerkProvider signInUrl="/login" signUpUrl="/login" afterSignOutUrl="/">
               {children}
               <Footer />
+              {/* Saves the bag and wishlist to the signed-in customer's account. */}
+              <StoreSync />
             </ClerkProvider>
           ) : (
             <>
@@ -66,6 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <CookieConsent />
         <RevealObserver />
         <ServiceWorkerRegister />
+        </CatalogProvider>
       </body>
     </html>
   );

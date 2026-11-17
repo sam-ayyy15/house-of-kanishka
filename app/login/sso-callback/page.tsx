@@ -12,8 +12,8 @@ export default function SsoCallbackPage() {
         Signing you in…
       </p>
       <AuthenticateWithRedirectCallback
-        signInFallbackRedirectUrl="/account"
-        signUpFallbackRedirectUrl="/account"
+        signInFallbackRedirectUrl="/login/welcome"
+        signUpFallbackRedirectUrl="/login/welcome"
         signInUrl="/login"
         signUpUrl="/login"
       />

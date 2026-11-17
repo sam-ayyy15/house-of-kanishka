@@ -1,0 +1,490 @@
+/* The founder's admin area. EXTRAPOLATED – no reference design (DESIGN_GUIDE.md §6 "Admin"):
+   the site's own tokens and type in a denser layout. 13px body, hairline tables, numbered
+   rows, the lotus instead of toasts. Every animation is short and can be interrupted. */
+.admin {
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 32px;
+  padding-bottom: 32px;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: clamp(34px, 4vw, 56px);
+  line-height: 1.05;
+  animation: vr-rise 400ms var(--ease-out) both;
+}
+
+.sub {
+  color: var(--vr-text-muted);
+}
+
+/* ---------- Figures ---------- */
+.figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  border-top: 1px solid var(--vr-black);
+  border-left: 1px solid var(--vr-border);
+}
+
+.figure {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border-right: 1px solid var(--vr-border);
+  border-bottom: 1px solid var(--vr-border);
+  animation: vr-rise 400ms var(--ease-out) calc(var(--i, 0) * 50ms) both;
+  transition: background-color var(--dur-fast) ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  a.figure:hover {
+    background: var(--vr-grey-tile);
+  }
+}
+
+.figureLabel,
+.th,
+.label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--vr-text-muted);
+}
+
+.figureValue {
+  font-family: var(--font-serif);
+  font-size: 44px;
+  line-height: 1;
+}
+
+.figure[data-alert] .figureValue {
+  color: var(--vr-red);
+}
+
+/* ---------- Sections and tables ---------- */
+.section {
+  padding: 36px 0 0;
+}
+
+.sectionTitle {
+  padding-bottom: 14px;
+  font-family: var(--font-serif);
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.index {
+  margin-right: 0.15em;
+  font-size: 0.45em;
+  font-style: italic;
+  vertical-align: 1.2em;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  padding-bottom: 18px;
+}
+
+.filter {
+  padding: 4px 0;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--vr-text-muted);
+  border-bottom: 1px solid transparent;
+}
+
+.filter[aria-current='page'] {
+  color: var(--vr-black);
+  border-bottom-color: var(--vr-red);
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.table th {
+  padding: 10px 12px 10px 0;
+  border-bottom: 1px solid var(--vr-black);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 12px 12px 12px 0;
+  border-bottom: 1px solid var(--vr-border);
+  vertical-align: top;
+}
+
+.table tbody tr {
+  animation: vr-rise 400ms var(--ease-out) calc(var(--i, 0) * 30ms) both;
+}
+
+.table .num {
+  text-align: right;
+  padding-right: 0;
+  white-space: nowrap;
+}
+
+.rowLink {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  line-height: 1.1;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--vr-border);
+}
+
+.tag {
+  display: inline-block;
+  padding: 1px 7px;
+  border: 1px solid var(--vr-border);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.6;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tag[data-tone='red'] {
+  border-color: var(--vr-red);
+  color: var(--vr-red);
+}
+
+.tag[data-tone='black'] {
+  border-color: var(--vr-black);
+  background: var(--vr-black);
+  color: var(--vr-white);
+}
+
+.muted {
+  color: var(--vr-text-muted);
+}
+
+.empty {
+  padding: 28px 0;
+  color: var(--vr-text-muted);
+}
+
+.attention {
+  margin-bottom: 24px;
+  padding: 14px 16px;
+  border: 1px solid var(--vr-red);
+  color: var(--vr-red);
+}
+
+/* ---------- One order ---------- */
+.cols {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 40px clamp(32px, 5vw, 72px);
+  align-items: start;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 0;
+  border-top: 1px solid var(--vr-border);
+}
+
+.block:first-child {
+  border-top-color: var(--vr-black);
+}
+
+.lines {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 4px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.lines li[data-total] {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--vr-border);
+  font-weight: 500;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.actions form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin :global(.btn) {
+  height: 40px;
+  padding: 0 18px;
+  font-size: 12px;
+}
+
+.admin :global(.btn):disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.admin :global(.field) input,
+.admin :global(.field) select,
+.admin :global(.field) textarea {
+  height: 40px;
+  font-size: 14px;
+}
+
+.admin :global(.field) textarea {
+  height: 96px;
+}
+
+/* Floating labels sit lower in the shorter admin field. */
+.admin :global(.field-float):has(:is(input, textarea):placeholder-shown:not(:focus):not(:autofill)) > span:first-child {
+  transform: translate(15px, 37px);
+}
+
+/* ---------- Stock ---------- */
+.product {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) 110px 110px minmax(0, 2.4fr) auto;
+  gap: 14px;
+  align-items: end;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--vr-border);
+  animation: vr-rise 400ms var(--ease-out) calc(var(--i, 0) * 30ms) both;
+}
+
+.productName {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  line-height: 1.15;
+}
+
+.mini {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mini input,
+.mini select {
+  width: 100%;
+  height: 34px;
+  padding: 0 8px;
+  border-radius: 0;
+  border: 1px solid var(--vr-border);
+  background: var(--vr-white);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  transition: border-color var(--dur-fast) ease;
+}
+
+.mini input:focus-visible,
+.mini select:focus-visible {
+  outline: none;
+  border-color: var(--vr-black);
+}
+
+.mini input[data-low] {
+  border-color: var(--vr-red);
+  color: var(--vr-red);
+}
+
+.sizes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 8px;
+}
+
+.saveCell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  min-width: 96px;
+}
+
+.saved {
+  font-size: 11px;
+  color: var(--vr-text-muted);
+  animation: vr-fade 400ms var(--ease-out) both;
+}
+
+.saved[data-bad] {
+  color: var(--vr-red);
+}
+
+/* A category heading above its pieces. */
+.group {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 28px 0 10px;
+  border-bottom: 1px solid var(--vr-black);
+}
+
+.group:first-child {
+  padding-top: 0;
+}
+
+.groupTitle {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  line-height: 1.1;
+  text-transform: capitalize;
+}
+
+.date {
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--vr-text-muted);
+}
+
+/* ---------- Settings ---------- */
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
+  column-gap: clamp(32px, 4vw, 72px);
+  padding: 32px 0;
+  border-top: 1px solid var(--vr-border);
+}
+
+.rowBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  max-width: 520px;
+}
+
+.rowBody form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+}
+
+.rowBody :global(.field) {
+  width: 100%;
+}
+
+.switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--vr-border);
+}
+
+.switchName {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  text-transform: capitalize;
+}
+
+/* ---------- Messages ---------- */
+.message {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) auto;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--vr-border);
+  animation: vr-rise 400ms var(--ease-out) calc(var(--i, 0) * 30ms) both;
+}
+
+.messageText {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+}
+
+.messageActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+@keyframes vr-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes vr-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 1023px) {
+  .cols,
+  .row {
+    grid-template-columns: 1fr;
+    row-gap: 20px;
+  }
+
+  .product {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .product > .productInfo,
+  .product > .sizes,
+  .product > .saveCell {
+    grid-column: 1 / -1;
+  }
+
+  .saveCell {
+    align-items: flex-start;
+  }
+
+  .message {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .messageActions {
+    flex-direction: row;
+    align-items: center;
+  }
+}

@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { newArrivals, newArrivalsMobile, productHref } from '@/lib/products';
+import { getCatalog, listProducts } from '@/lib/catalog';
+import { productHref } from '@/lib/products';
 import { ProductCaption } from '../ProductCaption';
 import { RiseWords } from '../RiseWords';
 import { UnderlineLink } from '../UnderlineLink';
@@ -10,8 +11,13 @@ import styles from './NewArrivals.module.css';
  * Homepage §4.2. Desktop: the S4 editorial row (cut-out, oval, framed photo).
  * Mobile: the S3 2-column grid of cut-outs without captions.
  */
-export function NewArrivals() {
-  const { dress, oval, framed } = newArrivals;
+export async function NewArrivals() {
+  const catalog = await getCatalog();
+  // The three hand-picked pieces of the editorial row; if one has left the shop, the newest pieces stand in.
+  const picked = listProducts(catalog, 'home.new_arrivals');
+  const [dress, oval, framed] = picked.length === 3 ? picked : catalog.products.filter((p) => p.isNew);
+  const newArrivalsMobile = listProducts(catalog, 'home.new_arrivals_mobile');
+  if (!dress || !oval || !framed) return null;
   return (
     <section className={styles.section} aria-labelledby="new-arrivals-title">
       <div className={styles.head}>

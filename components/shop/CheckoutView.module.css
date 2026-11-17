@@ -17,26 +17,279 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 36px;
   max-width: 640px;
 }
 
-.group {
+/* ---------- Steps: Contact, Delivery, Payment ---------- */
+.step {
+  padding: 28px 0;
+  border-top: 1px solid var(--vr-border);
+}
+
+.stepHead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 6px 24px;
+}
+
+.stepTitle {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 2.6vw, 38px);
+  line-height: 1.1;
+  transition: color var(--dur-base) ease;
+}
+
+.step[data-state='todo'] .stepTitle {
+  color: var(--vr-text-muted);
+}
+
+.index {
+  margin-right: 0.15em;
+  font-size: 0.42em;
+  font-style: italic;
+  vertical-align: 1.3em;
+}
+
+/* A finished step folds into one line: its answer rises in under the title. */
+.stepSummary {
+  grid-column: 1;
+  grid-row: 2;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--vr-text-muted);
+  overflow-wrap: anywhere;
+  animation: vr-rise var(--dur-base) var(--ease-out) both;
+}
+
+.stepHead :global(.text-link) {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  animation: vr-fade var(--dur-base) var(--ease-out) both;
+}
+
+.stepBody {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 16px;
-  margin: 0;
-  padding: 0;
-  border: 0;
+  padding-top: 24px;
+  font-size: 14px;
+  animation: vr-rise 600ms var(--ease-out) both;
+}
+
+.stepBody :global(.field),
+.stepBody .two,
+.stepBody :global(.btn-split) {
+  width: 100%;
+}
+
+.stepBody :global(.btn) {
+  min-width: 220px;
+  margin-top: 8px;
+}
+
+.stepBody :global(.btn):disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.hint {
   font-size: 14px;
 }
 
-.group legend {
-  margin-bottom: 16px;
-  padding: 0;
+/* Saved addresses to pick from. */
+.saved {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.savedCard {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--vr-border);
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: border-color var(--dur-fast) ease;
+}
+
+.savedCard[aria-pressed='true'] {
+  border-color: var(--vr-black);
+}
+
+.savedName {
   font-family: var(--font-serif);
-  font-size: 28px;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+/* Payment methods: the chosen one opens to explain itself. */
+.methods {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-top: 1px solid var(--vr-border);
+}
+
+.method {
+  position: relative;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 6px 14px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--vr-border);
+  cursor: pointer;
+}
+
+/* The red hairline draws along the chosen method. */
+.method::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: var(--vr-red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 600ms var(--ease-out);
+}
+
+.method[data-checked]::after {
+  transform: scaleX(1);
+}
+
+.method[data-off] {
+  color: var(--vr-text-muted);
+  cursor: default;
+}
+
+.method input {
+  margin: 0;
+  align-self: center;
+}
+
+.doneMark {
+  display: inline-block;
+  width: 0.62em;
+  margin-left: 0.4em;
+  vertical-align: 0.06em;
+  color: var(--vr-red);
+}
+
+.methodTitle {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.methodNote {
+  font-size: 13px;
+  color: var(--vr-text-muted);
+  text-align: right;
+}
+
+.methodMore {
+  grid-column: 2 / -1;
+  max-width: 36em;
+  font-size: 14px;
+  line-height: 1.6;
+  animation: vr-rise var(--dur-base) var(--ease-out) both;
+}
+
+.terms {
+  font-size: 13px;
+  color: var(--vr-text-muted);
+}
+
+.terms a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---------- The veil over checkout while payment happens ---------- */
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: var(--pad-x);
+  background: var(--vr-white);
+  animation: vr-fade var(--dur-base) var(--ease-out) both;
+}
+
+.veilInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  max-width: 30em;
+  text-align: center;
+}
+
+.veilEmblem {
+  width: clamp(72px, 7vw, 96px);
+  margin-bottom: 8px;
+  color: var(--vr-red);
+}
+
+/* Confirming: once open, the lotus breathes (opacity only) until the answer arrives. */
+.veilEmblem[data-breathing] {
+  animation: breathe 2200ms var(--ease-in-out) 1400ms infinite alternate;
+}
+
+.veilTitle {
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 3.4vw, 46px);
   line-height: 1.1;
+  text-wrap: balance;
+  animation: vr-rise var(--dur-slow) var(--ease-out) 200ms both;
+}
+
+.veilText {
+  font-size: 15px;
+  line-height: 1.6;
+  animation: vr-rise var(--dur-slow) var(--ease-out) 320ms both;
+}
+
+.veilActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-top: 12px;
+  animation: vr-fade var(--dur-slow) var(--ease-out) 480ms both;
+}
+
+.veilActions :global(.btn) {
+  min-width: 220px;
+}
+
+@keyframes breathe {
+  to {
+    opacity: 0.35;
+  }
+}
+
+@keyframes vr-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes vr-fade {
+  from {
+    opacity: 0;
+  }
 }
 
 .two {
@@ -124,6 +377,13 @@
   margin: 0;
 }
 
+.totals .total {
+  margin-top: 6px;
+  padding-top: 14px;
+  border-top: 1px solid var(--vr-border);
+  font-size: 16px;
+}
+
 @media (max-width: 1023px) {
   .layout {
     grid-template-columns: 1fr;
@@ -139,5 +399,24 @@
 @media (max-width: 767px) {
   .summary {
     padding: 20px;
+  }
+}
+
+.form :global(.page-title) {
+  margin-bottom: 36px;
+}
+
+@media (max-width: 767px) {
+  .two {
+    grid-template-columns: 1fr;
+  }
+
+  .method {
+    grid-template-columns: 18px minmax(0, 1fr);
+  }
+
+  .methodNote {
+    grid-column: 2;
+    text-align: left;
   }
 }

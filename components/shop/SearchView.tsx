@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { productHref, newIn, type Category } from '@/lib/products';
-import { POPULAR_SEARCHES, searchProducts, suggest } from '@/lib/search';
+import { productHref, type Category } from '@/lib/products';
+import { POPULAR_SEARCHES, createSearch } from '@/lib/search';
+import { useCatalog } from '../CatalogProvider';
 import { Eyebrow } from '../Eyebrow';
 import { ProductGrid } from '../plp/ProductGrid';
 import { UnderlineLink } from '../UnderlineLink';
@@ -62,14 +63,17 @@ export function SearchView() {
   }, []);
 
   const q = query.trim();
-  const { results: found, corrected } = useMemo(() => searchProducts(q), [q]);
+  const { products } = useCatalog();
+  const { searchProducts, suggest } = useMemo(() => createSearch(products), [products]);
+  const newIn = useMemo(() => products.filter((p) => p.isNew), [products]);
+  const { results: found, corrected } = useMemo(() => searchProducts(q), [searchProducts, q]);
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: found.length };
     for (const p of found) c[p.category] = (c[p.category] ?? 0) + 1;
     return c;
   }, [found]);
   const results = category === 'all' ? found : found.filter((p) => p.category === category);
-  const suggestions = useMemo(() => suggest(q), [q]);
+  const suggestions = useMemo(() => suggest(q), [suggest, q]);
 
   // The address follows the search.
   useEffect(() => {

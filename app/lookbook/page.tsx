@@ -4,7 +4,7 @@ import { Header } from '@/components/Header';
 import { Look } from '@/components/lookbook/Look';
 import { RiseWords } from '@/components/RiseWords';
 import { UnderlineLink } from '@/components/UnderlineLink';
-import { looks } from '@/lib/lookbook';
+import { getCatalog } from '@/lib/catalog';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
@@ -14,7 +14,8 @@ export const metadata: Metadata = {
 };
 
 /** Lookbook: photographs with the pieces tagged on them. EXTRAPOLATED – no reference design. */
-export default function LookbookPage() {
+export default async function LookbookPage() {
+  const { looks } = await getCatalog();
   return (
     <>
       <Header />

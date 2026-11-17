@@ -1,0 +1,97 @@
+/* Coming-soon category page. Same shell as the listing; the intro is centred like the
+   newsletter section. Only opacity and transform move. */
+.main {
+  padding: var(--header-h) 0 var(--section-py);
+  min-height: 80vh;
+}
+
+.intro {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding: clamp(56px, 7vw, 104px) var(--pad-x) clamp(64px, 7vw, 112px);
+  text-align: center;
+}
+
+.heading {
+  font-family: var(--font-serif);
+  font-size: clamp(48px, 7.2vw, 104px);
+  line-height: 1;
+}
+
+.heading em {
+  font-style: italic;
+}
+
+/* The house script, tilted and hanging off the heading's lower right (as in Who We Are). */
+.script {
+  margin: -0.42em 0 0 34%;
+  font-family: var(--font-script);
+  font-size: clamp(54px, 7vw, 108px);
+  line-height: 1;
+  color: #d10000; /* the site's script red */
+  white-space: nowrap;
+  pointer-events: none;
+  transform: rotate(-5deg);
+}
+
+.lead {
+  max-width: 34em;
+  font-size: 15px;
+  line-height: 1.6;
+  animation: vr-rise var(--dur-slow) var(--ease-out) 500ms both;
+}
+
+.notify {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  animation: vr-rise var(--dur-slow) var(--ease-out) 620ms both;
+}
+
+.notify button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.error {
+  min-height: 1.5em; /* reserved, so a message never moves the layout */
+  margin-top: 10px;
+  color: var(--vr-red);
+}
+
+/* Success: lotus, a line of script, then a plain sentence. */
+.thanks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-height: 87px; /* about the height of the form it replaces + its status line */
+}
+
+.thanksEmblem {
+  width: 44px;
+  color: var(--vr-red);
+}
+
+.thanksScript {
+  font-family: var(--font-script);
+  font-size: clamp(44px, 4.6vw, 64px);
+  line-height: 1;
+  color: #d10000;
+  transform: rotate(-4deg);
+}
+
+.thanksText {
+  font-size: 15px;
+  animation: vr-fade var(--dur-slow) var(--ease-out) 1500ms both;
+}
+
+@media (max-width: 767px) {
+  .script {
+    margin-left: 22%;
+  }
+}

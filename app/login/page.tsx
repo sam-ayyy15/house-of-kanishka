@@ -6,19 +6,26 @@ import authStyles from '@/components/auth/AuthView.module.css';
 import { Eyebrow } from '@/components/Eyebrow';
 import { Header } from '@/components/Header';
 import { authEnabled } from '@/lib/auth-config';
+import { safeNext } from '@/lib/return-to';
 
 export const metadata: Metadata = {
   title: 'Login · House of Kanishka',
   robots: { index: false, follow: false },
 };
 
-export default function LoginPage() {
+/**
+ * ?next=/some/page (ours) or ?redirect_url=… (added by Clerk when a protected page sends a
+ * visitor here) says where to go after signing in. Only pages on this site are accepted.
+ */
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; redirect_url?: string }> }) {
+  const { next, redirect_url } = await searchParams;
+  const after = next ? safeNext(next) : redirect_url ? safeNext(redirect_url, new URL(redirect_url, 'https://site.invalid').origin) : safeNext(null);
   return (
     <>
       <Header />
       <main>
         {authEnabled ? (
-          <AuthView />
+          <AuthView next={after} />
         ) : (
           // Shown only until the Clerk keys are added (see lib/auth-config.ts).
           <AuthShell>

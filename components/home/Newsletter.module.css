@@ -75,7 +75,7 @@
   top: 50%;
   right: 16px;
   width: 32px;
-  margin-top: -10px; /* half its height (32 × 810/1278) */
+  margin-top: -11px; /* half its height (32 × 806/1190) */
   color: #b4b4b4;
   pointer-events: none;
   transition: color var(--dur-base) ease;
@@ -225,4 +225,17 @@
   from {
     opacity: 0;
   }
+}
+
+/* A problem with the sign-up, in brand red under the form. */
+.formError {
+  margin-top: 12px;
+  color: var(--vr-red);
+  text-align: center;
+  animation: vr-rise var(--dur-base) var(--ease-out) both;
+}
+
+.button:disabled {
+  opacity: 0.55;
+  cursor: default;
 }

@@ -31,6 +31,7 @@ export function CookieConsent() {
 
   return (
     <section
+      data-chrome
       ref={panel}
       tabIndex={-1}
       className={styles.panel}

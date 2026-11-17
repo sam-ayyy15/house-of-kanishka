@@ -14,6 +14,8 @@ type Props = {
    */
   captions?: 'hover' | 'always';
   columns?: 5 | 4;
+  /** Pieces that are not on sale yet: pictures and names only, no links, prices or quick view. */
+  teaser?: boolean;
 };
 
 /**
@@ -21,7 +23,7 @@ type Props = {
  * second photo (where the piece has one), and QUICK VIEW slides in beside the price under the
  * photo; on touch screens a small + sits there instead. Nothing is ever drawn over the photo.
  */
-export function ProductGrid({ products, captions = 'always', columns = 5 }: Props) {
+export function ProductGrid({ products, captions = 'always', columns = 5, teaser = false }: Props) {
   return (
     <ul
       className={styles.grid}
@@ -32,6 +34,18 @@ export function ProductGrid({ products, captions = 'always', columns = 5 }: Prop
     >
       {products.map((p, i) => {
         const alt = altImage(p);
+        if (teaser) {
+          return (
+            <li key={p.slug} data-reveal="rise" style={{ '--reveal-delay': `${(i % columns) * 70}ms` } as React.CSSProperties}>
+              <div className={styles.card}>
+                <div className={styles.media} data-card={p.card}>
+                  <Image src={p.image} alt={p.name} fill sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 20vw" />
+                </div>
+                <ProductCaption name={p.name} price={p.price} note="Coming soon" className={styles.caption} />
+              </div>
+            </li>
+          );
+        }
         return (
           // Cards rise in on first view, one after another across the row.
           <li key={p.slug} data-reveal="rise" style={{ '--reveal-delay': `${(i % columns) * 70}ms` } as React.CSSProperties}>

@@ -1,4 +1,5 @@
 import { Header } from '@/components/Header';
+import { getCatalog, isComingSoon } from '@/lib/catalog';
 import { Accessories } from '@/components/home/Accessories';
 import { Announcement } from '@/components/home/Announcement';
 import { Campaign } from '@/components/home/Campaign';
@@ -26,7 +27,8 @@ const jsonLd = {
   ],
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const catalog = await getCatalog();
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -38,7 +40,7 @@ export default function HomePage() {
         <Campaign />
         <WhoWeAre />
         <NewCollection />
-        <Accessories />
+        <Accessories comingSoon={isComingSoon(catalog, 'accessories')} />
         <Promo />
         <Newsletter />
       </main>

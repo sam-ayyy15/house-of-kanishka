@@ -98,3 +98,21 @@ export function PageSkeleton() {
     </>
   );
 }
+
+/** A section inside the account or admin shell (the shell and its links stay on screen). */
+export function SectionSkeleton() {
+  return (
+    <div className={styles.section} aria-busy="true">
+      <Status label="Loading" />
+      <Bar />
+      <div className={styles.title} aria-hidden="true" />
+      {Array.from({ length: 4 }, (_, i) => (
+        <div key={i} className={styles.sectionRow} aria-hidden="true">
+          <span className={styles.line} />
+          <span className={styles.line} />
+          <span className={styles.line} />
+        </div>
+      ))}
+    </div>
+  );
+}

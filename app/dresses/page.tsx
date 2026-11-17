@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { EditorialBlock } from '@/components/plp/EditorialBlock';
 import { Listing } from '@/components/plp/Listing';
-import { DRESS_TABS, dresses, dressesFirstRow } from '@/lib/products';
+import { getCatalog, listProducts } from '@/lib/catalog';
+import { DRESS_TABS } from '@/lib/products';
 
 export const metadata: Metadata = {
   title: 'Dresses · House of Kanishka',
@@ -12,13 +13,14 @@ export const metadata: Metadata = {
 /** PLP "Dresses" (spec §5, S2). */
 export default async function DressesPage({ searchParams }: { searchParams: Promise<{ type?: string }> }) {
   const { type } = await searchParams;
+  const catalog = await getCatalog();
   return (
     <Listing
       title="Dresses"
-      products={dresses}
+      products={catalog.products.filter((p) => p.category === 'dresses')}
       tabs={DRESS_TABS}
       initialTag={type}
-      firstRow={dressesFirstRow}
+      firstRow={listProducts(catalog, 'plp.dresses_first_row')}
       interstitial={<EditorialBlock />}
       captions="hover"
     />

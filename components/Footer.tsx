@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { collections, collectionHref } from '@/lib/collections';
+import { getCatalog } from '@/lib/catalog';
+import { collectionHref } from '@/lib/collections';
 import { CookiePreferencesLink } from './CookiePreferencesLink';
 import { Emblem } from './Emblem';
 import styles from './Footer.module.css';
 
-const columns = [
+const columns = (collections: { slug: string; title: string[] }[]) => [
   {
     title: 'Shop',
     links: [
@@ -24,7 +25,8 @@ const columns = [
       { label: 'Shipping', href: '/help#shipping' },
       { label: 'Returns', href: '/help#returns' },
       { label: 'Size Guide', href: '/help#size-guide' },
-      { label: 'Contact Us', href: '/help#support' },
+      { label: 'Track Order', href: '/track' },
+      { label: 'Contact Us', href: '/contact' },
     ],
   },
   {
@@ -38,17 +40,25 @@ const columns = [
   },
 ];
 
+const LEGAL = [
+  { label: 'Terms', href: '/terms' },
+  { label: 'Privacy', href: '/privacy' },
+  { label: 'Refunds', href: '/refund-policy' },
+  { label: 'Shipping', href: '/shipping-policy' },
+];
+
 /** Global footer. EXTRAPOLATED – no reference design: built from the header and link styles. */
-export function Footer() {
+export async function Footer() {
+  const { collections } = await getCatalog();
   return (
-    <footer className={styles.footer}>
+    <footer data-chrome className={styles.footer}>
       <div className={styles.top}>
         <Link href="/" className={styles.logo}>
           <Emblem className={styles.emblem} />
           House of Kanishka
         </Link>
         <nav className={styles.columns} aria-label="Footer">
-          {columns.map((col, i) => (
+          {columns(collections).map((col, i) => (
             <div key={col.title} data-reveal="rise" style={{ '--reveal-delay': `${i * 80}ms` } as React.CSSProperties}>
               <h2 className={styles.heading}>{col.title}</h2>
               <ul className={styles.list}>
@@ -71,6 +81,14 @@ export function Footer() {
           <span className={styles.mark}>®</span> {new Date().getFullYear()} House of Kanishka
         </p>
         <p>
+          {LEGAL.map((l) => (
+            <span key={l.href}>
+              <Link href={l.href} className={styles.bottomLink}>
+                {l.label}
+              </Link>{' '}
+              ·{' '}
+            </span>
+          ))}
           Prices in INR · <CookiePreferencesLink className={styles.bottomLink} />
         </p>
       </div>

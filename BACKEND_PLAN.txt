@@ -32,11 +32,10 @@ GST registered         NO. Issue a "bill of supply" (no tax lines). Ready to swi
                        can require GST registration whatever the turnover.
 Cash on Delivery       YES. The customer confirms the order by a free email link. The
                        COD order limit and COD on/off are admin settings.
-Free shipping from     Rs 350 (the current code says Rs 35,000, which was a mistake). With
-                       every product above Rs 350, every order ships free.
+Free shipping from     Rs 3,500 (already set in the code).
                        The fee for smaller orders is an admin setting.
 Shipping area          India only.
-Returns                7 days, refunded to the original payment method
+Returns                30 days, refunded to the original payment method
                        (COD orders: to the customer's bank account or UPI ID).
 Business details       Placeholder details for now, clearly marked so they are easy to replace.
 Admin users            Founder only. The admin area must be hidden.
@@ -97,9 +96,7 @@ PHASE 0 – SETUP AND POLICY PAGES
 - A cloudflared tunnel so webhooks (Clerk, Razorpay, Shiprocket) reach this computer while testing.
 - GitHub Actions: a ping every few days so the free database doesn't pause, plus
   a nightly database backup.
-- Change the free-shipping limit from Rs 35,000 to Rs 350 (lib/products.ts,
-  the free-shipping bar, the promo text).
-- New pages: Terms, Privacy, Refund (7 days), Shipping (India only),
+- New pages: Terms, Privacy, Refund (30 days), Shipping (India only),
   Contact (placeholder business details). Linked from the footer. Razorpay
   requires these pages before it activates the account.
 - Motion: headings rise in, text reveals as you scroll, a sticky contents
@@ -178,7 +175,7 @@ PHASE 3 – CHECKOUT, PAYMENTS, CASH ON DELIVERY
 - The server checks every field: contact details, phone (required), address, India PIN code.
 - Prices are re-checked against the database. Stock is held for 15 minutes and
   released by Supabase pg_cron (the free Vercel plan only runs scheduled jobs once a day).
-- Shipping: free from Rs 350, with the fee for smaller orders set in the admin area.
+- Shipping: free from Rs 3,500, with the fee for smaller orders set in the admin area.
 - Online payment: the server creates a Razorpay order, Razorpay's payment window
   opens (brand red, our logo, customer details already filled in), the server checks
   the payment signature, and the payment.captured webhook is the final word.
@@ -282,3 +279,159 @@ access rules always apply.)
 - Razorpay: no setup fee; about 2% + GST per payment (new merchants may get
   0% for 90 days or the first Rs 5 lakh)
 - Vercel Hobby: scheduled jobs once a day only
+
+
+7. PROGRESS LOG
+====================================================================
+16 Nov 2026
+PHASE 0 – done in code
+- Supabase linked (project afaayyjtdigakcginjix, Mumbai); keys in .env.local.
+- Clerk development instance registered in Supabase as a third-party sign-in provider.
+- lib/env.ts (zod checks), lib/supabase/server.ts (publicDb / userDb / adminDb),
+  npm scripts: db:push, db:types, db:new, tunnel.
+- .github/workflows: db-keepalive.yml, db-backup.yml (need GitHub secrets, see TO DO).
+- Pages: /terms, /privacy, /refund-policy, /shipping-policy, /contact
+  (components/info/PolicyPage*). Footer links added. Placeholder business details
+  live in lib/business.ts.
+PHASE 1 – done in code
+- Migrations: supabase/migrations/20261116000100_catalogue.sql, …000200_customers.sql.
+- Catalogue seeded from the old data files (scripts/seed-catalogue.ts, scripts/seed-data/).
+  Opening stock is a placeholder: 10 per size.
+- lib/catalog.ts (server, cached, tag "catalog") + components/CatalogProvider.tsx (client).
+  lib/products.ts, collections.ts, lookbook.ts now hold types and helpers only.
+- Accessories = "coming soon": /accessories teaser + Notify me (launch_waitlist), home
+  section note, no accessory product pages, none in search / sitemap / bag / wishlist.
+- Product page: sold-out sizes disabled, "Few left" at 3 or fewer, "Sold out" button.
+- Search still runs in the browser over the on-sale catalogue (same typo tolerance).
+  Moving it into Postgres is deferred until the catalogue is large enough to need it.
+PHASE 2 – built and tested (2026-11-16)
+- Newsletter form saves to newsletter_subscribers (double opt-in; /newsletter/confirm);
+  confirmed/unsubscribed addresses are copied to Brevo once BREVO_API_KEY and BREVO_LIST_ID
+  are set (lib/brevo.ts).
+- Contact form saves to contact_messages. Both rate-limited, with a hidden bot trap.
+- lib/email.ts sends through Resend once RESEND_API_KEY and EMAIL_FROM are both set.
+- Clerk webhook: app/api/webhooks/clerk/route.ts (user.created, user.updated, user.deleted
+  → profiles). If the webhook is late or not set up, the profile is created on first use
+  (ensureProfile in lib/customer.ts).
+- Bag and wishlist are saved to the account (app/actions/store.ts, components/StoreSync.tsx):
+  a guest's bag is merged in at sign-in, later changes are saved, sign-out clears the browser.
+- Account area: /account (overview), /account/orders (empty until Phase 4), /account/addresses,
+  /account/wishlist, /account/preferences, /account/settings (the old account page), with the
+  sliding red hairline navigation. Addresses: up to 10, Indian mobile and PIN checks, default.
+- /account/export downloads the customer's data; "Delete my account" deletes the sign-in at
+  Clerk and erases addresses, bag, wishlist and newsletter subscription.
+- Login: returns to the page the customer came from (?next=, own-site paths only), sign-in by
+  email code, and the "Welcome back" lotus + script moment before moving on.
+- Form motion (components/form: Field, SubmitButton, FormStatus, FormThanks): floating labels,
+  red focus line, errors that ease down, lotus while busy, lotus + script on success. Used on
+  login, account, addresses and contact. The home newsletter form keeps its spec design.
+- Customer data is read and written on the server with the secret key, always scoped to
+  the signed-in Clerk user id. Row-level security blocks all direct access.
+- NOT done: Turnstile on the contact form (needs keys; rate limit + bot trap are in place),
+  "Sign in for faster checkout" (comes with checkout in Phase 3), welcome moment after
+  Google sign-in (Google returns straight to the page).
+
+PHASE 3 – built and tested, except a live Razorpay payment (2026-11-16)
+- Migration 20261116000300_orders.sql: orders, order_items, payment_events; place_order()
+  re-reads prices and stock and takes the stock in one transaction; holds last 15 minutes
+  (online) or 24 hours (COD awaiting confirmation); pg_cron releases expired holds every
+  5 minutes; mark_order_paid() and confirm_cod_order() are safe to repeat.
+- Checkout (/checkout): Contact, Delivery, Payment steps that fold into summaries, saved
+  addresses and "Sign in for faster checkout", total counts up, payment veil with the lotus,
+  recovery screens (window closed, could not start, back from a UPI app → /order page waits).
+- Razorpay: lib/razorpay.ts, app/actions/checkout.ts, app/api/webhooks/razorpay/route.ts.
+  Online payment shows "Opening soon" until RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET are set.
+  Tested: webhook signature, repeated delivery, forged call, late payment after a lapsed hold.
+  NOT tested: a real payment through Razorpay's window (needs the test keys).
+- Cash on delivery: order waits for the email link (/order/confirm). While email is not set
+  up (no EMAIL_FROM) a COD order is confirmed at once, so it cannot lapse unseen.
+
+PHASE 4 – built (2026-11-16)
+- /order/[number]: the animated bill of supply. Private link (?t=) or the signed-in owner only.
+  "Save bill as PDF" prints the sheet alone through the browser (no PDF is stored in Storage:
+  a deliberate, free alternative to generating PDFs on the server).
+- /account/orders (rows open to show pieces) and the latest order on the account overview.
+- Emails: COD confirm request, order confirmed, shipped, delivered, cancelled, refunded.
+- COD waits for the email link. If the email cannot be sent, the order page offers
+  "Try the email again" and "Confirm my order here". With no email set up at all it confirms at once.
+- Welcome moment also plays after Google sign-in (/login/welcome).
+
+PHASE 5 – tracking built; courier integration not done (still undecided)
+- /order/[number]/track: the journey timeline (placed, confirmed, packed, on its way, delivered).
+- /track: find an order by number + email (footer → Help → Track Order).
+- Stages come from what the founder records in the admin area. Shiprocket is not connected.
+
+PHASE 6 – built and tested (2026-11-16)
+- /admin (Today), /admin/orders, /admin/orders/[number], /admin/stock, /admin/messages,
+  /admin/settings. Only the account in FOUNDER_CLERK_USER_ID can open it; everyone else gets 404.
+  Not linked, not indexed, checked again inside every action.
+- Orders: confirm COD for the customer, pack, ship (courier + tracking), deliver (COD marked
+  paid), cancel (stock returns; online payments refunded through Razorpay), refund a return.
+- Stock: price, on sale / preview / hidden, stock per size. Settings: free-shipping threshold,
+  shipping fee, COD on/off and limit, the launch switch per category, connected services.
+- NOT tested: Razorpay refunds (no keys). NOT built: product creation/editing of text and
+  photos (still done in the database), order export.
+
+PHASE 7 – checks built and passing; launch steps below are the founder's (2026-11-16)
+- npm test            unit tests (return-to address safety, Indian phone / PIN rules).
+- npm run test:access what a stranger with only the public key can do: read nothing private,
+                      write nothing, call no server-only database function. All pass.
+- npm run test:orders order rules against the real database (prices from the database, stock
+                      holds, lapsing, late and repeated payments, COD confirmation). Cleans up
+                      after itself. All pass.
+- Security: headers on every page (no sniffing, no framing by other sites, referrer trimmed so
+  private order links never leak), private pages never cached or indexed, webhooks verified,
+  every server action re-checks who is calling. No Content-Security-Policy yet.
+- Error monitoring without a paid service: instrumentation.ts writes server errors to the
+  error_log table; Admin → Today shows "Errors, last 24 hours" → /admin/errors.
+- "Save bill as PDF" checked in print layout (sheet only, no site header or footer).
+- NOT done: Sentry and UptimeRobot (need accounts), analytics, a backup-restore rehearsal,
+  a test that one signed-in customer cannot read another's rows through the database's own
+  rules (the app never reads customer data that way; it always filters by the signed-in id),
+  full 1440/393 screenshot comparison of every new page, motion QA on real phones.
+- Known risk: guests can place COD orders that hold stock for 24 hours. Rate-limited to 8 per
+  10 minutes per visitor; add Turnstile (free) to checkout and contact before promoting the shop.
+
+LAUNCH CHECKLIST (in order)
+ 1. Commit and push; set every variable from .env.example in Vercel (Production).
+ 2. FOUNDER_CLERK_USER_ID → open /admin, set real stock, prices and the shipping fee.
+ 3. Real business details in lib/business.ts; have the policy pages reviewed.
+ 4. Resend: verify the shop's domain (DNS records), set EMAIL_FROM to an address on it.
+ 5. Clerk: production instance + its keys, webhook endpoint, "Email verification code" on,
+    Google sign-in credentials, Supabase integration for the production instance.
+ 6. Razorpay: KYC, test keys first (one paid test order + one refund from /admin), then live
+    keys and the webhook with RAZORPAY_WEBHOOK_SECRET.
+ 7. Replace every placeholder photo (they must never ship) and the placeholder size chart.
+ 8. Run npm test, npm run test:access, npm run test:orders against production settings.
+ 9. Place one real COD order and one real paid order yourself; take both through /admin.
+10. Check the nightly backup ran (GitHub → Actions) and try restoring one into a scratch project.
+11. Connect the domain in Vercel, set NEXT_PUBLIC_SITE_URL, update the webhook addresses.
+12. Hosting: the free Vercel plan does not allow commercial use; move to Pro once selling.
+
+TO DO BY THE FOUNDER
+- GitHub repo → Settings → Secrets → Actions: add SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY,
+  SUPABASE_DB_URL (Supabase → Connect → Session pooler string, with the database password),
+  BACKUP_PASSPHRASE (any long phrase; keep a copy).
+- Clerk dashboard → https://dashboard.clerk.com/setup/supabase → activate the Supabase
+  integration (adds the "role" claim to session tokens).
+- Clerk dashboard → Webhooks → Add endpoint:
+    URL     https://house-of-kanishka.vercel.app/api/webhooks/clerk  (or your own domain)
+    Events  user.created, user.updated, user.deleted
+  Copy its Signing Secret into CLERK_WEBHOOK_SIGNING_SECRET (Vercel env, and .env.local).
+  It only works once this code is deployed and Vercel has the Supabase keys too.
+- Clerk dashboard → User & authentication → Email: switch on "Email verification code" as a
+  sign-in method (for "Email me a code instead" on the login page).
+- .env.local and Vercel: add EMAIL_FROM (an address on the domain verified in Resend, e.g.
+  "House of Kanishka <care@yourdomain.com>"). Without it no emails are sent.
+- Razorpay (when the founder has the keys): fill RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET, then
+  dashboard → Settings → Webhooks: URL https://house-of-kanishka.vercel.app/api/webhooks/razorpay,
+  events payment.captured, order.paid, payment.failed, and put its Secret in RAZORPAY_WEBHOOK_SECRET.
+- Admin: sign in to the site with your own account, find your user id in the Clerk dashboard
+  (Users → your user → User ID, starts with "user_") and set FOUNDER_CLERK_USER_ID in Vercel
+  and .env.local. Then open /admin.
+- EMAIL_FROM is the Resend test sender for now: it only delivers to the Resend account's own
+  address. Verify the shop's domain in Resend and change EMAIL_FROM before launch.
+- Replace the placeholder business details in lib/business.ts.
+- Set real stock counts and the shipping fee for orders under Rs 3,500.
+- Have the policy pages reviewed (return conditions, 48-hour damage window and
+  cancellation rules were written as sensible defaults).

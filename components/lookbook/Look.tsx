@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { formatPrice } from '@/lib/format';
 import type { Look as LookData } from '@/lib/lookbook';
-import { getProduct, productHref } from '@/lib/products';
+import { productHref } from '@/lib/products';
+import { useCatalog } from '../CatalogProvider';
 import { openQuickView } from '@/lib/ui';
 import { Eyebrow } from '../Eyebrow';
 import { RiseWords } from '../RiseWords';
@@ -36,8 +37,9 @@ export function Look({ look, flip }: { look: LookData; flip: boolean }) {
     };
   }, [active, look.id]);
 
+  const { get } = useCatalog();
   const pieces = look.hotspots.flatMap((h) => {
-    const product = getProduct(h.slug);
+    const product = get(h.slug);
     return product ? [{ ...h, product }] : [];
   });
 

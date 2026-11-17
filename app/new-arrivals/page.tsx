@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Listing } from '@/components/plp/Listing';
-import { newIn } from '@/lib/products';
+import { getCatalog } from '@/lib/catalog';
 
 export const metadata: Metadata = {
   title: 'New Arrivals · House of Kanishka',
@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 };
 
 /** New Arrivals listing. EXTRAPOLATED – no reference design: reuses the Dresses PLP. */
-export default function NewArrivalsPage() {
-  return <Listing title="New Arrivals" products={newIn} />;
+export default async function NewArrivalsPage() {
+  const { products } = await getCatalog();
+  return <Listing title="New Arrivals" products={products.filter((p) => p.isNew)} />;
 }

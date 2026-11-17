@@ -8,18 +8,20 @@ import { ProductGrid } from '@/components/plp/ProductGrid';
 import { RiseWords } from '@/components/RiseWords';
 import { UnderlineLink } from '@/components/UnderlineLink';
 import { VideoBackground } from '@/components/VideoBackground';
-import { collectionHref, collections, getCollection } from '@/lib/collections';
-import { getProduct, type Product } from '@/lib/products';
+import { findProduct, getCatalog } from '@/lib/catalog';
+import { collectionHref } from '@/lib/collections';
+import type { Product } from '@/lib/products';
 import styles from './page.module.css';
 
 type Params = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return collections.map((c) => ({ slug: c.slug }));
+export async function generateStaticParams() {
+  return (await getCatalog()).collections.map((c) => ({ slug: c.slug }));
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const c = getCollection((await params).slug);
+  const { slug } = await params;
+  const c = (await getCatalog()).collections.find((x) => x.slug === slug);
   if (!c) return { title: 'House of Kanishka' };
   return {
     title: `${c.title.join(' ')} · House of Kanishka`,
@@ -31,10 +33,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 /** Campaign / collection landing page. EXTRAPOLATED – no reference design. */
 export default async function CollectionPage({ params }: Params) {
   const { slug } = await params;
-  const collection = getCollection(slug);
+  const catalog = await getCatalog();
+  const { collections } = catalog;
+  const collection = collections.find((c) => c.slug === slug);
   if (!collection) notFound();
 
-  const pieces = collection.products.map(getProduct).filter((p): p is Product => !!p);
+  const pieces = collection.products.map((s) => findProduct(catalog, s)).filter((p): p is Product => !!p);
   const next = collections[(collections.findIndex((c) => c.slug === slug) + 1) % collections.length];
 
   return (

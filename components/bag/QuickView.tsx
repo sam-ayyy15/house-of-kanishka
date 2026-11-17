@@ -4,7 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRef, useState } from 'react';
 import { formatPrice } from '@/lib/format';
-import { colourwaysOf, getProduct, productHref, type Product } from '@/lib/products';
+import { colourwaysOf, productHref, stockOf, type Product } from '@/lib/products';
+import { useCatalog } from '../CatalogProvider';
 import { addToBag } from '@/lib/store';
 import { closeQuickView, openMiniBag, useUI } from '@/lib/ui';
 import { Drawer } from '../Drawer';
@@ -33,7 +34,15 @@ function Body({ product }: { product: Product }) {
           <legend className={styles.label}>Size</legend>
           <div className={styles.chips}>
             {product.sizes.map((s) => (
-              <button key={s} type="button" className={styles.chip} aria-pressed={size === s} onClick={() => setSize(s)}>
+              <button
+                key={s}
+                type="button"
+                className={styles.chip}
+                aria-pressed={size === s}
+                disabled={stockOf(product, s) <= 0}
+                aria-label={stockOf(product, s) <= 0 ? `${s}, sold out` : undefined}
+                onClick={() => setSize(s)}
+              >
                 {s}
               </button>
             ))}
@@ -66,7 +75,8 @@ function Body({ product }: { product: Product }) {
 /** Quick view: pick a size and add to the bag without leaving the grid. Opened from a product card. */
 export function QuickView() {
   const { quick } = useUI();
-  const current = quick ? getProduct(quick) : undefined;
+  const { get } = useCatalog();
+  const current = quick ? get(quick) : undefined;
   // Keep the last product while the panel slides out.
   const last = useRef<Product | undefined>(undefined);
   if (current) last.current = current;

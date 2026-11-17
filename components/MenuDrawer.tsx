@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { collections, collectionHref } from '@/lib/collections';
+import { collectionHref } from '@/lib/collections';
+import { useCatalog } from './CatalogProvider';
 import { Drawer } from './Drawer';
 import styles from './MenuDrawer.module.css';
 
@@ -24,6 +25,7 @@ const utility = [
 
 /** Menu opened by the ≡ trigger. EXTRAPOLATED – no reference design. */
 export function MenuDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { collections } = useCatalog();
   return (
     <Drawer open={open} onClose={onClose} side="left" label="Menu">
       <nav aria-label="Menu" className={styles.nav}>

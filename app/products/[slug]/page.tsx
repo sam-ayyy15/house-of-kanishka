@@ -6,18 +6,19 @@ import { PdpGallery } from '@/components/pdp/PdpGallery';
 import { PdpInfo } from '@/components/pdp/PdpInfo';
 import { ProductGrid } from '@/components/plp/ProductGrid';
 import { RiseWords } from '@/components/RiseWords';
-import { getProduct, productHref, products } from '@/lib/products';
+import { findProduct, getCatalog } from '@/lib/catalog';
+import { productHref, soldOut } from '@/lib/products';
 import { SITE_NAME, SITE_URL } from '@/lib/site';
 import styles from './page.module.css';
 
 type Params = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  return (await getCatalog()).products.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const product = getProduct((await params).slug);
+  const product = findProduct(await getCatalog(), (await params).slug);
   if (!product) return { title: 'House of Kanishka' };
   return {
     title: `${product.name} · House of Kanishka`,
@@ -35,7 +36,10 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 /** PDP (spec §6, S1). Mobile order: title → gallery → tabs → selects → purchase (approved). */
 export default async function ProductPage({ params }: Params) {
-  const product = getProduct((await params).slug);
+  const catalog = await getCatalog();
+  const { products } = catalog;
+  // Pieces in a coming-soon category are not in `products`, so they have no page (404).
+  const product = findProduct(catalog, (await params).slug);
   if (!product) notFound();
 
   // "You may also like" is EXTRAPOLATED – no reference design.
@@ -66,7 +70,7 @@ export default async function ProductPage({ params }: Params) {
       url: `${SITE_URL}${productHref(product)}`,
       priceCurrency: 'INR',
       price: product.price.toFixed(2),
-      availability: 'https://schema.org/InStock',
+      availability: soldOut(product) ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
       itemCondition: 'https://schema.org/NewCondition',
     },
   };

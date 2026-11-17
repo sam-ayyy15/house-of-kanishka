@@ -283,3 +283,33 @@
     opacity: 0;
   }
 }
+
+/* ---------- Stock ---------- */
+/* "Few left": a quiet red line under the size, fading in when a low size is chosen. */
+.few {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--vr-red);
+  white-space: nowrap;
+  animation: vr-fade var(--dur-slow) var(--ease-out) both;
+}
+
+/* Sold out: the red button rests as a pale, struck-through label. */
+.addToCart[data-sold-out],
+.stickyAdd[data-sold-out] {
+  background: var(--vr-grey-tile);
+  color: var(--vr-text-muted);
+  cursor: default;
+}
+
+.addToCart[data-sold-out] span,
+.stickyAdd[data-sold-out] span {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}

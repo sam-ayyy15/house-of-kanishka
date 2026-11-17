@@ -13,3 +13,8 @@ reference/video-frames/
 # Clerk development keys (keyless mode)
 .clerk/
 .env*.local
+# AI coding-assistant tooling (installed skills): local only, not part of the site.
+.agents/
+.claude/skills/
+skills-lock.json
+.playwright-mcp/

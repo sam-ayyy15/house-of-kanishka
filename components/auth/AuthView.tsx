@@ -2,10 +2,15 @@
 
 import { useAuth, useSignIn, useSignUp } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { DEFAULT_AFTER_SIGN_IN } from '@/lib/return-to';
 import { Eyebrow } from '../Eyebrow';
+import { Field } from '../form/Field';
+import { FormStatus } from '../form/FormStatus';
+import { SubmitButton } from '../form/SubmitButton';
 import { AuthShell } from './AuthShell';
 import styles from './AuthView.module.css';
+import { Welcome, WELCOME_MS } from './Welcome';
 
 type Step =
   | 'signin' // email + password, or Google
@@ -13,9 +18,9 @@ type Step =
   | 'verify-email' // 6-digit code sent after sign-up
   | 'forgot' // ask for the email to reset
   | 'reset' // code from the email + new password
-  | 'device-code'; // extra email code when signing in from a new device
-
-const AFTER = '/account';
+  | 'device-code' // extra email code when signing in from a new device
+  | 'code-request' // sign in without a password: ask for the email
+  | 'email-code'; // …then the 6-digit code sent to it
 
 const TITLES: Record<Step, string> = {
   signin: 'Sign in',
@@ -24,6 +29,8 @@ const TITLES: Record<Step, string> = {
   forgot: 'Reset your password',
   reset: 'Choose a new password',
   'device-code': 'Confirm it’s you',
+  'code-request': 'Sign in with a code',
+  'email-code': 'Check your email',
 };
 
 type ClerkErr = { message: string; longMessage?: string } | null;
@@ -33,8 +40,12 @@ const text = (e: ClerkErr) => (e ? (e.longMessage ?? e.message) : null);
  * Sign in, sign up, email verification, password reset and Google sign-in, all inside the
  * site's own login design (portrait + red script on the left, one form at a time on the
  * right). Clerk does the work behind each form; no Clerk screens are shown.
+ *
+ * `next` is the page to open afterwards (already checked by safeNext() on the server).
+ * On success the form fades out, the lotus opens and "Welcome back" is written in script
+ * before that page opens.
  */
-export function AuthView() {
+export function AuthView({ next = DEFAULT_AFTER_SIGN_IN }: { next?: string }) {
   const router = useRouter();
   const { isSignedIn } = useAuth();
   const { signIn } = useSignIn();
@@ -45,11 +56,14 @@ export function AuthView() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [welcome, setWelcome] = useState<null | 'back' | 'new'>(null);
+  const welcoming = useRef(false);
+  const leave = useRef<() => void>(() => {});
 
-  // Already signed in: this page has nothing to offer.
+  // Already signed in: this page has nothing to offer. (Not while the welcome is playing.)
   useEffect(() => {
-    if (isSignedIn) router.replace(AFTER);
-  }, [isSignedIn, router]);
+    if (isSignedIn && !welcoming.current) router.replace(next);
+  }, [isSignedIn, router, next]);
 
   const go = (next: Step) => {
     setStep(next);
@@ -57,11 +71,23 @@ export function AuthView() {
     setNotice(null);
   };
 
-  const navigate = ({ decorateUrl }: { decorateUrl: (url: string) => string }) => {
-    const url = decorateUrl(AFTER);
-    if (url.startsWith('http')) window.location.href = url;
-    else router.push(url);
+  /** Signed in: play the welcome (unless motion is reduced), then open the next page. */
+  const arrive = (kind: 'back' | 'new') => ({ decorateUrl }: { decorateUrl: (url: string) => string }) => {
+    const url = decorateUrl(next);
+    let gone = false;
+    const open = () => {
+      if (gone) return;
+      gone = true;
+      if (url.startsWith('http')) window.location.href = url;
+      else router.push(url);
+    };
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return open();
+    welcoming.current = true;
+    leave.current = open;
+    setWelcome(kind);
+    window.setTimeout(open, WELCOME_MS);
   };
+  const navigate = arrive('back');
 
   /** Runs one step, showing a single clear message if it fails. */
   async function run(action: () => Promise<string | null | void>) {
@@ -119,7 +145,7 @@ export function AuthView() {
       const { error } = await signUp.verifications.verifyEmailCode({ code: f.code.trim() });
       if (error) return text(error);
       if (signUp.status !== 'complete') return 'Your account needs one more detail before it can be created.';
-      return text((await signUp.finalize({ navigate })).error);
+      return text((await signUp.finalize({ navigate: arrive('new') })).error);
     },
     forgot: async (f) => {
       setEmail(f.email);
@@ -145,13 +171,25 @@ export function AuthView() {
       const { error } = await signIn.mfa.verifyEmailCode({ code: f.code.trim() });
       return error ? text(error) : completeSignIn();
     },
+    'code-request': async (f) => {
+      setEmail(f.email);
+      const { error } = await signIn.emailCode.sendCode({ emailAddress: f.email });
+      if (error) return text(error);
+      go('email-code');
+      setNotice(`We sent a 6-digit code to ${f.email}.`);
+    },
+    'email-code': async (f) => {
+      const { error } = await signIn.emailCode.verifyCode({ code: f.code.trim() });
+      return error ? text(error) : completeSignIn();
+    },
   };
 
   const google = () =>
     run(async () => {
       const params = {
         strategy: 'oauth_google' as const,
-        redirectUrl: AFTER,
+        // Google returns to the welcome page, which then opens `next`.
+        redirectUrl: `/login/welcome?next=${encodeURIComponent(next)}`,
         redirectCallbackUrl: '/login/sso-callback',
       };
       const { error } = step === 'create' ? await signUp.sso(params) : await signIn.sso(params);
@@ -163,13 +201,14 @@ export function AuthView() {
       const { error } =
         step === 'verify-email' ? await signUp.verifications.sendEmailCode()
         : step === 'reset' ? await signIn.resetPasswordEmailCode.sendCode()
+        : step === 'email-code' ? await signIn.emailCode.sendCode({ emailAddress: email })
         : await signIn.mfa.sendEmailCode();
       if (error) return text(error);
       setNotice('A new code is on its way.');
     });
 
   const entry = step === 'signin' || step === 'create';
-  const hasCode = step === 'verify-email' || step === 'reset' || step === 'device-code';
+  const hasCode = step === 'verify-email' || step === 'reset' || step === 'device-code' || step === 'email-code';
   const submitLabel: Record<Step, [string, string]> = {
     signin: ['Sign in', 'Signing in…'],
     create: ['Create account', 'Creating…'],
@@ -177,10 +216,16 @@ export function AuthView() {
     forgot: ['Send reset code', 'Sending…'],
     reset: ['Save new password', 'Saving…'],
     'device-code': ['Confirm', 'Confirming…'],
+    'code-request': ['Email me a code', 'Sending…'],
+    'email-code': ['Sign in', 'Signing in…'],
   };
 
   return (
     <AuthShell>
+      {welcome && (
+        <Welcome kind={welcome} onSkip={() => leave.current()} />
+      )}
+      <div className={styles.content} data-leaving={welcome ? '' : undefined} inert={welcome ? true : undefined}>
           <Eyebrow>Account</Eyebrow>
           <h1 className={styles.title}>{TITLES[step]}</h1>
 
@@ -197,7 +242,9 @@ export function AuthView() {
             <p className={styles.lede}>
               {step === 'forgot'
                 ? 'Enter the email you use here and we’ll send you a code to choose a new password.'
-                : notice}
+                : step === 'code-request'
+                  ? 'No password needed. Enter the email you use here and we’ll send you a 6-digit code.'
+                  : notice}
             </p>
           )}
 
@@ -228,59 +275,52 @@ export function AuthView() {
               }}
             >
               {step === 'create' && (
-                <label className="field">
-                  <span>Name</span>
-                  <input name="name" autoComplete="name" required />
-                </label>
+                <Field label="Name" name="name" autoComplete="name" required />
               )}
-              {(entry || step === 'forgot') && (
-                <label className="field">
-                  <span>Email</span>
-                  <input type="email" name="email" autoComplete="email" defaultValue={email} required />
-                </label>
+              {(entry || step === 'forgot' || step === 'code-request') && (
+                <Field label="Email" type="email" name="email" autoComplete="email" defaultValue={email} required />
               )}
               {hasCode && (
-                <label className="field">
-                  <span>6-digit code</span>
-                  <input
-                    name="code"
-                    inputMode="numeric"
-                    autoComplete="one-time-code"
-                    pattern="[0-9]{6}"
-                    maxLength={6}
-                    className={styles.code}
-                    required
-                    autoFocus
-                  />
-                </label>
+                <Field
+                  label="6-digit code"
+                  name="code"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  pattern="[0-9]{6}"
+                  maxLength={6}
+                  className={styles.code}
+                  required
+                  autoFocus
+                />
               )}
               {(entry || step === 'reset') && (
-                <label className="field">
-                  <span>{step === 'reset' ? 'New password' : 'Password'}</span>
-                  <input
-                    type="password"
-                    name="password"
-                    autoComplete={step === 'signin' ? 'current-password' : 'new-password'}
-                    minLength={step === 'signin' ? undefined : 8}
-                    required
-                  />
-                </label>
+                <Field
+                  label={step === 'reset' ? 'New password' : 'Password'}
+                  type="password"
+                  name="password"
+                  autoComplete={step === 'signin' ? 'current-password' : 'new-password'}
+                  minLength={step === 'signin' ? undefined : 8}
+                  required
+                />
               )}
               {step === 'signin' && (
-                <button type="button" className={`text-link ${styles.aside}`} onClick={() => go('forgot')}>
-                  Forgot password?
-                </button>
+                <div className={styles.asides}>
+                  <button type="button" className="text-link" onClick={() => go('forgot')}>
+                    Forgot password?
+                  </button>
+                  <button type="button" className="text-link" onClick={() => go('code-request')}>
+                    Email me a code instead
+                  </button>
+                </div>
               )}
               {/* Clerk's bot check renders here when it is switched on. */}
               {step === 'create' && <div id="clerk-captcha" />}
 
-              <button type="submit" className="btn btn-black" disabled={busy}>
-                {submitLabel[step][busy ? 1 : 0]}
-              </button>
+              <SubmitButton pending={busy} busyLabel={submitLabel[step][1]}>
+                {submitLabel[step][0]}
+              </SubmitButton>
 
-              <p className={`status ${styles.status}`} role="alert">
-                {error}
-              </p>
+              <FormStatus message={error} className={styles.status} />
             </form>
 
             {!entry && (
@@ -296,6 +336,7 @@ export function AuthView() {
               </div>
             )}
           </div>
+      </div>
     </AuthShell>
   );
 }

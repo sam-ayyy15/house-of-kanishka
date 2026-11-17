@@ -363,42 +363,35 @@ html:has(dialog[open]) {
   }
 }
 
-/* 5. Emblem bloom: the lotus (<Emblem>) opens ring by ring from its base, each petal rising
-      out of the flower's heart (scaled from the bottom centre of the emblem). Step --s is
-      the ring; the four rings follow each other 140 ms apart. data-reveal="bloom" opens on
-      first view, data-bloom="load" as soon as it is shown. */
+/* 5. Emblem: the lotus (<Emblem>) unfolds from a closed bud, driven frame by frame by
+      components/emblem-unfold.ts. It is server-rendered open (so it shows without JavaScript). On a
+      page with script (html.js, set before the first paint) a lotus that is going to unfold stays
+      hidden until <Emblem> has set its first frame (data-play), so it never flashes open first; if
+      the script never runs, it appears after a moment anyway.
+      The lotus is line art. A hairline of extra weight that does not scale with the drawing
+      keeps its lines readable where it is small (ribbon separators, buttons, markers) while barely
+      changing it where it is large. */
 .emblem {
   display: block;
   overflow: visible;
 }
 
 .emblem path {
-  transform-box: view-box;
-  transform-origin: 50% 96%;
+  stroke: currentColor;
+  stroke-width: 0.4px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
 }
 
-@keyframes emblem-bloom {
-  from {
-    opacity: 0;
-    transform: scale(0.35);
-  }
-  40% {
+html.js .emblem[data-bloom]:not([data-play]) path {
+  opacity: 0;
+  animation: emblem-failsafe 0s linear 4s forwards;
+}
+
+@keyframes emblem-failsafe {
+  to {
     opacity: 1;
   }
-}
-
-[data-reveal='bloom'][data-reveal-state='pending'] {
-  opacity: 1;
-}
-
-[data-reveal='bloom'][data-reveal-state='pending'] path {
-  opacity: 0;
-  transform: scale(0.35);
-}
-
-[data-reveal='bloom'][data-reveal-state='in'] path,
-[data-bloom='load'] path {
-  animation: emblem-bloom 1100ms var(--ease-out) calc(var(--bloom-delay, var(--reveal-delay, 0ms)) + var(--s) * 140ms) both;
 }
 
 /* ---------- Page transitions (client request) ----------
@@ -576,6 +569,181 @@ html:has(dialog[open]) {
   line-height: 1.5;
 }
 
+/* ---------- Customer forms (backend phase 2; DESIGN_GUIDE.md §6 "Forms") ----------
+   <Field>, <SubmitButton>, <FormStatus> and <FormThanks> in components/form. The .field
+   design stays; these add the motion: the label rests inside an empty field and floats up
+   when it is focused or filled, a fine red line draws along the bottom edge on focus, and
+   messages ease down into place. Transform and opacity only. */
+.field-float {
+  position: relative;
+}
+
+.field-float > span:first-child {
+  align-self: flex-start;
+  line-height: 18px;
+  transform-origin: left center;
+  transition:
+    transform var(--dur-base) var(--ease-out),
+    color var(--dur-fast) ease;
+}
+
+/* Resting inside the empty field (18px label + 8px gap + half of the 48px field). */
+.field-float:has(:is(input, textarea):placeholder-shown:not(:focus):not(:autofill)) > span:first-child {
+  color: var(--vr-text-muted);
+  transform: translate(15px, 41px);
+  cursor: text;
+}
+
+.field-line {
+  display: block;
+  position: relative;
+  height: 1px;
+  margin-top: -9px; /* back over the field's bottom border (8px gap + its own 1px) */
+  background: var(--vr-red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-base) var(--ease-out);
+  pointer-events: none;
+}
+
+.field-float:focus-within .field-line {
+  transform: scaleX(1);
+}
+
+.field-float[data-invalid] :is(input, textarea, select) {
+  border-color: var(--vr-red);
+}
+
+.field-error,
+.form-status {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--vr-red);
+  animation: vr-drop var(--dur-base) var(--ease-out) both;
+}
+
+.form-status {
+  min-height: 1.5em;
+  font-size: 14px;
+}
+
+.form-status[data-tone='ok'] {
+  color: var(--vr-black);
+}
+
+.form-status:empty {
+  animation: none;
+}
+
+@keyframes vr-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+/* A button at work: the lotus opens where the label was. */
+.btn[aria-busy='true'] {
+  cursor: default;
+}
+
+.btn-emblem {
+  width: 26px;
+  flex: none;
+}
+
+/* Success: the lotus, a line of script, then the message. */
+.form-thanks {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.form-thanks .emblem {
+  width: 44px;
+  color: var(--vr-red);
+}
+
+.form-thanks-script {
+  margin: 4px 0 -4px;
+  font-family: var(--font-script);
+  font-size: clamp(44px, 4.4vw, 64px);
+  line-height: 1;
+  color: #d10000; /* the site's script red */
+  transform: rotate(-4deg);
+  transform-origin: left center;
+}
+
+.form-thanks > p:last-child {
+  animation: vr-rise var(--dur-slow) var(--ease-out) 500ms both;
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.check input {
+  flex: none;
+}
+
+/* Selects, checkboxes and radio buttons drawn in the house style (square, hairline, black
+   when chosen) instead of the browser's own rounded controls. */
+.field select,
+select.house {
+  appearance: none;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  cursor: pointer;
+}
+
+.check input[type='checkbox'],
+input[type='radio'].house {
+  appearance: none;
+  position: relative;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  border: 1px solid var(--vr-black);
+  background: var(--vr-white);
+  cursor: pointer;
+}
+
+/* The mark: a black square that settles in (scale and opacity only). */
+.check input[type='checkbox']::after,
+input[type='radio'].house::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: var(--vr-black);
+  opacity: 0;
+  transform: scale(0.4);
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) ease;
+}
+
+.check input[type='checkbox']:checked::after,
+input[type='radio'].house:checked::after {
+  opacity: 1;
+  transform: none;
+}
+
+input[type='radio'].house:disabled {
+  border-color: var(--vr-border);
+  cursor: default;
+}
+
 /* Simple page shell for non-hero pages. */
 .page {
   padding: calc(var(--header-h) + 24px) var(--pad-x) var(--section-py);
@@ -701,44 +869,15 @@ html[data-intro-nav] .intro {
   padding-top: clamp(34px, 3.8vw, 58px);
 }
 
-/* ---- The lotus: the site's own bloom, ring by ring from its base ----
-   One layer per ring (not per petal), so each ring blooms on the graphics layer. */
+/* ---- The lotus: the site's own <Emblem>, unfolding from a closed bud ---- */
 .intro-lotus {
-  position: relative;
   width: clamp(110px, 11vw, 168px);
-  aspect-ratio: 1278 / 810;
+  aspect-ratio: 1190 / 806; /* the emblem's viewBox */
 }
 
-.intro-ring {
-  position: absolute;
-  inset: 0;
-  display: block;
+.intro-lotus .emblem {
   width: 100%;
-  height: 100%;
-  overflow: visible;
-  transform-origin: 50% 96%;
-  will-change: transform, opacity;
-}
-
-.intro-ring path {
-  fill: var(--vr-black);
-}
-
-html:is([data-intro='go'], [data-intro='done']) .intro-ring {
-  animation: intro-bloom 1500ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--o) + 250ms + var(--s) * 170ms) backwards;
-}
-
-@keyframes intro-bloom {
-  from {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-  35% {
-    opacity: 0.85;
-  }
-  60% {
-    opacity: 1;
-  }
+  color: var(--vr-black);
 }
 
 /* ---- The house name, in the site's script red, written left to right ----
@@ -979,5 +1118,18 @@ html[data-intro='skip'] .intro {
   to {
     opacity: 0;
     visibility: hidden;
+  }
+}
+
+/* ---------- Printing (bills): only the page's own content, no site chrome ---------- */
+@media print {
+  /* data-chrome marks the site header, footer and cookie panel. */
+  [data-chrome],
+  dialog {
+    display: none !important;
+  }
+
+  @page {
+    margin: 18mm;
   }
 }

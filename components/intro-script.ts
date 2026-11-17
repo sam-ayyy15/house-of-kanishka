@@ -14,4 +14,4 @@ export const INTRO_NAV_OFFSET_MS = 650;
  *   skip  the visitor skipped it: a quick fade
  * then the attribute is removed.
  */
-export const INTRO_SCRIPT = `(function(){try{var d=document.documentElement,c=navigator.connection;if(location.pathname!=='/'||matchMedia('(prefers-reduced-motion: reduce)').matches||(c&&c.saveData))return;d.setAttribute('data-intro','go');setTimeout(function(){if(d.getAttribute('data-intro')==='go')d.setAttribute('data-intro','done')},${INTRO_DONE_MS});setTimeout(function(){d.removeAttribute('data-intro')},${INTRO_END_MS})}catch(e){}})();`;
+export const INTRO_SCRIPT = `(function(){try{var d=document.documentElement;d.classList.add('js');var c=navigator.connection;if(location.pathname!=='/'||matchMedia('(prefers-reduced-motion: reduce)').matches||(c&&c.saveData))return;d.setAttribute('data-intro','go');window.__hokIntroStart=performance.now();setTimeout(function(){if(d.getAttribute('data-intro')==='go')d.setAttribute('data-intro','done')},${INTRO_DONE_MS});setTimeout(function(){d.removeAttribute('data-intro')},${INTRO_END_MS})}catch(e){}})();`;

@@ -3,8 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/format';
-import { FREE_SHIPPING, getProduct, productHref } from '@/lib/products';
+import { productHref } from '@/lib/products';
 import { setQty, useStore } from '@/lib/store';
+import { useCatalog } from '../CatalogProvider';
 import { FreeShippingBar } from '../bag/FreeShippingBar';
 import { Emblem } from '../Emblem';
 import styles from './BagView.module.css';
@@ -12,8 +13,10 @@ import styles from './BagView.module.css';
 /** Resolved bag lines and subtotal, shared by the bag and checkout pages. */
 export function useBag() {
   const { bag } = useStore();
+  const { get, freeShipping: FREE_SHIPPING } = useCatalog();
+  // Pieces that are no longer on sale simply drop out of the bag.
   const lines = bag.flatMap((l) => {
-    const product = getProduct(l.slug);
+    const product = get(l.slug);
     return product ? [{ ...l, product }] : [];
   });
   const subtotal = lines.reduce((n, l) => n + l.product.price * l.qty, 0);

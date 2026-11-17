@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { products } from '@/lib/products';
 import { useStore } from '@/lib/store';
+import { useCatalog } from '../CatalogProvider';
 import { Emblem } from '../Emblem';
 import { ProductGrid } from '../plp/ProductGrid';
 import styles from './Simple.module.css';
@@ -10,6 +10,7 @@ import styles from './Simple.module.css';
 /** Wishlist. EXTRAPOLATED – no reference design. Saved in this browser until accounts exist. */
 export function WishlistView() {
   const { wishlist } = useStore();
+  const { products } = useCatalog();
   const saved = products.filter((p) => wishlist.includes(p.slug));
 
   return (

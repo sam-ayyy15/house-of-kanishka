@@ -1,13 +1,15 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { SITE_NAME } from '@/lib/site';
-import { EMBLEM_PETALS, EMBLEM_VIEWBOX } from './emblem-paths';
+import { Emblem } from './Emblem';
+import { introLotusScript } from './emblem-unfold';
 import { INTRO_DONE_MS, INTRO_END_MS, INTRO_NAV_OFFSET_MS } from './intro-script';
 
-/** The lotus's petals grouped by ring (0 = the base): each ring is one layer, so each can bloom on the graphics layer. */
-const RINGS = [0, 1, 2, 3].map((step) => EMBLEM_PETALS.filter((p) => p.step === step));
+/** When the lotus starts to unfold, in ms from the start of the loading screen. */
+const LOTUS_AT = 250;
+const INTRO_LOTUS = introLotusScript(LOTUS_AT);
 
 /**
  * Loading screen for the home page. EXTRAPOLATED – no reference design.
@@ -16,15 +18,16 @@ const RINGS = [0, 1, 2, 3].map((step) => EMBLEM_PETALS.filter((p) => p.step === 
  * first paint by INTRO_SCRIPT, intro-script.ts) and whenever a visitor navigates to "/" from
  * another page (started here, before the new page paints). No other page has it.
  *
- * White screen. The black lotus blooms petal by petal (the site's own bloom), the house name is
+ * White screen. The black lotus unfolds from a closed bud (the site's own <Emblem>), the house name is
  * written below it in the site's script red, and between them a red loading bar fills from one edge
  * of the screen to the other, as a page loads: quick at first, slowing, then finishing. When it is
  * full the screen splits in two along the bar, the lotus leaving with the upper half and the name
  * with the lower, and the page is revealed between them. About 5 seconds. There is no button; a
  * click, tap or Escape still skips it.
  *
- * Pure CSS and SVG. Everything that moves is a transform or an opacity, so the browser runs it on the
- * graphics layer, off the main thread: the page hydrating behind the screen cannot make it stutter. Not shown with reduced motion or Save-Data. Until the screen opens, the page's
+ * CSS and SVG. The bar, the name and the split are transforms, run on the graphics layer, so the page
+ * hydrating behind the screen cannot make them stutter; the lotus is drawn frame by frame by <Emblem>,
+ * kept in step with the screen's start time. Not shown with reduced motion or Save-Data. Until the screen opens, the page's
  * own entrance animations are held (globals.css, "Opening title").
  */
 export function Intro() {
@@ -32,6 +35,10 @@ export function Intro() {
   // The page the previous run saw. Starting only when the path really changes keeps this safe from
   // React running effects twice in development, which once looked like a second navigation.
   const previous = useRef<string | null>(null);
+  // First load or refresh of "/": the lotus is unfolded by an inline script from the moment the HTML
+  // arrives (below), so it is on time however slowly the page's script loads. Arriving from another
+  // page, <Emblem> plays it (replay), in step with the screen.
+  const [lotus, setLotus] = useState({ replay: 0, delay: LOTUS_AT });
 
   const skip = () => {
     const root = document.documentElement;
@@ -66,6 +73,7 @@ export function Intro() {
 
     root.setAttribute('data-intro-nav', '');
     root.setAttribute('data-intro', 'go');
+    setLotus((l) => ({ replay: l.replay + 1, delay: LOTUS_AT + INTRO_NAV_OFFSET_MS }));
     const done = setTimeout(() => {
       if (root.getAttribute('data-intro') === 'go') root.setAttribute('data-intro', 'done');
     }, INTRO_DONE_MS + INTRO_NAV_OFFSET_MS);
@@ -89,14 +97,9 @@ export function Intro() {
     <div className="intro" onClick={skip} role="presentation">
       <div className="intro-half intro-top">
         <div className="intro-lotus" aria-hidden="true">
-          {RINGS.map((petals, ring) => (
-            <svg key={ring} className="intro-ring" viewBox={EMBLEM_VIEWBOX} focusable="false" style={{ '--s': ring } as React.CSSProperties}>
-              {petals.map((p, i) => (
-                <path key={i} d={p.d} />
-              ))}
-            </svg>
-          ))}
+          <Emblem bloom="load" play={lotus.replay > 0} replay={lotus.replay} delay={lotus.delay} />
         </div>
+        <script dangerouslySetInnerHTML={{ __html: INTRO_LOTUS }} />
       </div>
       <div className="intro-half intro-bottom">
         <p className="intro-name" aria-hidden="true">

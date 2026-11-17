@@ -1,10 +1,10 @@
 'use client';
 
 import { useClerk, useSession, useUser } from '@clerk/nextjs';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
-import { Eyebrow } from '../Eyebrow';
+import { deleteAccount } from '@/app/actions/account';
+import { Field } from '../form/Field';
+import { SubmitButton } from '../form/SubmitButton';
 import styles from './AccountView.module.css';
 
 type Device = {
@@ -23,12 +23,11 @@ const when = (d: Date) =>
   new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(d);
 
 /**
- * Account management: profile, email, password, connected sign-in methods, signed-in
- * devices, sign out and delete. EXTRAPOLATED – no reference design: rows of serif titles and
- * answers, as on the Help page.
+ * Account settings (/account/settings): profile, email, password, connected sign-in methods,
+ * signed-in devices, your data, sign out and delete. EXTRAPOLATED – no reference design: rows
+ * of serif titles and answers, as on the Help page.
  */
 export function AccountView() {
-  const router = useRouter();
   const { user, isLoaded } = useUser();
   const { session } = useSession();
   const { signOut } = useClerk();
@@ -80,22 +79,6 @@ export function AccountView() {
 
   return (
     <>
-      <header className={styles.head}>
-        <Eyebrow>Account</Eyebrow>
-        <h1 className="page-title">
-          Hello{user.firstName ? ', ' : ''}
-          {user.firstName && <em>{user.firstName}</em>}
-        </h1>
-        <nav className={styles.shortcuts} aria-label="Your lists">
-          <Link href="/wishlist" className="text-link">
-            Wishlist
-          </Link>
-          <Link href="/bag" className="text-link">
-            Shopping bag
-          </Link>
-        </nav>
-      </header>
-
       <section className={styles.row} aria-labelledby="acc-profile">
         <h2 id="acc-profile" className={styles.rowTitle}>
           <span className={styles.index}>(01)</span>Profile
@@ -109,18 +92,12 @@ export function AccountView() {
           }}
         >
           <div className={styles.two}>
-            <label className="field">
-              <span>First name</span>
-              <input name="firstName" autoComplete="given-name" defaultValue={user.firstName ?? ''} required />
-            </label>
-            <label className="field">
-              <span>Last name</span>
-              <input name="lastName" autoComplete="family-name" defaultValue={user.lastName ?? ''} />
-            </label>
+            <Field label="First name" name="firstName" autoComplete="given-name" defaultValue={user.firstName ?? ''} required />
+            <Field label="Last name" name="lastName" autoComplete="family-name" defaultValue={user.lastName ?? ''} />
           </div>
-          <button type="submit" className="btn btn-black" disabled={busy === 'profile'}>
-            {busy === 'profile' ? 'Saving…' : 'Save'}
-          </button>
+          <SubmitButton pending={busy === 'profile'} busyLabel="Saving…">
+            Save
+          </SubmitButton>
           {status('profile')}
         </form>
       </section>
@@ -175,18 +152,12 @@ export function AccountView() {
           }}
         >
           {user.passwordEnabled && (
-            <label className="field">
-              <span>Current password</span>
-              <input type="password" name="current" autoComplete="current-password" required />
-            </label>
+            <Field label="Current password" type="password" name="current" autoComplete="current-password" required />
           )}
-          <label className="field">
-            <span>New password</span>
-            <input type="password" name="next" autoComplete="new-password" minLength={8} required />
-          </label>
-          <button type="submit" className="btn btn-black" disabled={busy === 'password'}>
-            {busy === 'password' ? 'Saving…' : user.passwordEnabled ? 'Change password' : 'Set a password'}
-          </button>
+          <Field label="New password" type="password" name="next" autoComplete="new-password" minLength={8} required />
+          <SubmitButton pending={busy === 'password'} busyLabel="Saving…">
+            {user.passwordEnabled ? 'Change password' : 'Set a password'}
+          </SubmitButton>
           {status('password')}
         </form>
       </section>
@@ -233,9 +204,22 @@ export function AccountView() {
         </div>
       </section>
 
+      <section className={styles.row} aria-labelledby="acc-data">
+        <h2 id="acc-data" className={styles.rowTitle}>
+          <span className={styles.index}>(05)</span>Your data
+        </h2>
+        <div className={styles.body}>
+          <p>Download a copy of everything we hold about you: your profile, addresses, saved bag, wishlist and consent choices.</p>
+          {/* A plain link: the browser saves the file the server sends. */}
+          <a href="/account/export" className="btn btn-outline" download>
+            Download my data
+          </a>
+        </div>
+      </section>
+
       <section className={styles.row} aria-labelledby="acc-leave">
         <h2 id="acc-leave" className={styles.rowTitle}>
-          <span className={styles.index}>(05)</span>Sign out
+          <span className={styles.index}>(06)</span>Sign out
         </h2>
         <div className={styles.body}>
           <button type="button" className="btn btn-outline" onClick={() => signOut({ redirectUrl: '/' })}>
@@ -249,13 +233,27 @@ export function AccountView() {
               </button>
             ) : (
               <>
-                <p>This permanently deletes your account and sign-in. It can’t be undone.</p>
+                <p>
+                  This permanently deletes your sign-in, addresses, saved bag and wishlist. It can’t be undone. Records of past orders
+                  are kept as the law requires.
+                </p>
                 <div className={styles.dangerActions}>
                   <button
                     type="button"
                     className="btn btn-red"
                     disabled={busy === 'delete'}
-                    onClick={() => act('delete', async () => { await user.delete(); router.push('/'); }, '')}
+                    onClick={() =>
+                      act(
+                        'delete',
+                        async () => {
+                          const result = await deleteAccount();
+                          if (!result?.ok) throw new Error(result?.message);
+                          // A full page load, so nothing of the old session stays in memory.
+                          window.location.assign('/');
+                        },
+                        '',
+                      )
+                    }
                   >
                     {busy === 'delete' ? 'Deleting…' : 'Delete account'}
                   </button>

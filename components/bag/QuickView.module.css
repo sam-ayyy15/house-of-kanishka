@@ -104,3 +104,12 @@
   align-self: flex-start;
   margin-top: 6px;
 }
+
+/* Sold-out sizes fade back with a fine strike-through. */
+.chip:disabled {
+  color: var(--vr-text-muted);
+  opacity: 0.55;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  cursor: default;
+}

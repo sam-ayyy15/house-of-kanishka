@@ -156,7 +156,7 @@
 /* The lotus anchor on the error page: the plain logo until the 3D petals are ready to replace it. */
 .mark {
   width: clamp(104px, 11vw, 160px);
-  aspect-ratio: 1278 / 810;
+  aspect-ratio: 1190 / 806; /* the emblem's viewBox */
 }
 
 .mark[data-hidden] {

@@ -7,9 +7,9 @@ import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
 import { EMBLEM_PETALS, EMBLEM_VIEWBOX } from '../emblem-paths';
 
 /**
- * The error page: the House lotus, built from its own thirteen petals (the same traced paths as
- * the <Emblem> logo, extruded a little so they catch the light like satin), opens, then comes
- * gently apart and drifts. "Try again" calls them back into the flower.
+ * The error page: the House lotus, built from its own petals (the same traced paths as
+ * the <Emblem> logo, extruded a little so they catch the light like satin), takes the place of the
+ * page's lotus once it has unfolded, then comes gently apart and drifts. "Try again" calls them back into the flower.
  *
  * - Home: the petals' exact place in the logo, over the DOM anchor the page leaves for the lotus.
  * - Away: spread round the edges of the view (never behind the words), each turning slowly.
@@ -49,12 +49,13 @@ function buildPetals(): { petals: Petal[]; width: number } {
     const data = loader.parse(svg);
     const shapes = data.paths.flatMap((path) => path.toShapes());
     const geometry = new THREE.ExtrudeGeometry(shapes, {
-      depth: 16,
-      curveSegments: 10,
+      // The petals are outlines about 11 units wide: a shallow bevel keeps the lines whole.
+      depth: 14,
+      curveSegments: 6,
       bevelEnabled: true,
-      bevelThickness: 5,
-      bevelSize: 4,
-      bevelSegments: 3,
+      bevelThickness: 2.5,
+      bevelSize: 1.5,
+      bevelSegments: 2,
     });
     geometry.computeBoundingBox();
     const box = geometry.boundingBox!;
@@ -63,7 +64,7 @@ function buildPetals(): { petals: Petal[]; width: number } {
     // Read the extent now: translate() updates this same box in place.
     minX = Math.min(minX, box.min.x);
     maxX = Math.max(maxX, box.max.x);
-    geometry.translate(-cx, -cy, -8);
+    geometry.translate(-cx, -cy, -7);
     petals.push({ geometry, cx: cx - VB_W / 2, cy: cy + VB_H / 2, step: p.step });
   }
   return { petals, width: maxX - minX };
@@ -102,7 +103,6 @@ function Petals({
   const meshes = useRef<(THREE.Mesh | null)[]>([]);
   const home = useRef({ x: 0, y: 0, w: 1 }); // the logo's place, in world units
   const progress = useRef(reduced ? 1 : 0); // 0 = flower, 1 = scattered
-  const born = useRef(-1);
   const target = useRef(reduced ? 1 : 0);
   const ready = useRef(false);
 
@@ -133,7 +133,7 @@ function Petals({
         }),
       };
     };
-    return [...petals.map((p, i) => make(p, i, false)), ...petals.map((p, i) => make(petals[(i * 5) % petals.length], i + petals.length, true))];
+    return [...petals.map((p, i) => make(p, i, false)), ...petals.map((p, i) => make(petals[(i * 3) % petals.length], i + petals.length, true))];
   }, [petals]);
   useEffect(() => () => pieces.forEach((p) => p.material.dispose()), [pieces]);
 
@@ -165,9 +165,7 @@ function Petals({
 
   const tmp = useMemo(() => new THREE.Vector3(), []);
   useFrame((state, delta) => {
-    if (born.current < 0) born.current = state.clock.elapsedTime;
     const t = state.clock.elapsedTime;
-    const age = t - born.current;
     if (!reduced) {
       const k = 1 - Math.exp(-delta * (target.current > progress.current ? 1.1 : 2.4));
       progress.current += (target.current - progress.current) * k;
@@ -180,8 +178,8 @@ function Petals({
     pieces.forEach((p, i) => {
       const m = meshes.current[i];
       if (!m) return;
-      // Bloom: ring by ring from the base, as the logo does on the site.
-      const bloom = reduced || p.extra ? 1 : easeInOut(Math.min(Math.max((age - p.petal.step * 0.14) / 1.0, 0), 1));
+      // The page's own lotus has already unfolded: the flower starts whole.
+      const bloom = 1;
       // Leaving the flower, the petals grow to a size you can see across a page.
       const sc = p.extra ? hw * p.scale * s * (1 + 1.6 * s) : hw * (0.35 + 0.65 * bloom) * (1 + (narrow ? 1.1 : 1.7) * s);
       m.visible = sc > 0.0001;

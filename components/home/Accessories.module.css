@@ -243,3 +243,18 @@
     height: 120px;
   }
 }
+
+/* "Coming soon" under the category list, until the category launches (admin switch). */
+.soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.soon em {
+  font-family: var(--font-serif);
+  font-size: clamp(20px, 2vw, 30px);
+  font-style: italic;
+  line-height: 1;
+}

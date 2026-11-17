@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Eyebrow } from '../Eyebrow';
+import { UnderlineLink } from '../UnderlineLink';
 import styles from './Accessories.module.css';
 
 type Box = { l: number; r: number; t: number; b: number };
@@ -23,7 +24,7 @@ const pct = (v: number) => `${v}%`;
  * Homepage §4.6: category list in the centre, six numbered cut-outs around it.
  * On desktop the six pieces travel slowly around the list on an oval path, staying upright.
  */
-export function Accessories() {
+export function Accessories({ comingSoon = false }: { comingSoon?: boolean }) {
   return (
     <section className={styles.section} aria-labelledby="accessories-title" data-loop>
       <div className={styles.centre}>
@@ -33,13 +34,20 @@ export function Accessories() {
         <ul className={styles.categories}>
           {items.map((it, i) => (
             <li key={it.n} data-reveal="rise" style={{ '--reveal-delay': `${i * 70}ms` } as React.CSSProperties}>
-              <Link href={`/accessories?type=${it.tag}`} className={styles.category} data-n={it.n}>
+              <Link href={comingSoon ? '/accessories' : `/accessories?type=${it.tag}`} className={styles.category} data-n={it.n}>
                 <span className={styles.index}>({it.n})</span>
                 {it.category}
               </Link>
             </li>
           ))}
         </ul>
+        {/* Until the category launches: a quiet line and the way to the waiting list. */}
+        {comingSoon && (
+          <p className={styles.soon} data-reveal="rise" style={{ '--reveal-delay': '480ms' } as React.CSSProperties}>
+            <em>Coming soon</em>
+            <UnderlineLink href="/accessories">Notify me</UnderlineLink>
+          </p>
+        )}
       </div>
 
       <ul className={styles.items}>

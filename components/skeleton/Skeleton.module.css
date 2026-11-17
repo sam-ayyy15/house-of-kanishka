@@ -189,6 +189,28 @@
   width: 78%;
 }
 
+/* ---------- A section inside the account / admin shell ---------- */
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+.section .title {
+  margin: 34px 0 48px;
+}
+
+.sectionRow {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) minmax(0, 1fr);
+  gap: 32px;
+  padding: 30px 0;
+  border-top: 1px solid var(--vr-border);
+}
+
+.sectionRow:nth-child(odd) .line:nth-child(2) {
+  width: 70%;
+}
+
 /* ---------- Motion ---------- */
 @media (prefers-reduced-motion: no-preference) {
   .tile,

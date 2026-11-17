@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import styles from '@/components/errors/Errors.module.css';
 import { Emblem } from '@/components/Emblem';
 import { Header } from '@/components/Header';
+import { UNFOLD } from '@/components/emblem-unfold';
 import { canRender3d } from '@/lib/can-render-3d';
 
 // Three.js is only fetched when something has actually gone wrong, and never on the server.
@@ -31,10 +32,15 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
 
   useEffect(() => {
     setReduced(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-    setEnabled(canRender3d());
-    // The flower opens first, then it comes apart.
-    const t = setTimeout(() => setScattered(true), 1500);
-    return () => clearTimeout(t);
+    // The lotus unfolds first (the page's own <Emblem>); only then does the 3D flower take its place
+    // (identical, so the swap is unseen) and come apart.
+    const allowed = canRender3d();
+    const t1 = setTimeout(() => setEnabled(allowed), UNFOLD.dur + 100);
+    const t2 = setTimeout(() => setScattered(true), UNFOLD.dur + 900);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
 
   useEffect(() => {

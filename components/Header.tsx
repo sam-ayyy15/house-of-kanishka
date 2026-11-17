@@ -49,6 +49,7 @@ export function Header({ overlayTargetId, mobileLeft = 'logo', onFilter }: Props
     <>
       {/* Named so it stays anchored while pages cross-fade beneath it (globals.css). */}
       <header
+        data-chrome
         className={styles.header}
         data-variant={solid ? 'solid' : 'transparent'}
         style={{ viewTransitionName: 'site-header' }}
