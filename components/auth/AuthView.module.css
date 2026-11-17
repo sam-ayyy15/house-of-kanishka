@@ -117,6 +117,34 @@
   transform: rotate(-5deg);
 }
 
+/* New account: "Welcome / to the house" on two lines, set like the portrait's script. */
+.welcomeTwoLines {
+  display: flex;
+  flex-direction: column;
+  line-height: 0.85;
+}
+
+.welcomeLine2 {
+  margin-left: 0.6em;
+}
+
+/* One welcome at a time: while the sign-in welcome plays, the portrait and its own
+   "Welcome to the house" fade away and the lotus + greeting take the centre of the page.
+   (Below 1024px the portrait is hidden anyway; the welcome is centred all the same.) */
+.visual {
+  transition: opacity 500ms var(--ease-out);
+}
+
+.split[data-welcoming] .visual {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.split[data-welcoming] .welcome {
+  position: fixed;
+  inset: var(--header-h) 0 0;
+}
+
 .title {
   margin-top: 16px;
   font-family: var(--font-serif);

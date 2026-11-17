@@ -109,6 +109,16 @@
   transform-origin: left bottom;
 }
 
+/* "Welcome to the house" (new account): may break between the two phrases on a phone. */
+.scriptWrap {
+  white-space: normal;
+}
+
+.scriptPart {
+  display: inline-block;
+  white-space: nowrap;
+}
+
 /* ---------- Numbered rows ---------- */
 .row {
   display: grid;

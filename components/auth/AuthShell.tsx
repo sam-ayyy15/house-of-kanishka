@@ -2,11 +2,15 @@ import Image from 'next/image';
 import { Handwriting } from '../Handwriting';
 import styles from './AuthView.module.css';
 
-/** The login page's split layout: portrait with the red script on the left, content on the right. */
-export function AuthShell({ children }: { children: React.ReactNode }) {
+/**
+ * The login page's split layout: portrait with the red script on the left, content on the right.
+ * `welcoming`: the sign-in welcome is playing, so the portrait and its "Welcome to the house"
+ * fade away and the welcome is the only greeting on screen (centred on the page).
+ */
+export function AuthShell({ children, welcoming = false }: { children: React.ReactNode; welcoming?: boolean }) {
   return (
-    <div className={styles.split}>
-      <div className={styles.visual}>
+    <div className={styles.split} data-welcoming={welcoming ? '' : undefined}>
+      <div className={styles.visual} aria-hidden={welcoming || undefined}>
         <div className={styles.photo}>
           {/* Placeholder: local-only photo. Never ship. */}
           <Image src="/placeholders/who-we-are.jpg" alt="" fill priority sizes="(max-width: 1023px) 0px, 50vw" />

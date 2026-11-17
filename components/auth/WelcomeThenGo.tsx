@@ -27,7 +27,7 @@ export function WelcomeThenGo({ next, kind }: { next: string; kind: 'back' | 'ne
   }, []);
 
   return (
-    <AuthShell>
+    <AuthShell welcoming>
       <div className={styles.welcomeOnly}>
         <Welcome kind={kind} onSkip={go} />
       </div>

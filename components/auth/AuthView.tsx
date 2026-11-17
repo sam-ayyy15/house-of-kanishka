@@ -221,7 +221,7 @@ export function AuthView({ next = DEFAULT_AFTER_SIGN_IN }: { next?: string }) {
   };
 
   return (
-    <AuthShell>
+    <AuthShell welcoming={!!welcome}>
       {welcome && (
         <Welcome kind={welcome} onSkip={() => leave.current()} />
       )}

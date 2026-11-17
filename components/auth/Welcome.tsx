@@ -8,16 +8,30 @@ import styles from './AuthView.module.css';
 export const WELCOME_MS = 3200;
 
 /**
- * The moment after signing in: the lotus opens and "Welcome back" (or "Welcome", for a new
- * account) is written in script. Sits over the login panel; a click moves on at once.
+ * The moment after signing in: the lotus opens and "Welcome back" (or, for a new account,
+ * "Welcome / to the house") is written in script. While it plays, the login portrait and its
+ * own script fade away (AuthShell `welcoming`), so it is the only welcome on screen, centred
+ * on the page. A click moves on at once.
  */
 export function Welcome({ kind, onSkip }: { kind: 'back' | 'new'; onSkip: () => void }) {
   return (
     <div className={styles.welcome} role="status" onClick={onSkip}>
       <Emblem bloom="load" className={styles.welcomeEmblem} delay={300} />
-      <p className={styles.welcomeScript} data-write="load" style={{ '--write-delay': '700ms' } as React.CSSProperties}>
-        <Handwriting text={kind === 'new' ? 'Welcome' : 'Welcome back'} />
-      </p>
+      {kind === 'new' ? (
+        <p className={`${styles.welcomeScript} ${styles.welcomeTwoLines}`} data-write="load" style={{ '--write-delay': '700ms' } as React.CSSProperties}>
+          <span className="visually-hidden">Welcome to the house</span>
+          <span aria-hidden="true">
+            <Handwriting text="Welcome" decorative />
+          </span>
+          <span aria-hidden="true" className={styles.welcomeLine2}>
+            <Handwriting text="to the house" from={8} decorative />
+          </span>
+        </p>
+      ) : (
+        <p className={styles.welcomeScript} data-write="load" style={{ '--write-delay': '700ms' } as React.CSSProperties}>
+          <Handwriting text="Welcome back" />
+        </p>
+      )}
     </div>
   );
 }

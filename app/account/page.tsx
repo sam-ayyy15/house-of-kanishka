@@ -4,6 +4,7 @@ import { Eyebrow } from '@/components/Eyebrow';
 import { Handwriting } from '@/components/Handwriting';
 import { ensureProfile, requireUserId } from '@/lib/customer';
 import { formatPrice } from '@/lib/format';
+import { isNewAccount } from '@/lib/new-account';
 import { orderDate, orderStatusLabel } from '@/lib/order-status';
 import { orderUrl } from '@/lib/orders';
 import { adminDb } from '@/lib/supabase/server';
@@ -24,6 +25,10 @@ export default async function AccountOverviewPage() {
     db.from('orders').select('number, access_token, status, total_inr, placed_at').eq('clerk_user_id', userId).order('placed_at', { ascending: false }).limit(1).maybeSingle(),
   ]);
   const order = latest.data;
+  const isNew = isNewAccount(profile.created_at);
+  // New, with a name: "Welcome to the house" over the name. New, without one: "Welcome" over
+  // "to the house" (the title), so the phrase is never written twice.
+  const welcomeToHouse = isNew && !!profile.first_name;
   const saved = wishlist.count ?? 0;
   const a = address.data;
 
@@ -31,8 +36,21 @@ export default async function AccountOverviewPage() {
     <>
       <header className={styles.head}>
         <Eyebrow>Account</Eyebrow>
-        <p className={styles.script} data-write="load" style={{ '--write-delay': '300ms' } as React.CSSProperties}>
-          <Handwriting text="Welcome back" />
+        {/* A new account (lib/new-account.ts) is welcomed to the house; everyone else is welcomed back. */}
+        <p className={`${styles.script} ${welcomeToHouse ? styles.scriptWrap : ''}`} data-write="load" style={{ '--write-delay': '300ms' } as React.CSSProperties}>
+          {welcomeToHouse ? (
+            <>
+              <span className="visually-hidden">Welcome to the house</span>
+              <span aria-hidden="true" className={styles.scriptPart}>
+                <Handwriting text="Welcome" decorative />
+              </span>{' '}
+              <span aria-hidden="true" className={styles.scriptPart}>
+                <Handwriting text="to the house" from={8} decorative />
+              </span>
+            </>
+          ) : (
+            <Handwriting text={isNew ? 'Welcome' : 'Welcome back'} />
+          )}
         </p>
         <h1 className="page-title">{profile.first_name ? <em>{profile.first_name}</em> : 'to the house'}</h1>
       </header>
