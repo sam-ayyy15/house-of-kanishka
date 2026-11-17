@@ -9,7 +9,9 @@ on:
   workflow_dispatch:
 jobs:
   backup:
-    runs-on: ubuntu-latest
+    # Pinned (not ubuntu-latest): the PostgreSQL 17 client comes from apt.postgresql.org for this
+    # exact Ubuntu release, so a silent move to a newer Ubuntu cannot break the nightly backup.
+    runs-on: ubuntu-24.04
     steps:
       - name: Install PostgreSQL 17 client
         run: |
@@ -26,8 +28,9 @@ jobs:
             --schema=public --schema=storage | gzip \
             | gpg --batch --symmetric --cipher-algo AES256 --passphrase "$BACKUP_PASSPHRASE" -o backup.sql.gz.gpg
           ls -lh backup.sql.gz.gpg
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7 # runs on Node 24
         with:
           name: db-backup-${{ github.run_id }}
           path: backup.sql.gz.gpg
           retention-days: 30
+          if-no-files-found: error # a missing dump fails the run loudly instead of passing quietly
