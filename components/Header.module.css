@@ -66,6 +66,39 @@
   }
 }
 
+/* Signed in: the first name in the house script, as in "Welcome back" (account page):
+   script red on the white header, white while the header floats over a hero (a red name
+   would vanish on the red Help hero). Tilted like every script phrase on the site. */
+.name {
+  display: inline-block;
+  margin: -10px 0 -6px;
+  padding: 0 2px;
+  font-family: var(--font-script);
+  /* 40px on wide screens, about 26px on a 1024px laptop; long names are scaled down a little more
+     (--name-scale, set in Header.tsx) so the right-hand links never reach the logo. */
+  font-size: calc(clamp(26px, 2.6vw, 40px) * var(--name-scale, 1));
+  line-height: 1;
+  white-space: nowrap;
+  color: #d10000; /* the site's script red */
+  /* Lowered a touch so the script's small letters sit on the line of the uppercase links. */
+  transform: translateY(5px) rotate(-4deg);
+  transition: color var(--dur-fast) ease;
+}
+
+.header[data-variant='transparent'] .name {
+  color: currentColor;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .header[data-variant='solid'] .name:hover {
+    color: color-mix(in srgb, #d10000 86%, black);
+  }
+
+  .header[data-variant='transparent'] .name:hover {
+    opacity: 0.8;
+  }
+}
+
 .menuIcon {
   flex: none;
 }

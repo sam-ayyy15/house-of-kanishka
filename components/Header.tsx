@@ -1,9 +1,11 @@
 'use client';
 
+import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { bagCount, useStore } from '@/lib/store';
 import { WhenSignedIn } from './auth/AuthEnabled';
+import { Handwriting } from './Handwriting';
 import { BagIcon, MenuIcon, SearchIcon } from './icons';
 import { MenuDrawer } from './MenuDrawer';
 import styles from './Header.module.css';
@@ -18,6 +20,52 @@ type Props = {
   mobileLeft?: 'logo' | 'filter';
   onFilter?: () => void;
 };
+
+// Runs before paint in the browser (so the name never flashes in full before it is written).
+const useBrowserLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
+const NAME_WRITTEN = 'hok-name-written';
+
+/**
+ * Signed in: the visitor's first name in the house script, linking to their account
+ * (EXTRAPOLATED, client request: the "Welcome back" script and red). It writes itself the
+ * first time it appears in a visit, then simply shows. Without a first name: "Account".
+ */
+function AccountName() {
+  const { user } = useUser();
+  const name = user?.firstName?.trim() || user?.fullName?.trim().split(/\s+/)[0] || '';
+  const [write, setWrite] = useState(false);
+
+  useBrowserLayoutEffect(() => {
+    if (!name) return;
+    try {
+      if (window.sessionStorage.getItem(NAME_WRITTEN)) return;
+      window.sessionStorage.setItem(NAME_WRITTEN, '1');
+      setWrite(true);
+    } catch {
+      // Storage blocked: the name is simply shown.
+    }
+  }, [name]);
+
+  if (!name) {
+    return (
+      <Link href="/account" className={styles.navLink}>
+        Account
+      </Link>
+    );
+  }
+  return (
+    <Link
+      href="/account"
+      className={styles.name}
+      aria-label={`Your account, ${name}`}
+      data-write={write ? 'load' : undefined}
+      // Names longer than 9 letters are written a little smaller (never below 70%) to keep the header's spacing.
+      style={{ '--write-delay': '150ms', '--name-scale': Math.max(0.7, Math.min(1, 9 / name.length)) } as React.CSSProperties}
+    >
+      <Handwriting text={name} decorative />
+    </Link>
+  );
+}
 
 /**
  * Global header (spec §3.1). Sticky: transparent with white text while it overlaps
@@ -88,11 +136,7 @@ export function Header({ overlayTargetId, mobileLeft = 'logo', onFilter }: Props
             Search
           </Link>
           <WhenSignedIn
-            signedIn={
-              <Link href="/account" className={styles.navLink}>
-                Account
-              </Link>
-            }
+            signedIn={<AccountName />}
             signedOut={
               <Link href="/login" className={styles.navLink}>
                 Login
