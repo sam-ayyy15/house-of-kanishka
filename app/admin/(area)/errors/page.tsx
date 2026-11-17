@@ -1,5 +1,5 @@
 import styles from '@/components/admin/Admin.module.css';
-import { requireFounder } from '@/lib/founder';
+import { requireAdmin } from '@/lib/admin-gate';
 import { adminDb } from '@/lib/supabase/server';
 
 const when = (iso: string) =>
@@ -7,7 +7,7 @@ const when = (iso: string) =>
 
 /** Server errors from the last 30 days (recorded by instrumentation.ts), newest first. */
 export default async function AdminErrorsPage() {
-  await requireFounder();
+  await requireAdmin('/admin/errors');
   const since = new Date(Date.now() - 30 * 86_400_000).toISOString();
   const { data } = await adminDb().from('error_log').select('id, path, message, digest, kind, created_at').gte('created_at', since).order('created_at', { ascending: false }).limit(200);
   const rows = data ?? [];

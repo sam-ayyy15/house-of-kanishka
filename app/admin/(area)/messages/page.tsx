@@ -1,12 +1,12 @@
 import styles from '@/components/admin/Admin.module.css';
 import { MessageActions } from '@/components/admin/MessageActions';
-import { requireFounder } from '@/lib/founder';
+import { requireAdmin } from '@/lib/admin-gate';
 import { orderDate } from '@/lib/order-status';
 import { adminDb } from '@/lib/supabase/server';
 
 /** Contact-form messages, newest first, and how many people are on the lists. */
 export default async function AdminMessagesPage() {
-  await requireFounder();
+  await requireAdmin('/admin/messages');
   const db = adminDb();
   const [messages, confirmed, pending, waitlist] = await Promise.all([
     db.from('contact_messages').select('id, name, email, order_number, message, status, created_at').order('created_at', { ascending: false }).limit(100),

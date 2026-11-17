@@ -3,7 +3,7 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { z } from 'zod';
 import { CATALOG_TAG } from '@/lib/catalog';
-import { isFounder } from '@/lib/founder';
+import { isAdmin } from '@/lib/admin-gate';
 import { getOrder, ORDER_NUMBER, sendOrderConfirmed, sendOrderUpdate } from '@/lib/orders';
 import { refundPayment } from '@/lib/razorpay';
 import { adminDb } from '@/lib/supabase/server';
@@ -34,7 +34,7 @@ const NEXT: Record<string, string[]> = {
 };
 
 export async function advanceOrder(number: string, to: 'confirmed' | 'packed' | 'delivered'): Promise<AdminState> {
-  if (!(await isFounder())) return DENIED;
+  if (!(await isAdmin())) return DENIED;
   const order = await getOrder(number);
   if (!order) return FAILED;
   if (!NEXT[order.status]?.includes(to)) return { ok: false, message: `This order is ${order.status}; it cannot become ${to}.` };
@@ -67,7 +67,7 @@ const shipInput = z.object({
 });
 
 export async function shipOrder(_prev: AdminState, form: FormData): Promise<AdminState> {
-  if (!(await isFounder())) return DENIED;
+  if (!(await isAdmin())) return DENIED;
   const parsed = shipInput.safeParse({
     number: form.get('number'),
     courier: form.get('courier'),
@@ -93,7 +93,7 @@ export async function shipOrder(_prev: AdminState, form: FormData): Promise<Admi
  * paid online, the money is returned through Razorpay to the original payment method.
  */
 export async function cancelOrder(number: string): Promise<AdminState> {
-  if (!(await isFounder())) return DENIED;
+  if (!(await isAdmin())) return DENIED;
   const order = await getOrder(number);
   if (!order) return FAILED;
   if (['delivered', 'cancelled', 'expired', 'refunded'].includes(order.status)) {
@@ -125,7 +125,7 @@ export async function cancelOrder(number: string): Promise<AdminState> {
 
 /** A delivered order that came back (30-day returns): refunds it; stock is put back by hand in Stock. */
 export async function refundOrder(number: string): Promise<AdminState> {
-  if (!(await isFounder())) return DENIED;
+  if (!(await isAdmin())) return DENIED;
   const order = await getOrder(number);
   if (!order || order.status !== 'delivered') return { ok: false, message: 'Only a delivered order can be refunded here.' };
   let refundId: string | null = null;
@@ -148,7 +148,7 @@ export async function refundOrder(number: string): Promise<AdminState> {
 }
 
 export async function saveOrderNote(_prev: AdminState, form: FormData): Promise<AdminState> {
-  if (!(await isFounder())) return DENIED;
+  if (!(await isAdmin())) return DENIED;
   const number = String(form.get('number') ?? '');
   if (!ORDER_NUMBER.test(number)) return FAILED;
   const note = String(form.get('note') ?? '').trim().slice(0, 2000);
@@ -162,7 +162,7 @@ export async function saveOrderNote(_prev: AdminState, form: FormData): Promise<
 // ---------- Stock, prices and what is on sale ----------
 
 export async function saveProduct(_prev: AdminState, form: FormData): Promise<AdminState> {
-  if (!(await isFounder())) return DENIED;
+  if (!(await isAdmin())) return DENIED;
   const id = String(form.get('product_id') ?? '');
   const price = Number(form.get('price'));
   const status = String(form.get('status') ?? '');
@@ -192,7 +192,7 @@ export async function saveProduct(_prev: AdminState, form: FormData): Promise<Ad
 // ---------- Shop settings and the launch switch ----------
 
 export async function saveSettings(_prev: AdminState, form: FormData): Promise<AdminState> {
-  if (!(await isFounder())) return DENIED;
+  if (!(await isAdmin())) return DENIED;
   const num = (k: string) => Number(form.get(k));
   const values = {
     free_shipping_threshold_inr: num('free_shipping_threshold_inr'),
@@ -214,7 +214,7 @@ export async function saveSettings(_prev: AdminState, form: FormData): Promise<A
 
 /** The launch switch: "live" puts a category on sale; "coming_soon" shows its teaser instead. */
 export async function setCategoryLaunch(slug: string, state: 'live' | 'coming_soon'): Promise<AdminState> {
-  if (!(await isFounder())) return DENIED;
+  if (!(await isAdmin())) return DENIED;
   if (!/^[a-z0-9-]{1,40}$/.test(slug) || !['live', 'coming_soon'].includes(state)) return FAILED;
   const { error } = await adminDb().from('categories').update({ launch_state: state }).eq('slug', slug);
   if (error) return FAILED;
@@ -225,7 +225,7 @@ export async function setCategoryLaunch(slug: string, state: 'live' | 'coming_so
 // ---------- Messages ----------
 
 export async function setMessageStatus(id: string, status: 'new' | 'answered' | 'closed'): Promise<AdminState> {
-  if (!(await isFounder())) return DENIED;
+  if (!(await isAdmin())) return DENIED;
   if (!z.uuid().safeParse(id).success || !['new', 'answered', 'closed'].includes(status)) return FAILED;
   const { error } = await adminDb().from('contact_messages').update({ status }).eq('id', id);
   if (error) return FAILED;

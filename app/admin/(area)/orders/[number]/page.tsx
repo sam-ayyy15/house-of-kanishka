@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import styles from '@/components/admin/Admin.module.css';
 import { OrderActions } from '@/components/admin/OrderActions';
-import { requireFounder } from '@/lib/founder';
+import { requireAdmin } from '@/lib/admin-gate';
 import { formatPrice } from '@/lib/format';
 import { orderStatusLabel } from '@/lib/order-status';
 import { getOrder, orderUrl, type ShipTo } from '@/lib/orders';
@@ -11,8 +11,8 @@ const when = (iso: string | null) =>
   iso ? new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Kolkata' }).format(new Date(iso)) : null;
 
 export default async function AdminOrderPage({ params }: { params: Promise<{ number: string }> }) {
-  await requireFounder();
   const { number } = await params;
+  await requireAdmin(`/admin/orders/${encodeURIComponent(number)}`);
   const order = await getOrder(number);
   if (!order) notFound();
   const to = order.ship_to as ShipTo;

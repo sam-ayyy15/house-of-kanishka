@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import styles from '@/components/admin/Admin.module.css';
-import { requireFounder } from '@/lib/founder';
+import { requireAdmin } from '@/lib/admin-gate';
 import { formatPrice } from '@/lib/format';
 import { orderDate, orderStatusLabel } from '@/lib/order-status';
 import { adminDb } from '@/lib/supabase/server';
@@ -18,7 +18,7 @@ const FILTERS = [
 ] as const;
 
 export default async function AdminOrdersPage({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
-  await requireFounder();
+  await requireAdmin('/admin/orders');
   const { status = 'all' } = await searchParams;
   const active = FILTERS.some(([key]) => key === status) ? status : 'all';
 

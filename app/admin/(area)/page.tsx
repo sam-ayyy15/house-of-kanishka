@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import styles from '@/components/admin/Admin.module.css';
 import { CountUp } from '@/components/CountUp';
-import { requireFounder } from '@/lib/founder';
+import { requireAdmin } from '@/lib/admin-gate';
 import { formatPrice } from '@/lib/format';
 import { orderDate } from '@/lib/order-status';
 import { LOW_STOCK } from '@/lib/products';
@@ -9,7 +9,7 @@ import { adminDb } from '@/lib/supabase/server';
 
 /** Today: what needs doing, in figures, then the orders waiting to be packed. */
 export default async function AdminTodayPage() {
-  await requireFounder();
+  await requireAdmin('/admin');
   const db = adminDb();
   const count = (status: string) => db.from('orders').select('id', { count: 'exact', head: true }).eq('status', status);
   const dayAgo = new Date(Date.now() - 86_400_000).toISOString();

@@ -1,11 +1,11 @@
 import styles from '@/components/admin/Admin.module.css';
 import { ProductRow } from '@/components/admin/ProductRow';
-import { requireFounder } from '@/lib/founder';
+import { requireAdmin } from '@/lib/admin-gate';
 import { adminDb } from '@/lib/supabase/server';
 
 /** Every piece (on sale or not): its price, whether it is on sale, and the stock of each size. */
 export default async function AdminStockPage() {
-  await requireFounder();
+  await requireAdmin('/admin/stock');
   const db = adminDb();
   const [products, variants] = await Promise.all([
     db.from('products').select('id, slug, name, category_slug, price_inr, status, sort_order').order('category_slug').order('sort_order'),

@@ -1,0 +1,326 @@
+/* The admin password page. EXTRAPOLATED – no reference design: the site's soft blob and
+   script watermark (Help), the lotus, serif + italic title, a script flourish, the red
+   hairline and the floating-label field; plus the entrance doors in brand red. */
+
+.stage {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: calc(var(--header-h) + 48px) var(--pad-x) var(--section-py);
+  overflow: hidden;
+  background: var(--vr-white);
+}
+
+/* ---------- Background: soft blob + the founder's name, faint, in script ---------- */
+.blob {
+  position: absolute;
+  z-index: -2;
+  inset: calc(var(--header-h) + 3%) 6% 5%;
+  width: 88%;
+  height: calc(92% - var(--header-h));
+  fill: var(--vr-grey-blob);
+  animation:
+    gate-fade 1400ms var(--ease-out) 700ms both,
+    gate-drift 18s var(--ease-in-out) 2100ms infinite alternate;
+}
+
+.watermark {
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 60%;
+  margin: 0;
+  font-family: var(--font-script);
+  font-size: clamp(150px, 21vw, 340px);
+  line-height: 0.8;
+  color: #e7e6ea; /* the Help page's watermark grey */
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  transform: translate(-50%, -50%) rotate(-7deg);
+  animation: gate-fade 1600ms var(--ease-out) 1100ms both;
+}
+
+/* ---------- The room ---------- */
+.column {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(100%, 420px);
+  text-align: center;
+  transition: opacity 400ms var(--ease-out);
+}
+
+.lotus {
+  width: clamp(64px, 6vw, 84px);
+  margin-bottom: 18px;
+  color: var(--vr-red);
+}
+
+.rise {
+  animation: vr-rise var(--dur-slow) var(--ease-out) var(--t, 0ms) both;
+}
+
+.title {
+  margin-top: 12px;
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 4.4vw, 62px);
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.title em {
+  font-style: italic;
+}
+
+.script {
+  margin: -4px 0 0 2.2em;
+  font-family: var(--font-script);
+  font-size: clamp(46px, 4.6vw, 68px);
+  line-height: 1;
+  color: #d10000; /* the site's script red */
+  white-space: nowrap;
+  transform: rotate(-6deg);
+}
+
+/* The red hairline, drawn out from its centre. */
+.hairline {
+  display: block;
+  width: 72px;
+  height: 1px;
+  margin: 26px 0 34px;
+  background: var(--vr-red);
+  animation: gate-hairline 900ms var(--ease-out) var(--t, 0ms) both;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  text-align: left;
+}
+
+.fieldRow {
+  position: relative;
+}
+
+/* Room for "Show"/"Hide" inside the field. */
+.fieldRow input {
+  padding-right: 64px;
+}
+
+/* Vertically centred on the input box itself (it sits 26px down, under the label's room,
+   and is 48px tall), so an error line appearing below never moves it. */
+.reveal {
+  position: absolute;
+  top: 26px;
+  right: 14px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  height: 48px;
+  font-size: 12px;
+}
+
+.enter {
+  width: 100%;
+}
+
+.note {
+  max-width: 30em;
+  margin-top: 22px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--vr-text-muted);
+}
+
+.unset {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--vr-red);
+  text-align: center;
+}
+
+/* The right password: the room fades back while the doors close over it. */
+.stage[data-entering] .column {
+  opacity: 0;
+}
+
+/* ---------- The doors (brand red, a white lotus on the seam) ----------
+   At rest they stand open, off to the sides, so nothing ever covers the page unless an
+   animation is playing (with reduced motion every animation jumps to its end). */
+.doors {
+  position: fixed;
+  inset: var(--header-h) 0 0;
+  z-index: 40;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.door {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: var(--vr-red);
+}
+
+.doorLeft {
+  left: 0;
+  transform: translateX(-101%);
+}
+
+.doorRight {
+  right: 0;
+  border-left: 1px solid color-mix(in srgb, var(--vr-red) 86%, black); /* the seam */
+  transform: translateX(101%);
+}
+
+.doorLotus {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(72px, 7vw, 96px);
+  margin: -48px 0 0 calc(clamp(72px, 7vw, 96px) / -2);
+  color: var(--vr-white);
+  opacity: 0;
+}
+
+.comeIn {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 40px);
+  margin: 0;
+  font-family: var(--font-script);
+  font-size: clamp(64px, 7vw, 104px);
+  line-height: 1;
+  color: var(--vr-white);
+  white-space: nowrap;
+  transform: translateX(-50%) rotate(-5deg);
+}
+
+/* Opening (arriving at the password page, or at the admin area just after unlocking):
+   closed at first, the lotus fades, then the doors part to the sides. */
+.doors[data-mode='open'] .doorLeft {
+  animation: gate-door-left-open 1150ms cubic-bezier(0.76, 0, 0.24, 1) 380ms both;
+}
+
+.doors[data-mode='open'] .doorRight {
+  animation: gate-door-right-open 1150ms cubic-bezier(0.76, 0, 0.24, 1) 380ms both;
+}
+
+.doors[data-mode='open'] .doorLotus {
+  animation: gate-lotus-out 420ms var(--ease-out) 120ms both;
+}
+
+/* Closing (the right password): the doors swing shut, the lotus returns, "Come in" is written. */
+.doors[data-mode='close'] .doorLeft {
+  animation: gate-door-left-close 720ms cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+
+.doors[data-mode='close'] .doorRight {
+  animation: gate-door-right-close 720ms cubic-bezier(0.76, 0, 0.24, 1) both;
+}
+
+.doors[data-mode='close'] .doorLotus {
+  animation: gate-lotus-in 500ms var(--ease-out) 420ms both;
+}
+
+@keyframes gate-door-left-open {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-101%);
+  }
+}
+
+@keyframes gate-door-right-open {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(101%);
+  }
+}
+
+@keyframes gate-door-left-close {
+  from {
+    transform: translateX(-101%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes gate-door-right-close {
+  from {
+    transform: translateX(101%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes gate-lotus-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes gate-lotus-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes gate-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes gate-drift {
+  from {
+    transform: translate(-1.5%, -1%) scale(1);
+  }
+  to {
+    transform: translate(2%, 1.5%) scale(1.04);
+  }
+}
+
+@keyframes gate-hairline {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@media (max-width: 767px) {
+  .stage {
+    align-items: flex-start;
+    padding-top: calc(var(--header-h) + 40px);
+  }
+
+  .script {
+    margin-left: 1.2em;
+  }
+}
+
+/* The watermark loop only runs where motion is welcome. */
+@media (prefers-reduced-motion: reduce) {
+  .blob {
+    animation: none;
+  }
+}

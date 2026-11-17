@@ -22,7 +22,16 @@ const useIsoLayoutEffect = typeof window === 'undefined' ? useEffect : useLayout
  * screens. A red hairline slides to the current section (down the column's left edge, or
  * along the tabs' bottom edge).
  */
-export function AccountNav({ sections = SECTIONS, label = 'Account sections' }: { sections?: { href: string; label: string }[]; label?: string }) {
+export function AccountNav({
+  sections = SECTIONS,
+  label = 'Account sections',
+  extra,
+}: {
+  sections?: { href: string; label: string }[];
+  label?: string;
+  /** Shown under "Sign out" (the admin area's "Lock admin"). */
+  extra?: React.ReactNode;
+}) {
   const pathname = usePathname();
   const { signOut } = useClerk();
   const list = useRef<HTMLUListElement>(null);
@@ -80,6 +89,7 @@ export function AccountNav({ sections = SECTIONS, label = 'Account sections' }: 
       <button type="button" className={`text-link ${styles.signOut}`} onClick={() => signOut({ redirectUrl: '/' })}>
         Sign out
       </button>
+      {extra}
     </nav>
   );
 }

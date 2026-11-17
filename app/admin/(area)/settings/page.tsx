@@ -2,12 +2,12 @@ import styles from '@/components/admin/Admin.module.css';
 import { LaunchSwitch, SettingsForm } from '@/components/admin/SettingsForms';
 import { getCatalog } from '@/lib/catalog';
 import { emailConfigured } from '@/lib/email';
-import { requireFounder } from '@/lib/founder';
+import { requireAdmin } from '@/lib/admin-gate';
 import { razorpayConfigured } from '@/lib/razorpay';
 import { adminDb } from '@/lib/supabase/server';
 
 export default async function AdminSettingsPage() {
-  await requireFounder();
+  await requireAdmin('/admin/settings');
   const [{ settings }, categories] = await Promise.all([getCatalog(), adminDb().from('categories').select('slug, launch_state').order('slug')]);
   const services: [string, boolean, string][] = [
     ['Online payment (Razorpay)', razorpayConfigured, 'RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET'],
