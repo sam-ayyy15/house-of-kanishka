@@ -1,0 +1,286 @@
+/* The admin sales dashboard (SalesView). Admin rules: the site's tokens, square corners, no
+   shadows; motion only transform/opacity, under 400ms, once. */
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px 32px;
+}
+
+.exports {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 26px;
+  padding-bottom: 18px;
+}
+
+/* Money in the figure tiles: a little smaller than counts, so ₹1,23,45,600 still fits. */
+.money {
+  font-size: clamp(28px, 2.6vw, 38px);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ---------- Revenue chart ---------- */
+.chart {
+  margin: 0;
+  overflow-x: clip; /* a tooltip never makes the page scroll sideways */
+}
+
+.plot {
+  position: relative;
+  height: 240px;
+  margin-left: 64px; /* room for the scale */
+}
+
+/* Hairline gridlines at the top, middle and baseline; labels to the left. */
+.grid {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.gridLine {
+  position: relative;
+  height: 0;
+  border-top: 1px solid var(--vr-border);
+}
+
+.gridLine:last-child {
+  border-top-color: var(--vr-black); /* the baseline */
+}
+
+.tick {
+  position: absolute;
+  right: calc(100% + 12px);
+  top: -7px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--vr-text-muted);
+  white-space: nowrap;
+}
+
+.bars {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each column is the hit target (the full height, not just the bar). */
+.col {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%;
+  outline-offset: -1px;
+  cursor: default;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .col:hover {
+    background: color-mix(in srgb, var(--vr-grey-tile) 80%, transparent);
+  }
+}
+
+/* Thin, square columns (the site never rounds a corner), never filling the slot. */
+.bar {
+  width: min(22px, 64%);
+  height: calc(var(--h) * 1%);
+  background: var(--vr-red);
+  transform-origin: 50% 100%;
+  animation: sales-grow 400ms var(--ease-out) calc(var(--i, 0) * 8ms) both;
+}
+
+@keyframes sales-grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+/* The tooltip: above the column, in the text colours (not the series colour). */
+.tip {
+  position: absolute;
+  /* Above the column, but never above the chart (it would cover the section title). */
+  bottom: min(calc(var(--h) * 1% + 10px), calc(100% - 52px));
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 10px;
+  background: var(--vr-black);
+  color: var(--vr-white);
+  font-size: 12px;
+  line-height: 1.35;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity 150ms ease;
+}
+
+.tip strong {
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.col[data-edge='start'] .tip {
+  left: 0;
+  transform: none;
+}
+
+.col[data-edge='end'] .tip {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
+.col:hover .tip,
+.col:focus-visible .tip {
+  opacity: 1;
+}
+
+.none {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-size: 13px;
+  color: var(--vr-text-muted);
+  pointer-events: none;
+}
+
+.axis {
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  margin: 10px 0 0 64px;
+  font-size: 11px;
+  color: var(--vr-text-muted);
+}
+
+.axis span {
+  overflow: visible;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* The first and last dates line up with the chart's edges instead of running past them. */
+.axis span:first-child {
+  justify-self: start;
+  width: max-content;
+}
+
+.axis span:last-child {
+  justify-self: end;
+  width: max-content;
+}
+
+.asTable {
+  margin-top: 22px;
+}
+
+.asTable summary {
+  display: inline-block;
+  margin-bottom: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.asTable summary::-webkit-details-marker {
+  display: none;
+}
+
+/* ---------- Status and payment: a name, a bar and a figure per row, bars aligned ---------- */
+.split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 clamp(32px, 4vw, 64px);
+}
+
+.meters {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.meters li {
+  display: grid;
+  /* A fixed figure column (per list, --figure) so every bar starts and ends at the same place. */
+  grid-template-columns: minmax(110px, 0.9fr) minmax(0, 1.4fr) var(--figure, 3em);
+  align-items: center;
+  gap: 16px;
+  font-size: 13px;
+  animation: vr-rise 400ms var(--ease-out) calc(var(--i, 0) * 40ms) both;
+}
+
+.meterTrack {
+  position: relative;
+  height: 6px;
+  background: var(--vr-grey-tile);
+}
+
+.meterFill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--w) * 1%);
+  background: var(--vr-black);
+  transform-origin: 0 50%;
+  animation: sales-fill 400ms var(--ease-out) calc(var(--i, 0) * 40ms + 100ms) both;
+}
+
+@keyframes sales-fill {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.meterFigure {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.piece {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+@media (max-width: 1023px) {
+  .split {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .plot,
+  .axis {
+    margin-left: 48px;
+  }
+
+  .meters li {
+    grid-template-columns: 1fr auto;
+  }
+
+  .meterTrack {
+    grid-column: 1 / -1;
+    order: 3;
+  }
+}

@@ -8,6 +8,7 @@ import { requireAdmin } from '@/lib/admin-gate';
 
 const SECTIONS = [
   { href: '/admin', label: 'Today' },
+  { href: '/admin/sales', label: 'Sales' },
   { href: '/admin/orders', label: 'Orders' },
   { href: '/admin/stock', label: 'Stock' },
   { href: '/admin/messages', label: 'Messages' },
