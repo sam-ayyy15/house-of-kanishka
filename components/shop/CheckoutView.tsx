@@ -14,6 +14,7 @@ import { Emblem } from '../Emblem';
 import { Field, SelectField } from '../form/Field';
 import { FormStatus } from '../form/FormStatus';
 import { SubmitButton } from '../form/SubmitButton';
+import { Turnstile } from '../form/Turnstile';
 import { useBag } from './BagView';
 import styles from './CheckoutView.module.css';
 
@@ -137,6 +138,9 @@ export function CheckoutView({ account, canSignIn, onlineOpen, codOpen, codMax, 
   const [veil, setVeil] = useState<Veil>(null);
   const [veilNote, setVeilNote] = useState('');
   const pending = useRef<Online | null>(null);
+  // The bot check's token for the next order attempt; a new one after every attempt.
+  const botCheck = useRef<string | null>(null);
+  const [attempts, setAttempts] = useState(0);
 
   const bind = (name: keyof Values) => ({
     name,
@@ -240,10 +244,12 @@ export function CheckoutView({ account, canSignIn, onlineOpen, codOpen, codMax, 
         method,
         save_address: saveAddress,
         items: lines.map((l) => ({ slug: l.slug, size: l.size, qty: l.qty })),
+        turnstile: botCheck.current ?? undefined,
       });
     } catch {
       result = { ok: false, message: 'We could not reach the shop. Nothing has been charged. Please try again.' };
     }
+    setAttempts((n) => n + 1); // the token has been used
     if (!result.ok) {
       setVeil(null);
       setMessage(result.message);
@@ -398,6 +404,7 @@ export function CheckoutView({ account, canSignIn, onlineOpen, codOpen, codMax, 
                     </label>
                   </div>
 
+                  <Turnstile action="checkout" onToken={(t) => (botCheck.current = t)} resetKey={attempts} />
                   <p className={styles.terms}>
                     By placing this order you agree to our <Link href="/terms">Terms</Link> and{' '}
                     <Link href="/refund-policy">Refund policy</Link>.

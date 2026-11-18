@@ -2,6 +2,7 @@
 
 import { z } from 'zod';
 import { withinRateLimit } from '@/lib/rate-limit';
+import { TURNSTILE_FAILED, verifyTurnstile } from '@/lib/turnstile';
 import { adminDb } from '@/lib/supabase/server';
 
 export type FormResult = { ok: true } | { ok: false; message: string };
@@ -18,6 +19,7 @@ const input = z.object({
 export async function joinWaitlist(_prev: FormResult | null, form: FormData): Promise<FormResult> {
   const parsed = input.safeParse({ email: String(form.get('email') ?? '').trim(), category: form.get('category') });
   if (!parsed.success) return { ok: false, message: 'Please enter a valid email address.' };
+  if (!(await verifyTurnstile(form.get('cf-turnstile-response'), 'notify'))) return { ok: false, message: TURNSTILE_FAILED };
   if (!(await withinRateLimit('waitlist', 5, 600))) {
     return { ok: false, message: 'Too many attempts. Please try again in a few minutes.' };
   }

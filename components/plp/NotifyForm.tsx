@@ -1,8 +1,9 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { joinWaitlist, type FormResult } from '@/app/actions/waitlist';
 import { Emblem } from '../Emblem';
+import { Turnstile } from '../form/Turnstile';
 import { Handwriting } from '../Handwriting';
 import form from '../home/Newsletter.module.css';
 import styles from './ComingSoon.module.css';
@@ -14,6 +15,7 @@ import styles from './ComingSoon.module.css';
  */
 export function NotifyForm({ category }: { category: string }) {
   const [result, action, pending] = useActionState<FormResult | null, FormData>(joinWaitlist, null);
+  const [check, setCheck] = useState<string | null>(null);
 
   if (result?.ok) {
     return (
@@ -31,6 +33,7 @@ export function NotifyForm({ category }: { category: string }) {
     <div className={styles.notify}>
       <form className={form.form} action={action}>
         <input type="hidden" name="category" value={category} />
+        <input type="hidden" name="cf-turnstile-response" value={check ?? ''} />
         <label htmlFor={`notify-${category}`} className="visually-hidden">
           Email address
         </label>
@@ -50,6 +53,7 @@ export function NotifyForm({ category }: { category: string }) {
           {pending ? 'Sending…' : 'Notify me'}
         </button>
       </form>
+      <Turnstile action="notify" onToken={setCheck} resetKey={result} className={form.turnstile} />
       <p className={`status ${styles.error}`} role="status">
         {result && !result.ok && result.message}
       </p>

@@ -8,6 +8,7 @@ import { emailConfigured } from '@/lib/email';
 import { INDIAN_STATES, indianMobile, PINCODE } from '@/lib/india';
 import { getOrder, isUuid, ORDER_NUMBER, orderUrl, sendCodConfirmRequest, sendOrderConfirmed } from '@/lib/orders';
 import { withinRateLimit } from '@/lib/rate-limit';
+import { TURNSTILE_FAILED, verifyTurnstile } from '@/lib/turnstile';
 import { createRazorpayOrder, razorpayConfigured, razorpayKeyId, validPaymentSignature } from '@/lib/razorpay';
 import { adminDb } from '@/lib/supabase/server';
 
@@ -35,6 +36,8 @@ const input = z.object({
   method: z.enum(['online', 'cod']),
   save_address: z.boolean().optional(),
   items: z.array(z.object({ slug: z.string().max(120), size: z.string().max(20), qty: z.number().int().min(1).max(10) })).min(1).max(40),
+  /** The Cloudflare Turnstile token (lib/turnstile.ts). */
+  turnstile: z.string().max(2048).optional(),
 });
 export type CheckoutInput = z.input<typeof input>;
 
@@ -66,6 +69,7 @@ export async function placeOrder(raw: CheckoutInput): Promise<CheckoutResult> {
   if (d.method === 'online' && !razorpayConfigured) {
     return { ok: false, message: 'Online payment is not open yet. Please choose cash on delivery.' };
   }
+  if (!(await verifyTurnstile(d.turnstile, 'checkout'))) return { ok: false, message: TURNSTILE_FAILED };
   if (!(await withinRateLimit('checkout', 8, 600))) {
     return { ok: false, message: 'Too many attempts. Please try again in a few minutes.' };
   }

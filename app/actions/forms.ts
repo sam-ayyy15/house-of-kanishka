@@ -5,6 +5,7 @@ import { BUSINESS } from '@/lib/business';
 import { letter, sendEmail } from '@/lib/email';
 import { withinRateLimit } from '@/lib/rate-limit';
 import { SITE_URL } from '@/lib/site';
+import { TURNSTILE_FAILED, verifyTurnstile } from '@/lib/turnstile';
 import { adminDb } from '@/lib/supabase/server';
 
 export type FormState = { ok: true; message: string } | { ok: false; message: string } | null;
@@ -23,6 +24,7 @@ export async function subscribeNewsletter(_prev: FormState, form: FormData): Pro
   const parsed = newsletterInput.safeParse({ email: String(form.get('email') ?? '').trim() });
   if (!parsed.success) return { ok: false, message: 'Please enter a valid email address.' };
   if (isBot(form)) return { ok: true, message: 'Thank you.' };
+  if (!(await verifyTurnstile(form.get('cf-turnstile-response'), 'newsletter'))) return { ok: false, message: TURNSTILE_FAILED };
   if (!(await withinRateLimit('newsletter', 5, 600))) return { ok: false, message: BUSY };
 
   const db = adminDb();
@@ -80,6 +82,7 @@ export async function sendContactMessage(_prev: FormState, form: FormData): Prom
   if (!parsed.success) return { ok: false, message: 'Please fill in your name, a valid email address and your message.' };
   const done: FormState = { ok: true, message: 'Thank you. Your message has reached us, and we will reply by email.' };
   if (isBot(form)) return done;
+  if (!(await verifyTurnstile(form.get('cf-turnstile-response'), 'contact'))) return { ok: false, message: TURNSTILE_FAILED };
   if (!(await withinRateLimit('contact', 4, 900))) return { ok: false, message: BUSY };
 
   const { name, email, order, message } = parsed.data;

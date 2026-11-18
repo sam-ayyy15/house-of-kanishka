@@ -6,6 +6,7 @@ import { Field, TextAreaField } from '../form/Field';
 import { FormStatus, FormThanks } from '../form/FormStatus';
 import { keepValues } from '../form/keep';
 import { SubmitButton } from '../form/SubmitButton';
+import { Turnstile } from '../form/Turnstile';
 
 /** Contact form: the message is saved on the server (and copied to the shop's inbox). */
 export function ContactForm() {
@@ -21,6 +22,7 @@ export function ContactForm() {
       <Field label="Email" type="email" name="email" autoComplete="email" required />
       <Field label="Order number (optional)" name="order" maxLength={40} />
       <TextAreaField label="Message" name="message" required maxLength={5000} />
+      <Turnstile action="contact" resetKey={state} />
       <SubmitButton pending={pending} busyLabel="Sending…">
         Send message
       </SubmitButton>

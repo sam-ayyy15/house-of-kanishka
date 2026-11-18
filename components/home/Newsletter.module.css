@@ -34,6 +34,13 @@
   margin-top: 8px;
 }
 
+/* The bot check's container, just below the row (Invisible mode: nothing shows). */
+.turnstile {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
 .input {
   width: 400px;
   height: 51px;

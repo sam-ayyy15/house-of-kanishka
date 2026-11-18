@@ -1,8 +1,9 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { subscribeNewsletter, type FormState } from '@/app/actions/forms';
 import { Emblem } from '../Emblem';
+import { Turnstile } from '../form/Turnstile';
 import styles from './Newsletter.module.css';
 
 /**
@@ -11,6 +12,7 @@ import styles from './Newsletter.module.css';
  */
 export function NewsletterForm() {
   const [state, action, pending] = useActionState<FormState, FormData>(subscribeNewsletter, null);
+  const [check, setCheck] = useState<string | null>(null);
 
   if (state?.ok) {
     return (
@@ -29,6 +31,8 @@ export function NewsletterForm() {
         </label>
         {/* Left empty by people; see isBot() in app/actions/forms.ts. */}
         <input type="text" name="company" tabIndex={-1} autoComplete="off" aria-hidden="true" className="visually-hidden" />
+        {/* The bot check's token (the check itself sits below the row, so the row never shifts). */}
+        <input type="hidden" name="cf-turnstile-response" value={check ?? ''} />
         {/* The lotus sits at the end of the field: it opens as the form appears, darkens while
             the field is in use and turns brand red once the address looks complete. */}
         <div className={styles.field}>
@@ -47,6 +51,7 @@ export function NewsletterForm() {
           {pending ? 'Sending…' : 'Subscribe'}
         </button>
       </form>
+      <Turnstile action="newsletter" onToken={setCheck} resetKey={state} className={styles.turnstile} />
       {state && !state.ok && (
         <p className={`status ${styles.formError}`} role="status">
           {state.message}

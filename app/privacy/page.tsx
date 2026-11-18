@@ -62,6 +62,16 @@ const sections: PolicySection[] = [
             <strong>Clerk</strong> (sign-in), <strong>Supabase</strong> (our database, hosted in India) and our <strong>email providers</strong>,
             which process data on our behalf.
           </li>
+          <li>
+            <strong>Cloudflare Turnstile</strong>, to keep automated bots away from our checkout, contact, newsletter and
+            &ldquo;Notify me&rdquo; forms. It works invisibly: when you send one of these forms, Cloudflare checks technical information
+            from your browser and device (such as your IP address) to confirm the request comes from a person. This is
+            governed by Cloudflare&rsquo;s{' '}
+            <a href="https://www.cloudflare.com/turnstile-privacy-policy/" target="_blank" rel="noopener noreferrer">
+              Turnstile Privacy Addendum
+            </a>
+            .
+          </li>
           <li>Authorities, where the law requires it.</li>
         </ul>
       </>
