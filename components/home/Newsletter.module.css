@@ -1,4 +1,6 @@
 .section {
+  /* The footer's "Newsletter" link lands here (/#newsletter), clear of the fixed header. */
+  scroll-margin-top: var(--header-h);
   display: flex;
   flex-direction: column;
   align-items: center;

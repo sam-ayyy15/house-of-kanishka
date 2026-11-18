@@ -13,6 +13,7 @@ const columns = (collections: { slug: string; title: string[] }[]) => [
       { label: 'Dresses', href: '/dresses' },
       { label: 'Accessories', href: '/accessories' },
       { label: 'Lookbook', href: '/lookbook' },
+      { label: 'Search', href: '/search' },
     ],
   },
   {
@@ -36,9 +37,12 @@ const columns = (collections: { slug: string; title: string[] }[]) => [
       { label: 'Account', href: '/account' },
       { label: 'Wishlist', href: '/wishlist' },
       { label: 'Shopping Bag', href: '/bag' },
+      { label: 'Newsletter', href: '/#newsletter' },
     ],
   },
 ];
+// Every column has five rows (Collections has five today), so the four columns end on one
+// line instead of stepping up and down.
 
 const LEGAL = [
   { label: 'Terms', href: '/terms' },
@@ -74,23 +78,27 @@ export async function Footer() {
           ))}
         </nav>
       </div>
+      {/* Desktop: one line, the legal links separated by dots. Phones: the links in a two-column
+          grid with comfortable tap rows, then the copyright and currency on one line. */}
       <div className={styles.bottom}>
-        <p>
+        <p className={styles.copyright}>
           {/* The registered-trademark sign gets its own, larger size: in the 12px line the font's
               built-in ® is a speck. It stays a real character, so it is still read as "registered". */}
           <span className={styles.mark}>®</span> {new Date().getFullYear()} House of Kanishka
         </p>
-        <p>
+        <ul className={styles.legal} aria-label="Legal">
           {LEGAL.map((l) => (
-            <span key={l.href}>
+            <li key={l.href}>
               <Link href={l.href} className={styles.bottomLink}>
                 {l.label}
-              </Link>{' '}
-              ·{' '}
-            </span>
+              </Link>
+            </li>
           ))}
-          Prices in INR · <CookiePreferencesLink className={styles.bottomLink} />
-        </p>
+          <li>
+            <CookiePreferencesLink className={styles.bottomLink} />
+          </li>
+        </ul>
+        <p className={styles.currency}>Prices in INR</p>
       </div>
     </footer>
   );

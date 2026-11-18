@@ -17,7 +17,7 @@ const lines: { text: string; italic?: boolean }[][] = [
 export function Newsletter() {
   let w = 0;
   return (
-    <section className={styles.section} aria-labelledby="newsletter-title">
+    <section id="newsletter" className={styles.section} aria-labelledby="newsletter-title">
       <Eyebrow className={styles.eyebrow}>
         <span data-reveal="fade">Subscribe</span>
       </Eyebrow>
