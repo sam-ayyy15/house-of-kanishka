@@ -1,3 +1,64 @@
+/* ---------- Account bar: the first thing in the menu (phones and tablets have no account
+   link in the header). Signed out: two house buttons. Signed in: the name in script. ---------- */
+.account {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 14px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--vr-border);
+}
+
+.accountLabel {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--vr-text-muted);
+}
+
+.accountButtons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.accountButtons :global(.btn) {
+  height: 44px;
+  padding: 0 10px;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+
+/* The first name, as on the desktop header and in "Welcome back". */
+.accountName {
+  align-self: flex-start;
+  margin: 0 0 -2px;
+  padding-right: 6px;
+  font-family: var(--font-script);
+  font-size: 48px;
+  line-height: 1.05;
+  color: #d10000; /* the site's script red */
+  white-space: nowrap;
+  transform: rotate(-4deg);
+  transform-origin: left bottom;
+}
+
+.accountLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 26px;
+}
+
+.accountLinks button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
 .nav {
   display: flex;
   flex-direction: column;
@@ -85,6 +146,7 @@
 /* Opening: the links rise in one after another behind the sliding panel. @starting-style
    gives them their "before" state each time the dialog opens; nothing is hidden at rest. */
 @media (prefers-reduced-motion: no-preference) {
+  :global(dialog[open]) .account,
   :global(dialog[open]) .nav li,
   :global(dialog[open]) .heading {
     transition:
@@ -92,7 +154,13 @@
       transform 500ms var(--ease-out) calc(140ms + var(--i, 4.5) * 45ms);
   }
 
+  /* The account bar rises in first. */
+  :global(dialog[open]) .account {
+    --i: -1;
+  }
+
   @starting-style {
+    :global(dialog[open]) .account,
     :global(dialog[open]) .nav li,
     :global(dialog[open]) .heading {
       opacity: 0;

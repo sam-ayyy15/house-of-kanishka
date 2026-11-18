@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { collectionHref } from '@/lib/collections';
 import { useCatalog } from './CatalogProvider';
 import { Drawer } from './Drawer';
+import { MenuAccount } from './MenuAccount';
 import styles from './MenuDrawer.module.css';
 
 const shop = [
@@ -16,7 +17,6 @@ const shop = [
 
 const utility = [
   { label: 'Search', href: '/search' },
-  { label: 'Account', href: '/account' },
   { label: 'Wishlist', href: '/wishlist' },
   { label: 'Shopping Bag', href: '/bag' },
   { label: 'Help', href: '/help' },
@@ -28,6 +28,8 @@ export function MenuDrawer({ open, onClose }: { open: boolean; onClose: () => vo
   const { collections } = useCatalog();
   return (
     <Drawer open={open} onClose={onClose} side="left" label="Menu">
+      {/* First thing in the menu: phones and tablets have no account link in the header. */}
+      <MenuAccount open={open} onNavigate={onClose} />
       <nav aria-label="Menu" className={styles.nav}>
         <ul className={styles.primary}>
           {shop.map((l, i) => (

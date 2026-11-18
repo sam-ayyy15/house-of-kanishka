@@ -17,15 +17,15 @@ export const metadata: Metadata = {
  * ?next=/some/page (ours) or ?redirect_url=… (added by Clerk when a protected page sends a
  * visitor here) says where to go after signing in. Only pages on this site are accepted.
  */
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; redirect_url?: string }> }) {
-  const { next, redirect_url } = await searchParams;
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string; redirect_url?: string; tab?: string }> }) {
+  const { next, redirect_url, tab } = await searchParams;
   const after = next ? safeNext(next) : redirect_url ? safeNext(redirect_url, new URL(redirect_url, 'https://site.invalid').origin) : safeNext(null);
   return (
     <>
       <Header />
       <main>
         {authEnabled ? (
-          <AuthView next={after} />
+          <AuthView next={after} start={tab === 'create' ? 'create' : 'signin'} />
         ) : (
           // Shown only until the Clerk keys are added (see lib/auth-config.ts).
           <AuthShell>

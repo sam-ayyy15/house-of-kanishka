@@ -45,13 +45,13 @@ const text = (e: ClerkErr) => (e ? (e.longMessage ?? e.message) : null);
  * On success the form fades out, the lotus opens and "Welcome back" is written in script
  * before that page opens.
  */
-export function AuthView({ next = DEFAULT_AFTER_SIGN_IN }: { next?: string }) {
+export function AuthView({ next = DEFAULT_AFTER_SIGN_IN, start = 'signin' }: { next?: string; /** Which tab opens first (?tab=create opens Create account). */ start?: 'signin' | 'create' }) {
   const router = useRouter();
   const { isSignedIn } = useAuth();
   const { signIn } = useSignIn();
   const { signUp } = useSignUp();
 
-  const [step, setStep] = useState<Step>('signin');
+  const [step, setStep] = useState<Step>(start);
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
