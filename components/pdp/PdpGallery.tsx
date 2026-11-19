@@ -30,10 +30,6 @@ export function PdpGallery({ product }: { product: Product }) {
               fill
               sizes="(max-width: 767px) 85vw, 33vw"
               className={img.fit === 'contain' ? styles.contain : styles.cover}
-              // The first row is on screen when the page opens (three across on desktop): fetch it
-              // at once, the first photo (the page's largest paint) at high priority.
-              loading={i < 3 ? 'eager' : undefined}
-              fetchPriority={i === 0 ? 'high' : undefined}
             />
             <button type="button" className={styles.open} aria-label={`Enlarge photo ${i + 1} of ${images.length}: ${img.alt}`} onClick={() => setOpen(i)} />
           </li>

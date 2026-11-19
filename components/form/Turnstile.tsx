@@ -47,47 +47,19 @@ export function Turnstile({ action, onToken, resetKey, className }: { action: st
   tokenTo.current = onToken;
 
   useEffect(() => {
-    if (!SITE_KEY || !box.current) return;
+    if (!SITE_KEY) return;
     let gone = false;
-    const start = () =>
-      void loadTurnstile().then((ok) => {
-        if (!ok || gone || !box.current || !window.turnstile) return;
-        widget.current = window.turnstile.render(box.current, {
-          sitekey: SITE_KEY,
-          action,
-          callback: (token: string) => tokenTo.current?.(token),
-          'expired-callback': () => tokenTo.current?.(null),
-          'error-callback': () => tokenTo.current?.(null),
-        });
+    void loadTurnstile().then((ok) => {
+      if (!ok || gone || !box.current || !window.turnstile) return;
+      widget.current = window.turnstile.render(box.current, {
+        sitekey: SITE_KEY,
+        action,
+        callback: (token: string) => tokenTo.current?.(token),
+        'expired-callback': () => tokenTo.current?.(null),
+        'error-callback': () => tokenTo.current?.(null),
       });
-    // Cloudflare's script is large (several hundred KB with its challenge frame), so it is only
-    // fetched once the form is within about a screen of view, or the moment someone uses it. That
-    // still leaves the invisible check plenty of time to finish before they can press send. A form
-    // already on screen (checkout, contact) starts at once, as before. The box itself has no size
-    // in Invisible mode, so its parent (the form's block) is what is watched.
-    const watched = box.current.parentElement ?? box.current;
-    const near = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        stop();
-        start();
-      },
-      { rootMargin: '800px 0px' },
-    );
-    const onUse = () => {
-      stop();
-      start();
-    };
-    const stop = () => {
-      near.disconnect();
-      watched.removeEventListener('focusin', onUse);
-      watched.removeEventListener('pointerdown', onUse);
-    };
-    near.observe(watched);
-    watched.addEventListener('focusin', onUse);
-    watched.addEventListener('pointerdown', onUse);
+    });
     return () => {
-      stop();
       gone = true;
       if (widget.current && window.turnstile) window.turnstile.remove(widget.current);
       widget.current = null;

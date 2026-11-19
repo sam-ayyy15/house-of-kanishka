@@ -16,24 +16,14 @@ type Props = {
   columns?: 5 | 4;
   /** Pieces that are not on sale yet: pictures and names only, no links, prices or quick view. */
   teaser?: boolean;
-  /**
-   * How many leading photos are on screen when the page opens (a grid at the top of the page:
-   * one desktop row). These are fetched at once instead of lazily, the first two at high
-   * priority (the first row on a phone), since one of them is the page's largest paint.
-   */
-  eager?: number;
 };
-
-/** Loading hints for the main photo of card i. */
-const loadHints = (i: number, eager: number) =>
-  i < eager ? ({ loading: 'eager', fetchPriority: i < 2 ? 'high' : 'auto' } as const) : {};
 
 /**
  * Cut-out product grid (spec §5): 5 columns desktop, 2 mobile. Hovering a card fades in a
  * second photo (where the piece has one), and QUICK VIEW slides in beside the price under the
  * photo; on touch screens a small + sits there instead. Nothing is ever drawn over the photo.
  */
-export function ProductGrid({ products, captions = 'always', columns = 5, teaser = false, eager = 0 }: Props) {
+export function ProductGrid({ products, captions = 'always', columns = 5, teaser = false }: Props) {
   return (
     <ul
       className={styles.grid}
@@ -49,7 +39,7 @@ export function ProductGrid({ products, captions = 'always', columns = 5, teaser
             <li key={p.slug} data-reveal="rise" style={{ '--reveal-delay': `${(i % columns) * 70}ms` } as React.CSSProperties}>
               <div className={styles.card}>
                 <div className={styles.media} data-card={p.card}>
-                  <Image src={p.image} alt={p.name} fill sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 20vw" {...loadHints(i, eager)} />
+                  <Image src={p.image} alt={p.name} fill sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 20vw" />
                 </div>
                 <ProductCaption name={p.name} price={p.price} note="Coming soon" className={styles.caption} />
               </div>
@@ -63,7 +53,7 @@ export function ProductGrid({ products, captions = 'always', columns = 5, teaser
               <div className={styles.frame}>
                 <Link href={productHref(p)} className={styles.mediaLink} aria-label={p.name}>
                   <div className={styles.media} data-card={p.card}>
-                    <Image src={p.image} alt="" fill sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 20vw" {...loadHints(i, eager)} />
+                    <Image src={p.image} alt="" fill sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 20vw" />
                     {alt && (
                       <Image
                         src={alt.src}
