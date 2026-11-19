@@ -320,11 +320,23 @@ html:has(dialog[open]) {
   opacity: 0;
 }
 
-/* backwards: the first keyframe (letter hidden by the mask) holds during the delay; when
-   the animation ends the letter returns to its own, unmasked style. */
+/* Waiting for its turn, a letter is fully hidden by hw-wait: the slanted pen mask alone
+   leaves a faint corner of narrow letters uncovered (a visible fleck before the writing
+   starts). hw-wait is listed last, so it overrides hw-pen's held first frame until the
+   letter's start, then ends and the pen stroke plays as before. When hw-pen ends the letter
+   returns to its own, unmasked style. */
+@keyframes hw-wait {
+  from,
+  to {
+    opacity: 0;
+  }
+}
+
 [data-write='load'] .hw,
 [data-reveal='write'][data-reveal-state='in'] .hw {
-  animation: hw-pen 480ms cubic-bezier(0.37, 0, 0.63, 1) var(--hw-start) backwards;
+  animation:
+    hw-pen 480ms cubic-bezier(0.37, 0, 0.63, 1) var(--hw-start) backwards,
+    hw-wait var(--hw-start) linear;
 }
 
 /* 4. Scroll-linked depth, driven by the scroll position itself (CSS scroll timelines; no

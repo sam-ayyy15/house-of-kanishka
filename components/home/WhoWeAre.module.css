@@ -186,8 +186,21 @@
   opacity: 0;
 }
 
-/* backwards: the first keyframe (hidden by the mask) holds during the delay; when the
-   animation ends the letter returns to its own, unmasked style. */
+/* Waiting for its turn, a letter is fully hidden by who-wait. The pen mask alone does not
+   hide it: its edge is slanted, so on narrow letters a faint corner of the ink stays
+   uncovered, which showed as a small red fleck over the photo before the writing began.
+   who-wait is listed last, so it overrides who-pen's held first frame until the letter's
+   start; it then ends and the pen stroke plays as before. When who-pen ends the letter
+   returns to its own, unmasked style. */
+@keyframes who-wait {
+  from,
+  to {
+    opacity: 0;
+  }
+}
+
 .media[data-reveal-state='in'] .ch {
-  animation: who-pen 480ms cubic-bezier(0.37, 0, 0.63, 1) var(--start) backwards;
+  animation:
+    who-pen 480ms cubic-bezier(0.37, 0, 0.63, 1) var(--start) backwards,
+    who-wait var(--start) linear;
 }
