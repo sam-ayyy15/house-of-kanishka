@@ -3,12 +3,16 @@ import { notFound } from 'next/navigation';
 import styles from '@/components/admin/Admin.module.css';
 import { OrderActions } from '@/components/admin/OrderActions';
 import { requireAdmin } from '@/lib/admin-gate';
+import { delhiveryConfigured, getParcelDefaults } from '@/lib/delhivery';
+import { carrierWords, EWAYBILL_FROM_INR, placeName } from '@/lib/delhivery-core';
 import { formatPrice } from '@/lib/format';
 import { orderStatusLabel } from '@/lib/order-status';
 import { getOrder, orderUrl, type ShipTo } from '@/lib/orders';
 
 const when = (iso: string | null) =>
   iso ? new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Kolkata' }).format(new Date(iso)) : null;
+const day = (iso: string | null) =>
+  iso ? new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Asia/Kolkata' }).format(new Date(iso)) : null;
 
 export default async function AdminOrderPage({ params }: { params: Promise<{ number: string }> }) {
   const { number } = await params;
@@ -16,6 +20,18 @@ export default async function AdminOrderPage({ params }: { params: Promise<{ num
   const order = await getOrder(number);
   if (!order) notFound();
   const to = order.ship_to as ShipTo;
+  const parcel = order.status === 'packed' && !order.shipment_booked_at && delhiveryConfigured ? await getParcelDefaults() : null;
+  const words = carrierWords(order.carrier_status, order.carrier_status_type);
+  const delhivery = {
+    configured: delhiveryConfigured,
+    booked: !!order.shipment_booked_at,
+    waybill: order.courier === 'Delhivery' ? order.tracking_number : null,
+    weightG: order.parcel_weight_g ?? parcel?.weightG ?? 500,
+    needsEwaybill: order.total_inr >= EWAYBILL_FROM_INR,
+    latest: words ? { words, where: placeName(order.carrier_location), when: when(order.carrier_status_at) } : null,
+    expected: order.status === 'shipped' ? day(order.carrier_expected_at) : null,
+    synced: when(order.carrier_synced_at),
+  };
   const steps: [string, string | null][] = [
     ['Placed', order.placed_at],
     ['Confirmed', order.confirmed_at],
@@ -116,7 +132,7 @@ export default async function AdminOrderPage({ params }: { params: Promise<{ num
           </div>
         </div>
 
-        <OrderActions number={order.number} status={order.status} paidOnline={order.payment_method === 'online' && order.payment_status === 'paid'} note={order.admin_note ?? ''} hasAttention={!!order.needs_attention} />
+        <OrderActions number={order.number} status={order.status} paidOnline={order.payment_method === 'online' && order.payment_status === 'paid'} note={order.admin_note ?? ''} hasAttention={!!order.needs_attention} delhivery={delhivery} />
       </div>
     </>
   );

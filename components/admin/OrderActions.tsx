@@ -7,11 +7,12 @@ import { FormStatus } from '../form/FormStatus';
 import { keepValues } from '../form/keep';
 import { SubmitButton } from '../form/SubmitButton';
 import styles from './Admin.module.css';
+import { DelhiveryPanel, type DelhiveryInfo } from './DelhiveryPanel';
 
-type Props = { number: string; status: string; paidOnline: boolean; note: string; hasAttention: boolean };
+type Props = { number: string; status: string; paidOnline: boolean; note: string; hasAttention: boolean; delhivery: DelhiveryInfo };
 
 /** What the founder can do with an order next, depending on where it is. */
-export function OrderActions({ number, status, paidOnline, note, hasAttention }: Props) {
+export function OrderActions({ number, status, paidOnline, note, hasAttention, delhivery }: Props) {
   const [reply, setReply] = useState<AdminState>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [confirming, setConfirming] = useState<null | 'cancel' | 'refund'>(null);
@@ -43,18 +44,32 @@ export function OrderActions({ number, status, paidOnline, note, hasAttention }:
           Mark as packed
         </SubmitButton>
       )}
-      {status === 'packed' && (
-        <form onSubmit={keepValues(shipAction)}>
-          <input type="hidden" name="number" value={number} />
-          <Field label="Courier" name="courier" required maxLength={60} />
-          <Field label="Tracking number (optional)" name="tracking_number" maxLength={60} />
-          <Field label="Tracking link (optional)" name="tracking_url" type="url" inputMode="url" />
-          <SubmitButton pending={shipping} busyLabel="Saving…">
-            Mark as shipped
-          </SubmitButton>
-          <FormStatus message={shipState?.message} ok={shipState?.ok} />
-        </form>
-      )}
+      {(status === 'packed' || status === 'shipped') && <DelhiveryPanel number={number} status={status} info={delhivery} />}
+      {status === 'packed' &&
+        !delhivery.booked &&
+        (() => {
+          const manual = (
+            <form onSubmit={keepValues(shipAction)}>
+              <input type="hidden" name="number" value={number} />
+              <Field label="Courier" name="courier" required maxLength={60} />
+              <Field label="Tracking number (optional)" name="tracking_number" maxLength={60} />
+              <Field label="Tracking link (optional)" name="tracking_url" type="url" inputMode="url" />
+              <SubmitButton pending={shipping} busyLabel="Saving…" className={delhivery.configured ? 'btn btn-outline' : undefined}>
+                Mark as shipped
+              </SubmitButton>
+              <FormStatus message={shipState?.message} ok={shipState?.ok} />
+            </form>
+          );
+          // With Delhivery set up, sending a parcel another way is the exception: folded away.
+          return delhivery.configured ? (
+            <details className={styles.otherWay}>
+              <summary>Sent another way?</summary>
+              {manual}
+            </details>
+          ) : (
+            manual
+          );
+        })()}
       {status === 'shipped' && (
         <SubmitButton type="button" pending={busy === 'deliver'} busyLabel="Saving…" onClick={() => run('deliver', () => advanceOrder(number, 'delivered'))}>
           Mark as delivered

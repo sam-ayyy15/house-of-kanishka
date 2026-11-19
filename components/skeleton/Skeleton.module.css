@@ -178,6 +178,9 @@
   flex-direction: column;
   gap: 22px;
   max-width: 760px;
+  /* As tall as the screen, like the pages it stands in for, so the footer stays below the fold
+     while loading instead of jumping down when the page arrives (layout shift). */
+  min-height: 100svh;
   padding: calc(var(--header-h) + 48px) var(--pad-x) var(--section-py);
 }
 

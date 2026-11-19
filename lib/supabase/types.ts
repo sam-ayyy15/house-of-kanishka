@@ -531,6 +531,13 @@ export type Database = {
           access_token: string
           admin_note: string | null
           cancelled_at: string | null
+          carrier_expected_at: string | null
+          carrier_location: string | null
+          carrier_scans: Json | null
+          carrier_status: string | null
+          carrier_status_at: string | null
+          carrier_status_type: string | null
+          carrier_synced_at: string | null
           clerk_user_id: string | null
           cod_confirm_token: string
           confirm_email_sent_at: string | null
@@ -544,6 +551,7 @@ export type Database = {
           number: string
           packed_at: string | null
           paid_at: string | null
+          parcel_weight_g: number | null
           payment_method: string
           payment_status: string
           phone: string
@@ -553,6 +561,8 @@ export type Database = {
           razorpay_refund_id: string | null
           refunded_at: string | null
           ship_to: Json
+          shipment_attempt: number
+          shipment_booked_at: string | null
           shipped_at: string | null
           shipping_inr: number
           status: string
@@ -567,6 +577,13 @@ export type Database = {
           access_token?: string
           admin_note?: string | null
           cancelled_at?: string | null
+          carrier_expected_at?: string | null
+          carrier_location?: string | null
+          carrier_scans?: Json | null
+          carrier_status?: string | null
+          carrier_status_at?: string | null
+          carrier_status_type?: string | null
+          carrier_synced_at?: string | null
           clerk_user_id?: string | null
           cod_confirm_token?: string
           confirm_email_sent_at?: string | null
@@ -580,6 +597,7 @@ export type Database = {
           number: string
           packed_at?: string | null
           paid_at?: string | null
+          parcel_weight_g?: number | null
           payment_method: string
           payment_status?: string
           phone: string
@@ -589,6 +607,8 @@ export type Database = {
           razorpay_refund_id?: string | null
           refunded_at?: string | null
           ship_to: Json
+          shipment_attempt?: number
+          shipment_booked_at?: string | null
           shipped_at?: string | null
           shipping_inr: number
           status: string
@@ -603,6 +623,13 @@ export type Database = {
           access_token?: string
           admin_note?: string | null
           cancelled_at?: string | null
+          carrier_expected_at?: string | null
+          carrier_location?: string | null
+          carrier_scans?: Json | null
+          carrier_status?: string | null
+          carrier_status_at?: string | null
+          carrier_status_type?: string | null
+          carrier_synced_at?: string | null
           clerk_user_id?: string | null
           cod_confirm_token?: string
           confirm_email_sent_at?: string | null
@@ -616,6 +643,7 @@ export type Database = {
           number?: string
           packed_at?: string | null
           paid_at?: string | null
+          parcel_weight_g?: number | null
           payment_method?: string
           payment_status?: string
           phone?: string
@@ -625,6 +653,8 @@ export type Database = {
           razorpay_refund_id?: string | null
           refunded_at?: string | null
           ship_to?: Json
+          shipment_attempt?: number
+          shipment_booked_at?: string | null
           shipped_at?: string | null
           shipping_inr?: number
           status?: string

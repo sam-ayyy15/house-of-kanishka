@@ -2,6 +2,7 @@
 
 import { useActionState, useState, useTransition } from 'react';
 import { saveSettings, setCategoryLaunch, type AdminState } from '@/app/actions/admin';
+import { saveParcelDefaults } from '@/app/actions/delhivery';
 import { Field } from '../form/Field';
 import { FormStatus } from '../form/FormStatus';
 import { keepValues } from '../form/keep';
@@ -20,6 +21,26 @@ export function SettingsForm({ freeFrom, fee, codEnabled, codMax }: { freeFrom: 
         <span>Offer cash on delivery</span>
       </label>
       <Field label="Largest cash-on-delivery order (₹, 0 = no limit)" name="cod_max_order_inr" defaultValue={codMax} {...number} />
+      <SubmitButton pending={pending} busyLabel="Saving…">
+        Save
+      </SubmitButton>
+      <FormStatus message={state?.message} ok={state?.ok} />
+    </form>
+  );
+}
+
+/** The usual parcel's weight and box size, pre-filled when booking with Delhivery. */
+export function ParcelForm({ weightG, lengthCm, widthCm, heightCm }: { weightG: number; lengthCm: number; widthCm: number; heightCm: number }) {
+  const [state, action, pending] = useActionState<AdminState, FormData>(saveParcelDefaults, null);
+  const cm = { type: 'number', inputMode: 'decimal', min: 1, max: 200, step: 0.5, required: true } as const;
+  return (
+    <form onSubmit={keepValues(action)}>
+      <Field label="Weight, packed (grams)" name="parcel_weight_g" type="number" inputMode="numeric" min={50} max={50000} step={1} required defaultValue={weightG} />
+      <div className={styles.three}>
+        <Field label="Length (cm)" name="parcel_length_cm" defaultValue={lengthCm} {...cm} />
+        <Field label="Width (cm)" name="parcel_width_cm" defaultValue={widthCm} {...cm} />
+        <Field label="Height (cm)" name="parcel_height_cm" defaultValue={heightCm} {...cm} />
+      </div>
       <SubmitButton pending={pending} busyLabel="Saving…">
         Save
       </SubmitButton>

@@ -15,7 +15,8 @@ Payments               Razorpay with our own checkout form: the form is ours, an
                        (UPI, cards, net banking, wallets) + Cash on Delivery
 Order emails           Resend + React Email (sent from our own domain)
 Newsletter             Brevo (free plan), with double opt-in
-Shipping               Shiprocket (Lite plan), tracking page we build ourselves(LATER NOT NOW)
+Shipping               Delhivery, direct API (Delhivery One account; decided 18 Nov 2026,
+                       replaces Shiprocket). Our own tracking page, fed by Delhivery's scans.
 Bill / invoice PDF     @react-pdf/renderer, saved in Supabase Storage
 Search                 Postgres full-text search + pg_trgm (for typo tolerance)
 Spam protection        Cloudflare Turnstile + rate limits
@@ -206,8 +207,43 @@ PHASE 4 – ORDERS, BILL OF SUPPLY, EMAILS
 - Motion: orders in the account expand to show their details; opening the bill moves
   smoothly into its preview.
 
-PHASE 5 – SHIPPING, TRACKING, REFUNDS(LATER AS NOT DECIDED STILL)but create an asthetic page for it with animation
+PHASE 5 – SHIPPING WITH DELHIVERY, TRACKING, REFUNDS
 --------------------------------------------------------------------
+Courier: Delhivery, through its B2C API, called only from our server (the token never
+reaches the browser). Built on what already exists, not beside it:
+
+Reused as they are
+- orders.courier / tracking_number / tracking_url / shipped_at / delivered_at
+  (fulfilment migration): the integration fills the same columns the manual form fills.
+- /order/[number]/track (the lotus timeline) and /track (find by number + email).
+- The "on its way" and "delivered" letters (lib/orders.ts sendOrderUpdate).
+- "Delivered" handling in the admin: COD marked paid, the letter sent.
+- error_log (every Delhivery refusal is written there, like Razorpay's).
+- Admin → Settings → Connected services, and the CSV export (already has courier columns).
+- The manual "Mark as shipped" form stays, for parcels sent another way.
+
+New
+A. lib/delhivery.ts (server-only): one client, `Authorization: Token …`, the address and
+   token from environment settings (staging and production use different addresses and
+   tokens), timeouts, and refusals logged.
+B. Admin, packed order: "Ship with Delhivery" creates the shipment (Prepaid, or COD with
+   the amount to collect) and stores the waybill. Then: "Print label" (Delhivery's
+   packing slip) and "Cancel shipment" (before pickup).
+C. Admin: "Book a pickup" asks Delhivery to collect the day's parcels from our address
+   (date: today up to 7 days ahead).
+D. Tracking sync: every 2 hours a scheduled GitHub Action calls a secret-protected
+   route that asks Delhivery about every shipped order (50 per request). It stores the
+   latest scan and the expected delivery date, marks "Delivered" orders delivered (with
+   the letter) and flags returns to sender (RTO) in "needs attention".
+E. Tracking page: under "On its way", the latest scan ("At the Mangaluru hub, 18 November
+   3:10 pm") and the expected delivery date. Same design and motion as now.
+F. Checkout (second step): check the PIN code with Delhivery before ordering; hide cash on
+   delivery where Delhivery cannot collect cash.
+Later: return pickups (30-day returns), failed-delivery re-attempts (NDR).
+
+Founder's part: Delhivery One account with KYC, the wallet topped up (at least Rs 500),
+COD enabled on the account, our pickup address registered under a warehouse name, the
+API token (and a staging token for testing, from the Delhivery contact).
 
 
 PHASE 6 – HIDDEN ADMIN AREA (FOUNDER ONLY)
@@ -356,10 +392,34 @@ PHASE 4 – built (2026-11-16)
   "Try the email again" and "Confirm my order here". With no email set up at all it confirms at once.
 - Welcome moment also plays after Google sign-in (/login/welcome).
 
-PHASE 5 – tracking built; courier integration not done (still undecided)
-- /order/[number]/track: the journey timeline (placed, confirmed, packed, on its way, delivered).
+PHASE 5 – Delhivery built (2026-11-18), waiting for the founder's Delhivery token
+- /order/[number]/track: the journey timeline (placed, confirmed, packed, on its way, delivered),
+  now with Delhivery's latest scan under "On its way" and the expected delivery date.
 - /track: find an order by number + email (footer → Help → Track Order).
-- Stages come from what the founder records in the admin area. Shiprocket is not connected.
+- lib/delhivery-core.ts (pure, tested in tests/delhivery.test.ts), lib/delhivery.ts (calls),
+  lib/delhivery-sync.ts (tracking sync), app/actions/delhivery.ts (admin actions).
+- Admin order (packed): "Book with Delhivery" (weight pre-filled from Settings; e-waybill asked
+  for at Rs 50,000+), label A4 / 4x6 (/admin/label/[number]), "Handed to Delhivery", "Cancel
+  booking"; the manual courier form is folded under "Sent another way?". Shipped: latest scan,
+  expected date, "Refresh tracking". Cancelling an order cancels its Delhivery booking first.
+- Admin orders: "Delhivery pickup" panel (parcels waiting, book a pickup, last booking).
+- Admin settings: (02) Parcels for Delhivery (placeholder 500 g, 30 x 25 x 5 cm until set);
+  Connected services shows Delhivery and the tracking sync.
+- Tracking sync: POST /api/cron/delhivery (Bearer CRON_SECRET), run every 2 hours by
+  .github/workflows/delhivery-sync.yml: latest scan, collected → shipped (letter), delivered
+  (letter, COD marked paid), returning (RTO) → "needs attention".
+- Checkout: the Delivery step checks the PIN code with Delhivery (not served / paused → stays
+  on the step with a message; cash on delivery hidden where Delhivery says it cannot collect
+  cash); placeOrder checks again. If Delhivery does not answer, checkout carries on as before.
+- Database: migration 20261118000100_delhivery.sql (applied).
+- To switch on: DELHIVERY_BASE_URL, DELHIVERY_API_TOKEN, DELHIVERY_PICKUP_LOCATION, CRON_SECRET
+  in .env.local and Vercel; CRON_SECRET also as a GitHub Actions secret.
+- Journey map (2026-11-19) on /order/[number]/track for Delhivery parcels on their way or
+  delivered: a drawn India outline (Natural Earth, India's official borders), the parcel's
+  towns from Delhivery's scan history (orders.carrier_scans; hub names matched to towns with
+  GeoNames, city level), a red route drawn in by a pen mask, the lotus where the parcel is,
+  hover / tap / keyboard notes. lib/geo/*, components/order/TrackMap.tsx + MapStops.tsx.
+  Data rebuilt with scripts/make-india-map.mjs. Delhivery Maps API: looked at, NOT used (paid).
 
 PHASE 6 – built and tested (2026-11-16)
 - /admin (Today), /admin/orders, /admin/orders/[number], /admin/stock, /admin/messages,
@@ -407,6 +467,8 @@ LAUNCH CHECKLIST (in order)
 10. Check the nightly backup ran (GitHub → Actions) and try restoring one into a scratch project.
 11. Connect the domain in Vercel, set NEXT_PUBLIC_SITE_URL, update the webhook addresses.
 12. Hosting: the free Vercel plan does not allow commercial use; move to Pro once selling.
+13. Delhivery: production token, warehouse name and wallet in place; ship one real order
+    through /admin and watch it reach "Delivered" on the tracking page.
 
 TO DO BY THE FOUNDER
 - GitHub repo → Settings → Secrets → Actions: add SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY,
@@ -435,3 +497,9 @@ TO DO BY THE FOUNDER
 - Set real stock counts and the shipping fee for orders under Rs 3,500.
 - Have the policy pages reviewed (return conditions, 48-hour damage window and
   cancellation rules were written as sensible defaults).
+- Delhivery (2026-11-18): sign up for Delhivery One and finish KYC (with the bank account
+  for cash-on-delivery money); add the Ambalpadi pickup address and note its exact name; top
+  up the wallet (at least Rs 500); ask Delhivery to switch on cash on delivery and for a
+  staging (test) API token; copy the API token (Settings → API Setup); weigh and measure one
+  packed dress. Then put DELHIVERY_BASE_URL, DELHIVERY_API_TOKEN, DELHIVERY_PICKUP_LOCATION
+  in .env.local. Orders never exceed Rs 50,000, so no e-waybill is needed.

@@ -114,3 +114,43 @@ export async function sendOrderUpdate(number: string, kind: 'shipped' | 'deliver
   }[kind];
   return sendEmail({ to: o.email, subject: copy.subject, ...letter({ heading: copy.heading, lines: copy.lines, button: copy.button }) });
 }
+
+// ---------- Moving an order along (shared by the admin buttons and the Delhivery sync) ----------
+
+/**
+ * Packed → shipped, with the courier's details, and the "on its way" letter. Only changes an
+ * order that is still packed, so two callers at once can never send the letter twice.
+ * Returns whether this call moved it.
+ */
+export async function markShipped(
+  number: string,
+  courier: { courier: string; tracking_number: string | null; tracking_url: string | null },
+  at = new Date().toISOString(),
+): Promise<boolean> {
+  const { data, error } = await adminDb()
+    .from('orders')
+    .update({ status: 'shipped', shipped_at: at, ...courier })
+    .eq('number', number)
+    .eq('status', 'packed')
+    .select('id');
+  if (error || !data?.length) return false;
+  await sendOrderUpdate(number, 'shipped');
+  return true;
+}
+
+/**
+ * Packed or shipped → delivered, and the "delivered" letter. Cash on delivery is paid at the
+ * door, so a COD order is marked paid too. Returns whether this call moved it.
+ */
+export async function markDelivered(order: Pick<Order, 'number' | 'payment_method' | 'payment_status' | 'shipped_at'>, at = new Date().toISOString()): Promise<boolean> {
+  const paid = order.payment_method === 'cod' && order.payment_status !== 'paid' ? { payment_status: 'paid', paid_at: at } : {};
+  const { data, error } = await adminDb()
+    .from('orders')
+    .update({ status: 'delivered', delivered_at: at, shipped_at: order.shipped_at ?? at, ...paid })
+    .eq('number', order.number)
+    .in('status', ['packed', 'shipped'])
+    .select('id');
+  if (error || !data?.length) return false;
+  await sendOrderUpdate(order.number, 'delivered');
+  return true;
+}

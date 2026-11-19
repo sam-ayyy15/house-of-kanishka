@@ -4,7 +4,10 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 import { z } from 'zod';
 import { CATALOG_TAG } from '@/lib/catalog';
 import { isAdmin } from '@/lib/admin-gate';
-import { getOrder, ORDER_NUMBER, sendOrderConfirmed, sendOrderUpdate } from '@/lib/orders';
+import { cancelShipment } from '@/lib/delhivery';
+import { plainReason } from '@/lib/delhivery-core';
+import { forgetBooking } from '@/lib/delhivery-sync';
+import { getOrder, markDelivered, markShipped, ORDER_NUMBER, sendOrderConfirmed, sendOrderUpdate } from '@/lib/orders';
 import { refundPayment } from '@/lib/razorpay';
 import { adminDb } from '@/lib/supabase/server';
 
@@ -49,11 +52,8 @@ export async function advanceOrder(number: string, to: 'confirmed' | 'packed' | 
     const { error } = await db.from('orders').update({ status: 'packed', packed_at: now() }).eq('id', order.id);
     if (error) return FAILED;
   } else {
-    // Delivered. Cash on delivery is paid at the door.
-    const paid = order.payment_method === 'cod' && order.payment_status !== 'paid' ? { payment_status: 'paid', paid_at: now() } : {};
-    const { error } = await db.from('orders').update({ status: 'delivered', delivered_at: now(), ...paid }).eq('id', order.id);
-    if (error) return FAILED;
-    await sendOrderUpdate(number, 'delivered');
+    // Delivered (cash on delivery is marked paid; the letter goes out).
+    if (!(await markDelivered(order))) return FAILED;
   }
   refresh();
   return { ok: true, message: `Order ${number} is now ${to}.` };
@@ -78,12 +78,8 @@ export async function shipOrder(_prev: AdminState, form: FormData): Promise<Admi
   const d = parsed.data;
   const order = await getOrder(d.number);
   if (!order || order.status !== 'packed') return { ok: false, message: 'Only a packed order can be shipped.' };
-  const { error } = await adminDb()
-    .from('orders')
-    .update({ status: 'shipped', shipped_at: now(), courier: d.courier, tracking_number: d.tracking_number ?? null, tracking_url: d.tracking_url || null })
-    .eq('id', order.id);
-  if (error) return FAILED;
-  await sendOrderUpdate(d.number, 'shipped');
+  if (order.shipment_booked_at) return { ok: false, message: 'This parcel is booked with Delhivery. Cancel that booking first to send it another way.' };
+  if (!(await markShipped(d.number, { courier: d.courier, tracking_number: d.tracking_number ?? null, tracking_url: d.tracking_url || null }))) return FAILED;
   refresh();
   return { ok: true, message: `Order ${d.number} is on its way.` };
 }
@@ -102,10 +98,22 @@ export async function cancelOrder(number: string): Promise<AdminState> {
   const db = adminDb();
   const paidOnline = order.payment_method === 'online' && order.payment_status === 'paid' && !!order.razorpay_payment_id;
 
+  // A parcel booked with Delhivery is cancelled there first. If Delhivery refuses, nothing changes.
+  let parcelNote = '';
+  if (order.shipment_booked_at && order.courier === 'Delhivery' && order.tracking_number) {
+    const parcel = await cancelShipment(order.tracking_number);
+    if ('reason' in parcel) return { ok: false, message: `Delhivery did not cancel parcel ${order.tracking_number}, so nothing was changed. ${plainReason(parcel.reason)}` };
+    if (order.status === 'packed') await forgetBooking(order);
+    parcelNote = order.status === 'shipped' ? ' Delhivery will bring the parcel back to you.' : ' Its Delhivery booking was cancelled too.';
+  }
+
   let refundId: string | null = null;
   if (paidOnline) {
     const refund = await refundPayment(order.razorpay_payment_id!, order.total_inr);
-    if ('reason' in refund) return { ok: false, message: `Razorpay did not accept the refund (${refund.reason}), so nothing was changed. Please try again, or refund it in the Razorpay dashboard first.` };
+    if ('reason' in refund) {
+      const booking = parcelNote ? ' (The Delhivery booking was already cancelled.)' : '';
+      return { ok: false, message: `Razorpay did not accept the refund (${refund.reason}), so the order was not cancelled.${booking} Please try again, or refund it in the Razorpay dashboard first.` };
+    }
     refundId = refund.id;
   }
   if (order.stock_held) await db.rpc('release_order_stock', { p_order_id: order.id });
@@ -120,7 +128,7 @@ export async function cancelOrder(number: string): Promise<AdminState> {
   if (error) return FAILED;
   await sendOrderUpdate(number, paidOnline ? 'refunded' : 'cancelled');
   refreshCatalog();
-  return { ok: true, message: paidOnline ? `Order ${number} was cancelled and refunded.` : `Order ${number} was cancelled.` };
+  return { ok: true, message: (paidOnline ? `Order ${number} was cancelled and refunded.` : `Order ${number} was cancelled.`) + parcelNote };
 }
 
 /** A delivered order that came back (30-day returns): refunds it; stock is put back by hand in Stock. */

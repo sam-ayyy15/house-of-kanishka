@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import styles from '@/components/admin/Admin.module.css';
+import { PickupPanel } from '@/components/admin/PickupPanel';
 import { requireAdmin } from '@/lib/admin-gate';
+import { delhiveryConfigured, type Pickup } from '@/lib/delhivery';
+import { PICKUP_HOURS, pickupWindow } from '@/lib/delhivery-core';
 import { formatPrice } from '@/lib/format';
 import { orderDate, orderStatusLabel } from '@/lib/order-status';
 import { adminDb } from '@/lib/supabase/server';
@@ -32,6 +35,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
   else if (active !== 'all') query = query.eq('status', active);
   const { data } = await query;
   const orders = data ?? [];
+  const pickup = delhiveryConfigured ? await pickupSummary() : null;
 
   return (
     <>
@@ -42,6 +46,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
           {orders.length === 200 ? ' (latest 200)' : ''}
         </p>
       </header>
+      {pickup && <PickupPanel ready={pickup.ready} last={pickup.last} firstDay={pickup.first} lastDay={pickup.lastDay} hours={PICKUP_HOURS} />}
       <nav className={styles.filters} aria-label="Filter orders">
         {FILTERS.map(([key, label]) => (
           <Link key={key} href={key === 'all' ? '/admin/orders' : `/admin/orders?status=${key}`} className={styles.filter} aria-current={key === active ? 'page' : undefined}>
@@ -104,4 +109,25 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
       )}
     </>
   );
+}
+
+/** Parcels booked with Delhivery that are still here, and the last pickup asked for. */
+async function pickupSummary() {
+  const db = adminDb();
+  const [{ count }, { data: saved }] = await Promise.all([
+    db.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'packed').not('shipment_booked_at', 'is', null),
+    db.from('settings').select('value').eq('key', 'delhivery_pickup').maybeSingle(),
+  ]);
+  const p = saved?.value as Pickup | null;
+  const last = p
+    ? [
+        `${new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(`${p.date}T00:00:00Z`))}, ${Number(p.time.slice(0, 2)) % 12 || 12} ${Number(p.time.slice(0, 2)) < 12 ? 'am' : 'pm'}`,
+        p.centre,
+        `request ${p.id}`,
+      ]
+        .filter(Boolean)
+        .join(' · ')
+    : null;
+  const { first, last: lastDay } = pickupWindow();
+  return { ready: count ?? 0, last, first, lastDay };
 }

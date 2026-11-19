@@ -4,6 +4,7 @@ import { revalidateTag } from 'next/cache';
 import { z } from 'zod';
 import { CATALOG_TAG } from '@/lib/catalog';
 import { ensureProfile, signedInUserId } from '@/lib/customer';
+import { checkPincode } from '@/lib/delhivery';
 import { emailConfigured } from '@/lib/email';
 import { INDIAN_STATES, indianMobile, PINCODE } from '@/lib/india';
 import { getOrder, isUuid, ORDER_NUMBER, orderUrl, sendCodConfirmRequest, sendOrderConfirmed } from '@/lib/orders';
@@ -54,6 +55,27 @@ export type CheckoutResult =
 
 const FAILED = 'Something went wrong on our side. Nothing has been charged. Please try again.';
 
+/** What checkout says when Delhivery cannot deliver to a PIN code (lib/delhivery.ts checkPincode). */
+export type DeliveryCheck = { deliverable: boolean; cod: boolean | null; prepaid: boolean | null; message: string | null } | null;
+const NOT_DELIVERABLE = 'We can’t deliver to this PIN code yet. Please check it, or write to us and we will find a way.';
+const PAUSED = 'Deliveries to this PIN code are paused for now. Please try again in a few days, or use another address.';
+const COD_NOT_HERE = 'Cash on delivery is not available for this PIN code. Please pay online.';
+const ONLINE_NOT_HERE = 'For this PIN code our courier can only deliver cash-on-delivery parcels. Please choose cash on delivery.';
+
+/**
+ * Checked as the customer leaves the Delivery step: whether Delhivery delivers to the PIN
+ * code, and whether it can collect cash there. null means "could not tell" (Delhivery not set
+ * up, slow, or too many checks from one visitor): checkout then carries on as before.
+ */
+export async function checkDelivery(pincode: string): Promise<DeliveryCheck> {
+  const pin = typeof pincode === 'string' ? pincode.trim() : '';
+  if (!PINCODE.test(pin)) return null;
+  if (!(await withinRateLimit('pincode', 40, 600))) return null;
+  const area = await checkPincode(pin);
+  if (!area) return null;
+  return { deliverable: area.deliverable, cod: area.cod, prepaid: area.prepaid, message: area.deliverable ? null : area.embargo ? PAUSED : NOT_DELIVERABLE };
+}
+
 type Placed =
   | { ok: true; id: string; number: string; access_token: string; total_inr: number }
   | { ok: false; error: string; slug?: string; size?: string; available?: number };
@@ -73,6 +95,12 @@ export async function placeOrder(raw: CheckoutInput): Promise<CheckoutResult> {
   if (!(await withinRateLimit('checkout', 8, 600))) {
     return { ok: false, message: 'Too many attempts. Please try again in a few minutes.' };
   }
+
+  // The same PIN code check as the Delivery step, in case the page skipped it.
+  const area = await checkPincode(d.pincode);
+  if (area && !area.deliverable) return { ok: false, message: area.embargo ? PAUSED : NOT_DELIVERABLE, fields: { pincode: area.embargo ? PAUSED : NOT_DELIVERABLE } };
+  if (area?.cod === false && d.method === 'cod') return { ok: false, message: COD_NOT_HERE };
+  if (area?.prepaid === false && d.method === 'online') return { ok: false, message: ONLINE_NOT_HERE };
 
   const userId = await signedInUserId();
   if (userId) await ensureProfile(userId);

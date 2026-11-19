@@ -488,3 +488,117 @@
     align-items: center;
   }
 }
+
+/* ---------- Delhivery (one order, and the pickup panel) ---------- */
+.parcel {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 16px 0 18px;
+  border-top: 1px solid var(--vr-black);
+  border-bottom: 1px solid var(--vr-border);
+  animation: vr-rise 320ms var(--ease-out) both;
+}
+
+.parcelHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* The waybill is the parcel's name: set in the serif, like an order number. */
+.waybill {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.parcelNews {
+  font-size: 14px;
+}
+
+.parcelLinks {
+  color: var(--vr-text-muted);
+}
+
+.otherWay summary {
+  cursor: pointer;
+  color: var(--vr-text-muted);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--vr-border);
+  list-style: none;
+}
+
+.otherWay summary::-webkit-details-marker {
+  display: none;
+}
+
+.otherWay[open] summary {
+  margin-bottom: 12px;
+  color: var(--vr-black);
+}
+
+.otherWay[open] form {
+  animation: vr-rise 280ms var(--ease-out) both;
+}
+
+/* Three short number fields side by side (parcel length × width × height). */
+.three {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.pickup {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px 32px;
+  align-items: end;
+  margin-bottom: 28px;
+  padding: 18px 0;
+  border-top: 1px solid var(--vr-black);
+  border-bottom: 1px solid var(--vr-border);
+  animation: vr-rise 320ms var(--ease-out) both;
+}
+
+.pickupForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 16px;
+}
+
+.pickupForm :global(.field) {
+  width: 160px;
+}
+
+.pickupBooked {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+@media (max-width: 767px) {
+  .pickup {
+    grid-template-columns: 1fr;
+  }
+
+  .pickupForm :global(.field) {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parcel,
+  .pickup,
+  .otherWay[open] form {
+    animation: none;
+  }
+}

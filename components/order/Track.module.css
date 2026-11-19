@@ -35,7 +35,7 @@
   font-size: clamp(34px, 4.4vw, 62px);
   line-height: 1.08;
   text-wrap: balance;
-  animation: vr-rise var(--dur-slow) var(--ease-out) 500ms both;
+  /* Rises word by word (data-rise="load" + <RiseWords>, globals.css). */
 }
 
 .lede {
@@ -54,6 +54,20 @@
 }
 
 /* ---------- The journey ---------- */
+/* The timeline below the map often starts below the fold: while RevealObserver holds it
+   ("pending"), its stages and red line wait, then play once it scrolls into view. Without
+   JavaScript, or with reduced motion, it is never held. */
+.timeline[data-reveal-state='pending'] .stage,
+.timeline[data-reveal-state='pending'] .fill {
+  animation-play-state: paused;
+}
+
+/* The right-hand column: the map (for parcels with Delhivery) above the timeline. */
+.journey {
+  min-width: 0;
+  max-width: 620px;
+}
+
 .timeline {
   margin: 0;
   padding: 8px 0 0;
@@ -145,6 +159,32 @@
   margin-top: 6px;
   font-size: 15px;
   line-height: 1.6;
+}
+
+/* Delhivery's latest scan under "On its way": set off by a hairline, the label in brand red.
+   It fades in once the red line has reached this stage and its lotus has opened. */
+.stageLatest {
+  max-width: 30em;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--vr-border);
+  font-size: 15px;
+  line-height: 1.6;
+  animation: vr-fade var(--dur-slow) var(--ease-out) 1900ms both;
+}
+
+.stageLatestLabel {
+  margin-right: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vr-red);
+}
+
+.stageLatestWhen {
+  display: block;
+  margin-top: 4px;
 }
 
 .stopped {

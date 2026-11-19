@@ -1,0 +1,402 @@
+/* The tracking map. EXTRAPOLATED – no reference design: house tokens, hairlines, square marks,
+   brand red; the map rests on the soft grey stage the bill uses ("paper on
+   grey"). Motion uses only opacity, transform and masks, in the site's own vocabulary:
+   settle (the map eases in), pen (the route is uncovered by a pen-stroke mask), word rise
+   (town names rise out of a mask), the red hairline (progress), and one quiet loop, the
+   breathing red dot where the parcel is, which runs only while the map is on screen. The global
+   reduced-motion rule ends every animation at once, so everything is simply visible. */
+
+.map {
+  margin: 0 0 64px;
+}
+
+/* ---------- Heading: "The journey / Udupi to Delhi" ---------- */
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 18px;
+  animation: map-rise var(--dur-slow) var(--ease-out) 150ms both;
+}
+
+.leg {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 2.6vw, 38px);
+  line-height: 1.1;
+}
+
+.leg em {
+  font-style: italic;
+  color: var(--vr-text-muted);
+}
+
+/* ---------- The stage ---------- */
+.frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--vr-grey-tile);
+}
+
+/* The map and its towns move as one while they settle in. */
+.canvas {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 55%;
+  animation: settle 1600ms var(--ease-out) both;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.land {
+  fill: var(--vr-white);
+  stroke: var(--vr-black);
+  stroke-opacity: 0.45;
+  stroke-width: 0.7px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The pen that uncovers the route: a white stroke in the mask, a few pixels wider than the red
+   line (1.2% of the view ≈ 7px at any zoom), drawn from start to end. Square ends, so nothing
+   shows before the pen arrives. */
+.pen {
+  fill: none;
+  stroke: #fff;
+  stroke-linecap: butt;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  animation: pen var(--draw) cubic-bezier(0.37, 0, 0.63, 1) var(--start) forwards;
+}
+
+.route {
+  fill: none;
+  stroke: var(--vr-red);
+  stroke-width: 1.6px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The way still to go: a fine dashed line that fades in once the route has arrived. */
+.ahead {
+  fill: none;
+  stroke: var(--vr-text-muted);
+  stroke-width: 1px;
+  stroke-dasharray: 4 5;
+  vector-effect: non-scaling-stroke;
+  animation: map-fade 700ms var(--ease-out) calc(var(--start) + var(--draw) + 150ms) both;
+}
+
+/* ---------- Towns ---------- */
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+.stop,
+.destination {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin: -16px 0 0 -16px; /* centred on the town */
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--vr-black);
+  cursor: pointer;
+}
+
+.destination {
+  cursor: default;
+}
+
+/* Each town's mark settles in as the pen reaches it. */
+.mark,
+.openMark {
+  animation: town-in 500ms var(--ease-out) var(--d) both;
+}
+
+/* A town passed through: a small black square; the town in focus turns brand red and grows. */
+.mark {
+  width: 7px;
+  height: 7px;
+  background: var(--vr-black);
+  transition: transform var(--dur-fast) var(--ease-out), background-color var(--dur-fast) ease;
+}
+
+.stop[data-kind='origin'] .mark {
+  width: 9px;
+  height: 9px;
+}
+
+.stop[data-active] .mark {
+  background: var(--vr-red);
+  transform: scale(1.35);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .stop:hover .mark {
+    transform: scale(1.35);
+  }
+}
+
+/* Where the parcel is now: a brand-red dot with a thin white ring (so it reads on land and on
+   the line), appearing as the route arrives. Once there, it breathes: the dot swells very
+   slightly while a soft red glow around it grows and fades, one breath every 2.6 s, only while
+   the map is on screen (RevealObserver sets data-inview on data-loop elements). Without
+   JavaScript or with reduced motion: the dot with a still, soft glow. */
+.here {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 12px;
+  height: 12px;
+}
+
+.dot {
+  position: relative;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--vr-red);
+  box-shadow: 0 0 0 2px var(--vr-white);
+  animation: town-in 500ms var(--ease-out) var(--d) both;
+}
+
+.glow {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(162 15 21 / 0.42) 0%, rgb(162 15 21 / 0.16) 42%, rgb(162 15 21 / 0) 70%);
+  opacity: 0.55;
+  pointer-events: none;
+  animation: map-fade 600ms var(--ease-out) var(--d) both;
+}
+
+.here[data-inview='true'] .glow {
+  animation: breathe-glow 2600ms var(--ease-in-out) calc(var(--d) + 300ms) infinite both;
+}
+
+.here[data-inview='true'] .dot {
+  animation:
+    town-in 500ms var(--ease-out) var(--d) both,
+    breathe-dot 2600ms var(--ease-in-out) calc(var(--d) + 500ms) infinite;
+}
+
+/* Where it is going: an open square, like a stage still to come on the timeline. */
+.openMark {
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--vr-black);
+  background: var(--vr-white);
+}
+
+/* Town names rise out of a mask just after their mark appears (the site's word rise). No box
+   behind them (a tinted box showed through when the dot's glow passed behind it): a soft white
+   halo around the letters keeps them clear over the route line and the coast. The padding is
+   room for the halo inside the mask. */
+.label {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 2px);
+  overflow: hidden;
+  padding: 3px 5px;
+  font-size: 11px;
+  text-shadow:
+    0 0 2px var(--vr-white),
+    0 0 4px var(--vr-white),
+    0 0 6px var(--vr-white);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--vr-black);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.label > span {
+  display: inline-block;
+  animation: label-rise 700ms var(--ease-out) calc(var(--d) + 150ms) both;
+}
+
+.label[data-side='left'] {
+  right: calc(100% + 2px);
+  left: auto;
+}
+
+.stop[data-kind='current'] .label {
+  color: var(--vr-red);
+}
+
+/* ---------- Below the map ---------- */
+
+/* The note for the town in focus. Space is kept for it, so nothing moves when it changes. */
+.note {
+  min-height: 70px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--vr-border);
+  animation: map-rise 600ms var(--ease-out) var(--d) both;
+}
+
+.noteSwap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 12px;
+  animation: note-swap 380ms var(--ease-out) both;
+}
+
+.noteTown {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.noteWords {
+  font-size: 14px;
+}
+
+.noteWhen {
+  flex-basis: 100%;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--vr-text-muted);
+}
+
+/* How far along: the house progress hairline (2px track, red fill growing with scaleX), timed
+   to finish as the route arrives. */
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 0 4px;
+  animation: map-fade 600ms var(--ease-out) var(--start) both;
+}
+
+.progressWords {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.track {
+  display: block;
+  height: 2px;
+  overflow: hidden;
+  background: var(--vr-border);
+}
+
+.fillBar {
+  display: block;
+  height: 100%;
+  background: var(--vr-red);
+  transform: scaleX(var(--progress));
+  transform-origin: left;
+  animation: fill var(--draw) cubic-bezier(0.37, 0, 0.63, 1) var(--start) both;
+}
+
+.caption {
+  margin-top: 14px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--vr-text-muted);
+}
+
+/* ---------- Keyframes (local copies: component stylesheets scope their names) ---------- */
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes pen {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fill {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes map-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes map-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes town-in {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+@keyframes label-rise {
+  from {
+    transform: translateY(115%);
+  }
+}
+
+@keyframes note-swap {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes breathe-glow {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes breathe-dot {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.14);
+  }
+}
+
+@media (max-width: 767px) {
+  .map {
+    margin-bottom: 48px;
+  }
+
+  .noteTown {
+    font-size: 20px;
+  }
+}

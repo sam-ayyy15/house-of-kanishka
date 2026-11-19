@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
-import { confirmPayment, placeOrder, type CheckoutResult } from '@/app/actions/checkout';
+import { checkDelivery, confirmPayment, placeOrder, type CheckoutResult } from '@/app/actions/checkout';
 import { formatPrice } from '@/lib/format';
 import { INDIAN_STATES, indianMobile, PINCODE } from '@/lib/india';
 import { clearBag } from '@/lib/store';
@@ -117,7 +117,7 @@ export function CheckoutView({ account, canSignIn, onlineOpen, codOpen, codMax, 
   const { freeShipping: threshold } = useCatalog();
   const shipping = freeShipping ? 0 : shippingFee;
   const total = subtotal + shipping;
-  const codAllowed = codOpen && (codMax === 0 || total <= codMax);
+  const codByRules = codOpen && (codMax === 0 || total <= codMax);
 
   const first = account?.addresses[0];
   const [values, setValues] = useState<Values>({
@@ -141,6 +141,14 @@ export function CheckoutView({ account, canSignIn, onlineOpen, codOpen, codMax, 
   // The bot check's token for the next order attempt; a new one after every attempt.
   const botCheck = useRef<string | null>(null);
   const [attempts, setAttempts] = useState(0);
+  // What Delhivery said about the PIN code when leaving the Delivery step (null: not asked or no answer).
+  const [area, setArea] = useState<{ pin: string; cod: boolean | null; prepaid: boolean | null } | null>(null);
+  const [checkingPin, setCheckingPin] = useState(false);
+  const areaNow = area && area.pin === values.pincode.trim() ? area : null;
+  const codHere = areaNow?.cod !== false;
+  const onlineHere = areaNow?.prepaid !== false;
+  const codAllowed = codByRules && codHere;
+  const onlineAllowed = onlineOpen && onlineHere;
 
   const bind = (name: keyof Values) => ({
     name,
@@ -168,11 +176,23 @@ export function CheckoutView({ account, canSignIn, onlineOpen, codOpen, codMax, 
     return e;
   }
 
-  function next(e: React.FormEvent) {
+  async function next(e: React.FormEvent) {
     e.preventDefault();
     const found = check(step);
     setErrors(found);
-    if (Object.keys(found).length === 0) setStep(step + 1);
+    if (Object.keys(found).length > 0) return;
+    if (step === 1) {
+      // Can Delhivery deliver here (and take cash)? No answer means carry on as before.
+      const pin = values.pincode.trim();
+      setCheckingPin(true);
+      const res = await checkDelivery(pin).catch(() => null);
+      setCheckingPin(false);
+      if (res && !res.deliverable) return setErrors({ pincode: res.message ?? 'We can’t deliver to this PIN code yet.' });
+      setArea(res ? { pin, cod: res.cod, prepaid: res.prepaid } : null);
+      if (res?.cod === false && method === 'cod' && onlineOpen) setMethod('online');
+      if (res?.prepaid === false && method === 'online' && codByRules && res.cod !== false) setMethod('cod');
+    }
+    setStep(step + 1);
   }
 
   const pickAddress = (a: SavedAddress) => {
@@ -370,19 +390,19 @@ export function CheckoutView({ account, canSignIn, onlineOpen, codOpen, codMax, 
                       <span>Save this address to my account</span>
                     </label>
                   )}
-                  <button type="submit" className="btn btn-black">
+                  <SubmitButton pending={checkingPin} busyLabel="Checking delivery to your PIN code…">
                     Continue to payment
-                  </button>
+                  </SubmitButton>
                 </form>
               )}
 
               {state === 'active' && i === 2 && (
                 <form className={styles.stepBody} onSubmit={submit}>
                   <div className={styles.methods} role="radiogroup" aria-label="Payment method">
-                    <label className={styles.method} data-checked={method === 'online' || undefined} data-off={!onlineOpen || undefined}>
-                      <input type="radio" className="house" name="method" value="online" checked={method === 'online'} disabled={!onlineOpen} onChange={() => setMethod('online')} />
+                    <label className={styles.method} data-checked={method === 'online' || undefined} data-off={!onlineAllowed || undefined}>
+                      <input type="radio" className="house" name="method" value="online" checked={method === 'online'} disabled={!onlineAllowed} onChange={() => setMethod('online')} />
                       <span className={styles.methodTitle}>Pay online</span>
-                      <span className={styles.methodNote}>{onlineOpen ? 'UPI, cards, netbanking and wallets' : 'Opening soon'}</span>
+                      <span className={styles.methodNote}>{!onlineOpen ? 'Opening soon' : onlineHere ? 'UPI, cards, netbanking and wallets' : 'Not available for this PIN code'}</span>
                       {method === 'online' && (
                         <span className={styles.methodMore}>
                           You pay in Razorpay’s secure window, which opens next. We never see or store your card or UPI details.
@@ -393,7 +413,13 @@ export function CheckoutView({ account, canSignIn, onlineOpen, codOpen, codMax, 
                       <input type="radio" className="house" name="method" value="cod" checked={method === 'cod'} disabled={!codAllowed} onChange={() => setMethod('cod')} />
                       <span className={styles.methodTitle}>Cash on delivery</span>
                       <span className={styles.methodNote}>
-                        {codAllowed ? 'Pay when your pieces arrive' : codOpen ? `Available up to ${formatPrice(codMax)}` : 'Not available at the moment'}
+                        {codAllowed
+                          ? 'Pay when your pieces arrive'
+                          : !codOpen
+                            ? 'Not available at the moment'
+                            : !codHere
+                              ? 'Not available for this PIN code'
+                              : `Available up to ${formatPrice(codMax)}`}
                       </span>
                       {method === 'cod' && codAllowed && (
                         <span className={styles.methodMore}>
@@ -413,7 +439,7 @@ export function CheckoutView({ account, canSignIn, onlineOpen, codOpen, codMax, 
                     pending={veil === 'placing'}
                     busyLabel="Placing your order…"
                     className="btn btn-red btn-split"
-                    disabled={method === 'online' ? !onlineOpen : !codAllowed}
+                    disabled={method === 'online' ? !onlineAllowed : !codAllowed}
                   >
                     <span>{method === 'online' ? 'Pay now' : 'Place order'}</span>
                     <span>
