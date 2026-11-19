@@ -113,6 +113,9 @@
   background: none;
   color: var(--vr-black);
   cursor: pointer;
+  /* No grey box flashing over a mark when it is tapped on a phone (the browser's default tap
+     highlight): the mark turning red is the feedback. */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .destination {
