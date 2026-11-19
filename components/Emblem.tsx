@@ -100,6 +100,16 @@ export function Emblem({ className, bloom = 'view', delay = 0, replay = 0, play:
     };
   }, [animated, autoplay, bloom, delay, replay]);
 
+  // A lotus that never unfolds draws the shared, cached file (app/emblem.svg/route.ts) rather
+  // than repeating its paths in the page.
+  if (!animated) {
+    return (
+      <svg className={`emblem ${className ?? ''}`} viewBox={EMBLEM_VIEWBOX} style={style} aria-hidden="true" focusable="false" {...rest}>
+        <use href="/emblem.svg#lotus" />
+      </svg>
+    );
+  }
+
   return (
     <svg
       ref={svg}

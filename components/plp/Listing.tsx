@@ -125,11 +125,11 @@ export function Listing({ title, products, tabs, initialTag = '', interstitial, 
           </div>
         ) : (
           <>
-            {lead && <ProductGrid products={lead} captions={captions} />}
+            {lead && <ProductGrid products={lead} captions={captions} eager={5} />}
             {lead && interstitial}
             {rest.length > 0 && (
               <div className={lead && !interstitial ? styles.gap : undefined}>
-                <ProductGrid products={rest} captions={captions} />
+                <ProductGrid products={rest} captions={captions} eager={lead ? 0 : 5} />
               </div>
             )}
           </>
